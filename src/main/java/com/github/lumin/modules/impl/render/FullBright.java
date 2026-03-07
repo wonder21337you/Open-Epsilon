@@ -1,4 +1,4 @@
-package com.github.lumin.modules.impl.visual;
+package com.github.lumin.modules.impl.render;
 
 
 import com.github.lumin.modules.Category;
@@ -16,7 +16,7 @@ public class FullBright extends Module {
     private final DoubleSetting amount = doubleSetting("Amount", 1, 0.1f, 1, 0.1f);
 
     public FullBright() {
-        super("充满光", "", Category.VISUAL);
+        super("全亮", "FullBright", Category.RENDER);
     }
 
     @SubscribeEvent

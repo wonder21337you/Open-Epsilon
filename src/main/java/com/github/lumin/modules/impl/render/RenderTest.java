@@ -1,4 +1,4 @@
-package com.github.lumin.modules.impl.visual;
+package com.github.lumin.modules.impl.render;
 
 import com.github.lumin.graphics.renderers.LineRenderer;
 import com.github.lumin.graphics.renderers.RectRenderer;
@@ -18,7 +18,7 @@ public class RenderTest extends Module {
     public static final RenderTest INSTANCE = new RenderTest();
 
     private RenderTest() {
-        super("渲染测试", "idk", Category.VISUAL);
+        super("渲染测试", "idk", Category.RENDER);
     }
 
     private final Supplier<RectRenderer> rectRendererSupplier = Suppliers.memoize(RectRenderer::new);

@@ -41,7 +41,7 @@ public class AimAssist extends Module {
     private LivingEntity currentTarget;
 
     public AimAssist() {
-        super("自动瞄准", "我练的好", Category.COMBAT);
+        super("自动瞄准", "AimAssist", Category.COMBAT);
     }
 
     @Override

@@ -7,10 +7,10 @@ import com.github.lumin.modules.impl.combat.AntiBot;
 import com.github.lumin.modules.impl.combat.AutoClicker;
 import com.github.lumin.modules.impl.combat.KillAura;
 import com.github.lumin.modules.impl.player.*;
-import com.github.lumin.modules.impl.visual.FullBright;
-import com.github.lumin.modules.impl.visual.Glow;
-import com.github.lumin.modules.impl.visual.Nametags;
-import com.github.lumin.modules.impl.visual.RenderTest;
+import com.github.lumin.modules.impl.render.FullBright;
+import com.github.lumin.modules.impl.render.Glow;
+import com.github.lumin.modules.impl.render.Nametags;
+import com.github.lumin.modules.impl.render.RenderTest;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import java.util.List;
@@ -27,15 +27,6 @@ public class ModuleManager {
 
                 // Client
                 ClickGui.INSTANCE,
-                Test1.INSTANCE,
-                Test2.INSTANCE,
-                Test3.INSTANCE,
-                Test7.INSTANCE,
-                Test8.INSTANCE,
-                Test666.INSTANCE,
-                TestA.INSTANCE,
-                TestB.INSTANCE,
-                TestC.INSTANCE,
 
                 // Combat
                 AimAssist.INSTANCE,

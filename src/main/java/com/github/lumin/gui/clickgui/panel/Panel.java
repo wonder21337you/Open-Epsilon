@@ -16,6 +16,7 @@ public class Panel implements IComponent {
 
     private final RoundRectRenderer bottomRoundRect = new RoundRectRenderer();
     private final RoundRectRenderer topRoundRect = new RoundRectRenderer();
+    private final RectRenderer rectRenderer = new RectRenderer();
     private final TextureRenderer textureRenderer = new TextureRenderer();
     private final TextRenderer fontRenderer = new TextRenderer();
     private final ShadowRenderer shadowRenderer = new ShadowRenderer();
@@ -37,12 +38,19 @@ public class Panel implements IComponent {
         float screenWidth = mc.getWindow().getGuiScaledWidth();
         float screenHeight = mc.getWindow().getGuiScaledHeight();
 
+
+        if (ClickGui.INSTANCE.backgroundBlackColor.getValue()) {
+            rectRenderer.addRect(0, 0, screenWidth, screenHeight, new Color(18, 18, 18, (int) (110 * alpha)));
+            rectRenderer.drawAndClear();
+        }
+
         if (ClickGui.INSTANCE.blurMode.is("全屏")) {
             if (ClickGui.INSTANCE.backgroundBlur.getValue()) {
                 BlurRenderer.INSTANCE.drawBlur(0.0f, 0.0f, screenWidth, screenHeight, 0.0f, ClickGui.INSTANCE.blurStrength.getValue().floatValue());
             } else {
                 bottomRoundRect.addRoundRect(0.0f, 0.0f, screenWidth, screenHeight, 0.0f, new Color(18, 18, 18, (int) (110 * alpha)));
             }
+
         }
 
         float targetWidth = screenWidth * 0.5f;
@@ -60,7 +68,7 @@ public class Panel implements IComponent {
         float x = (screenWidth - scaledWidth) / 2.0f;
         float y = (screenHeight - scaledHeight) / 2.0f;
 
-        shadowRenderer.addShadow(x, y, scaledWidth, scaledHeight, 20f * guiScale, 12f * guiScale, new Color(0, 0, 0, 100));
+        shadowRenderer.addShadow(x, y, scaledWidth, scaledHeight, 20f * guiScale, 30f * guiScale, ClickGui.INSTANCE.shadowColor.getValue());
         shadowRenderer.drawAndClear();
 
         float sidebarWidth = Math.max(120f * guiScale, width / 4);

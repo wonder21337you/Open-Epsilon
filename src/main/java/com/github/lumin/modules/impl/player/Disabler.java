@@ -17,7 +17,7 @@ public class Disabler extends Module {
     private final BoolSetting AimDuplicateLook = new BoolSetting("AimDuplicateLook", false);
 
     public Disabler() {
-        super("残疾人", "", Category.PLAYER);
+        super("残疾人", "Disabler", Category.PLAYER);
     }
 
     private float playerYaw;

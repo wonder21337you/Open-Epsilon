@@ -17,7 +17,7 @@ public class Stuck extends Module {
     public static final Stuck INSTANCE = new Stuck();
 
     public Stuck() {
-        super("卡空", "卡了", Category.PLAYER);
+        super("卡空", "Stuck", Category.PLAYER);
     }
 
     float lastYaw;

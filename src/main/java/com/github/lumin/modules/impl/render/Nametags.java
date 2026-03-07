@@ -1,6 +1,6 @@
-package com.github.lumin.modules.impl.visual;
+package com.github.lumin.modules.impl.render;
 
-import com.github.lumin.graphics.renderers.RectRenderer;
+import com.github.lumin.graphics.renderers.RoundRectRenderer;
 import com.github.lumin.graphics.renderers.TextRenderer;
 import com.github.lumin.graphics.text.StaticFontLoader;
 import com.github.lumin.modules.Category;
@@ -32,19 +32,17 @@ public class Nametags extends Module {
     public static final Nametags INSTANCE = new Nametags();
 
     public Nametags() {
-        super("名牌显示", "看迪克", Category.VISUAL);
+        super("名牌显示", "Nametags", Category.RENDER);
     }
 
     private final IntSetting range = intSetting("距离", 64, 8, 256, 1);
     private final BoolSetting showSelf = boolSetting("显示自己", false);
-    private final BoolSetting showHealth = boolSetting("显示血条", true);
+    private final BoolSetting showItems = boolSetting("显示装备", false);
     private final BoolSetting showHealthText = boolSetting("显示血量数值", true);
-    private final BoolSetting showItems = boolSetting("显示装备", false); // vibe coding
-    private final IntSetting maxItems = intSetting("最大物品数", 7, 0, 12, 1);
     private final ColorSetting backgroundColor = colorSetting("背景颜色", new Color(0, 0, 0, 140));
     private final ColorSetting textColor = colorSetting("文字颜色", Color.WHITE);
 
-    private final Supplier<RectRenderer> rectRendererSupplier = Suppliers.memoize(RectRenderer::new);
+    private final Supplier<RoundRectRenderer> roundRectRendererSupplier = Suppliers.memoize(RoundRectRenderer::new);
     private final Supplier<TextRenderer> textRendererSupplier = Suppliers.memoize(TextRenderer::new);
 
     private final List<TagInfo> tags = new ArrayList<>();
@@ -55,118 +53,54 @@ public class Nametags extends Module {
         if (tags.isEmpty()) return;
 
         GuiGraphics guiGraphics = event.getGuiGraphics();
-        RectRenderer rectRenderer = rectRendererSupplier.get();
+        RoundRectRenderer roundRectRenderer = roundRectRendererSupplier.get();
         TextRenderer textRenderer = textRendererSupplier.get();
 
         Color bg = backgroundColor.getValue();
         Color fg = textColor.getValue();
 
-        float paddingX = 0f; // x预留
-        float paddingY = 0f; // y预留
-        float barGap = 2.0f;
-        float barHeight = 2.0f;
-        float itemGap = 2.0f;
-        float itemSize = 16.0f;
-        float anchorOffset = 8.0f;
-        float healthTextGap = 6.0f;
-
         for (TagInfo tag : tags) {
             float scale = tag.scale();
             float textW = textRenderer.getWidth(tag.text(), scale, StaticFontLoader.REGULAR);
             float textH = textRenderer.getHeight(scale, StaticFontLoader.REGULAR);
-
-            float hpW = 0.0f;
-            boolean drawHealthTextInLine = showHealth.getValue() && showHealthText.getValue();
-            if (drawHealthTextInLine) {
-                hpW = textRenderer.getWidth(tag.healthText(), scale, StaticFontLoader.REGULAR);
-            }
-
-            int itemCount = showItems.getValue() ? Math.min(tag.items().size(), Math.max(0, maxItems.getValue())) : 0;
-            float itemRowW = itemCount > 0 ? (itemCount * itemSize + (itemCount - 1) * itemGap) * scale : 0.0f;
-            float itemRowH = itemCount > 0 ? itemSize * scale : 0.0f;
-
-            float topLineW = textW;
-            if (drawHealthTextInLine && hpW > 0.0f) {
-                topLineW = textW + healthTextGap + hpW;
-            }
-
-            float contentW = Math.max(topLineW, itemRowW);
-            float contentH = textH;
-            if (showHealth.getValue()) contentH += barGap + barHeight;
-            if (itemCount > 0) contentH += itemGap + itemRowH;
-
-            float boxW = contentW + paddingX * 2.0f;
-            float boxH = contentH + paddingY * 2.0f;
-
+            float hpW = showHealthText.getValue() ? textRenderer.getWidth(tag.healthText(), scale, StaticFontLoader.REGULAR) : 0.0f;
+            float topLineW = (showHealthText.getValue() && hpW > 0.0f) ? textW + 4.0f + hpW : textW;
+            float boxW = topLineW + 8.0f;
+            float boxH = textH + 8.0f;
             float boxLeft = tag.x() - boxW * 0.5f;
-            float boxTop = tag.y() - boxH - anchorOffset;
+            float boxTop = tag.y() - boxH - 8.0f;
+            float cursorY = boxTop + 4.0f;
 
-            float contentLeft = tag.x() - contentW * 0.5f;
-            float cursorY = boxTop + paddingY;
-
-            rectRenderer.addRect(boxLeft, boxTop, boxW, boxH, bg);
-
-            float textY = cursorY;
-            if (drawHealthTextInLine && hpW > 0.0f) {
-                int scX = (int) contentLeft;
-                int scY = (int) textY;
-                int scW = (int) Math.max(0.0f, contentW - hpW - healthTextGap);
-                int scH = (int) (textH + 2.0f);
-
-                if (scW > 0) {
-                    textRenderer.setScissor(scX, scY, scW, scH);
-                }
-                textRenderer.addText(tag.text(), contentLeft, textY, scale, fg, StaticFontLoader.REGULAR);
-                if (scW > 0) {
-                    textRenderer.clearScissor();
-                }
-
-                float hpX = contentLeft + contentW - hpW;
-                textRenderer.addText(tag.healthText(), hpX, textY, scale, fg, StaticFontLoader.REGULAR);
-            } else {
-                float textX = tag.x() - textW * 0.5f;
-                textRenderer.addText(tag.text(), textX, textY, scale, fg, StaticFontLoader.REGULAR);
-            }
-            cursorY += textH;
-
-            if (showHealth.getValue()) {
-                cursorY += barGap;
-
-                int bgBarColor = new Color(0, 0, 0, 110).getRGB();
-                rectRenderer.addRect(contentLeft, cursorY, contentW, barHeight, new Color(bgBarColor, true));
-
-                float frac = clamp01(tag.healthFrac());
-                Color hpColor = lerpColor(new Color(220, 60, 60, 220), new Color(80, 220, 80, 220), frac);
-                rectRenderer.addRect(contentLeft, cursorY, contentW * frac, barHeight, hpColor);
-
-                cursorY += barHeight;
-            }
-
-            if (itemCount > 0) {
-                cursorY += itemGap;
-
+            if (showItems.getValue() && !tag.items().isEmpty()) {
+                float itemRowW = (tag.items().size() * 16.0f + (tag.items().size() - 1) * 2.0f) * scale;
                 float itemsLeft = tag.x() - itemRowW * 0.5f;
+                float itemY = boxTop - 16.0f * scale - 2.0f;
 
                 guiGraphics.pose().pushMatrix();
-                guiGraphics.pose().translate(itemsLeft, cursorY);
+                guiGraphics.pose().translate(itemsLeft, itemY);
                 guiGraphics.pose().scale(scale, scale);
-                guiGraphics.pose().translate(-itemsLeft, -cursorY);
+                guiGraphics.pose().translate(-itemsLeft, -itemY);
 
                 int seed = 0;
-                for (int i = 0; i < itemCount; i++) {
+                for (int i = 0; i < tag.items().size(); i++) {
                     ItemStack stack = tag.items().get(i);
                     if (stack == null || stack.isEmpty()) continue;
-                    int ix = (int) (itemsLeft + i * (itemSize + itemGap));
-                    int iy = (int) cursorY;
-                    guiGraphics.renderItem(mc.player, stack, ix, iy, seed++);
-                    guiGraphics.renderItemDecorations(mc.font, stack, ix, iy);
+                    guiGraphics.renderItem(mc.player, stack, (int) (itemsLeft + i * 18.0f), (int) itemY, seed++);
+                    guiGraphics.renderItemDecorations(mc.font, stack, (int) (itemsLeft + i * 18.0f), (int) itemY);
                 }
 
                 guiGraphics.pose().popMatrix();
             }
+
+            roundRectRenderer.addRoundRect(boxLeft, boxTop, boxW, boxH, 6.0f * scale, bg);
+            textRenderer.addText(tag.text(), tag.x() - topLineW * 0.5f, cursorY - 2, scale, fg, StaticFontLoader.REGULAR);
+
+            if (showHealthText.getValue() && hpW > 0.0f) {
+                textRenderer.addText(tag.healthText(), tag.x() - topLineW * 0.5f + textW + 4.0f, cursorY - 2, scale, tag.healthColor(), StaticFontLoader.REGULAR);
+            }
         }
 
-        rectRenderer.drawAndClear();
+        roundRectRenderer.drawAndClear();
         textRenderer.drawAndClear();
     }
 
@@ -216,9 +150,13 @@ public class Nametags extends Module {
             float health = player.getHealth() + player.getAbsorptionAmount();
             float frac = maxHealth > 0.0f ? health / maxHealth : 0.0f;
             String hpText = String.format("%.1f", health);
+            Color hpColor = getHealthColor(frac);
 
             List<ItemStack> items = new ArrayList<>();
             if (showItems.getValue()) {
+                ItemStack off = player.getOffhandItem();
+                if (!off.isEmpty()) items.add(off);
+
                 ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
                 ItemStack chest = player.getItemBySlot(EquipmentSlot.CHEST);
                 ItemStack legs = player.getItemBySlot(EquipmentSlot.LEGS);
@@ -231,20 +169,28 @@ public class Nametags extends Module {
 
                 ItemStack main = player.getMainHandItem();
                 if (!main.isEmpty()) items.add(main);
-                ItemStack off = player.getOffhandItem();
-                if (!off.isEmpty()) items.add(off);
             }
 
-            tags.add(new TagInfo(text, hpText, frac, items, screen.x, screen.y, scale));
+            tags.add(new TagInfo(text, hpText, hpColor, items, screen.x, screen.y + 5, scale));
         }
     }
 
-    private static float clamp01(float v) {
-        return Mth.clamp(v, 0.0f, 1.0f);
+    private record TagInfo(String text, String healthText, Color healthColor, List<ItemStack> items, float x, float y, float scale) {
+    }
+
+    private static Color getHealthColor(float frac) {
+        frac = Mth.clamp(frac, 0.0f, 1.0f);
+        if (frac > 0.5f) {
+            float t = (frac - 0.5f) * 2.0f;
+            return lerpColor(new Color(255, 255, 0), new Color(0, 255, 0), t);
+        } else {
+            float t = frac * 2.0f;
+            return lerpColor(new Color(255, 0, 0), new Color(255, 255, 0), t);
+        }
     }
 
     private static Color lerpColor(Color a, Color b, float t) {
-        t = clamp01(t);
+        t = Mth.clamp(t, 0.0f, 1.0f);
         int r = (int) (a.getRed() + (b.getRed() - a.getRed()) * t);
         int g = (int) (a.getGreen() + (b.getGreen() - a.getGreen()) * t);
         int bl = (int) (a.getBlue() + (b.getBlue() - a.getBlue()) * t);
@@ -252,8 +198,5 @@ public class Nametags extends Module {
         return new Color(r, g, bl, al);
     }
 
-    private record TagInfo(String text, String healthText, float healthFrac, List<ItemStack> items, float x, float y,
-                           float scale) {
-    }
-
 }
+

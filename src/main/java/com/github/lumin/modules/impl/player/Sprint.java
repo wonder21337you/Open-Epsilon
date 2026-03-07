@@ -9,7 +9,7 @@ public class Sprint extends Module {
     public static final Sprint INSTANCE = new Sprint();
 
     public Sprint() {
-        super("疾跑", "idk", Category.PLAYER);
+        super("疾跑", "Sprint", Category.PLAYER);
     }
 
     @SubscribeEvent

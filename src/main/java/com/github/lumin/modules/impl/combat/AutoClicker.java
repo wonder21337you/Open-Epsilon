@@ -28,7 +28,7 @@ public class AutoClicker extends Module {
     private long readyTime = 0;
 
     public AutoClicker() {
-        super("连点器", "我不是AC我是多鼠标！", Category.COMBAT);
+        super("连点器", "AutoClicker", Category.COMBAT);
     }
 
     @SubscribeEvent

@@ -6,6 +6,7 @@ import com.github.lumin.settings.impl.ColorSetting;
 import com.github.lumin.utils.render.MouseUtils;
 import com.github.lumin.utils.render.animation.Animation;
 import com.github.lumin.utils.render.animation.Easing;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -15,6 +16,8 @@ import org.lwjgl.glfw.GLFW;
 import java.awt.*;
 
 public class ColorSettingComponent extends Component {
+
+    private final Minecraft mc = Minecraft.getInstance();
 
     private final ColorPicker colorPicker = new ColorPicker();
     private static ColorSettingComponent activePicker = null;
@@ -103,7 +106,11 @@ public class ColorSettingComponent extends Component {
         if (!opened) return;
         float panelW = ColorPicker.preferredWidth(scale);
         float panelH = ColorPicker.preferredHeight(scale, setting.isAllowAlpha());
-        float panelX = lastSwatchX + lastSwatchW - panelW;
+        float gap = 5.0f * scale;
+        float rightX = lastSwatchX + lastSwatchW + gap;
+        float screenWidth = mc.getWindow().getGuiScaledWidth();
+        boolean showOnRight = (rightX + panelW) <= screenWidth;
+        float panelX = showOnRight ? rightX : lastSwatchX - panelW - gap;
         float panelY = (lastSwatchY + lastSwatchH / 2.0f) - panelH / 2.0f;
 
         openAnimation.run(1.0f);
@@ -140,7 +147,11 @@ public class ColorSettingComponent extends Component {
         if (!ClickGui.INSTANCE.backgroundBlur.getValue()) return;
         float panelW = ColorPicker.preferredWidth(scale);
         float panelH = ColorPicker.preferredHeight(scale, setting.isAllowAlpha());
-        float panelX = lastSwatchX + lastSwatchW - panelW;
+        float gap = 5.0f * scale;
+        float rightX = lastSwatchX + lastSwatchW + gap;
+        float screenWidth = mc.getWindow().getGuiScaledWidth();
+        boolean showOnRight = (rightX + panelW) <= screenWidth;
+        float panelX = showOnRight ? rightX : lastSwatchX - panelW - gap;
         float panelY = (lastSwatchY + lastSwatchH / 2.0f) - panelH / 2.0f;
         float t = Mth.clamp(openAnimation.getValue(), 0.0f, 1.0f);
         if (t <= 0.0f) return;
@@ -154,7 +165,6 @@ public class ColorSettingComponent extends Component {
         float x = cx - w / 2.0f;
         float y = cy - h / 2.0f;
         float radius = 7.0f * scale * t;
-        //drawRoundedBlur(x, y, w, h, radius, ClickGui.INSTANCE.blurStrength.getValue().floatValue() * t);
     }
 
     @Override

@@ -4,7 +4,7 @@ public enum Category {
 
     COMBAT("b", "战斗", "ComBat"),
     PLAYER("5", "玩家", "Player"),
-    VISUAL("a", "渲染", "Render"),
+    RENDER("a", "渲染", "Render"),
     CLIENT("_", "客户端", "Client");
 
     public final String icon;

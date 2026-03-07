@@ -50,7 +50,7 @@ public class NoSlow extends Module {
     int delay = 0;
 
     public NoSlow() {
-        super("无减速", "不厌食", Category.PLAYER);
+        super("无减速", "NoSlow", Category.PLAYER);
     }
 
     private static float getMovementMultiplier(boolean positive, boolean negative) {

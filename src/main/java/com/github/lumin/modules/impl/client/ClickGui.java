@@ -4,27 +4,28 @@ import com.github.lumin.gui.clickgui.ClickGuiScreen;
 import com.github.lumin.modules.Category;
 import com.github.lumin.modules.Module;
 import com.github.lumin.settings.impl.BoolSetting;
+import com.github.lumin.settings.impl.ColorSetting;
 import com.github.lumin.settings.impl.DoubleSetting;
 import com.github.lumin.settings.impl.ModeSetting;
+
+import java.awt.*;
 
 public class ClickGui extends Module {
 
     public static final ClickGui INSTANCE = new ClickGui();
 
     public ClickGui() {
-        super("控制面板", "idk", Category.CLIENT);
+        super("控制面板", "ClickGui", Category.CLIENT);
     }
 
     public final DoubleSetting scale = doubleSetting("界面缩放", 1.0, 0.5, 2.0, 0.05);
 
-//    public final ColorSetting mainColor = colorSetting("主色调", new Color(255, 183, 197, 255));
-//    public final ColorSetting secondColor = colorSetting("次色调", new Color(255, 133, 161, 255));
-//    public final ColorSetting backgroundColor = colorSetting("背景颜色", new Color(28, 28, 28, 120));
-//    public final ColorSetting expandedBackgroundColor = colorSetting("展开背景颜色", new Color(20, 20, 20, 120));
+    public final ColorSetting shadowColor = colorSetting("阴影颜色", new Color(0, 0, 0, 113));
 
+    public final BoolSetting backgroundBlackColor = boolSetting("黑色背景", true);
     public final BoolSetting backgroundBlur = boolSetting("背景模糊", true);
-    public final DoubleSetting blurStrength = doubleSetting("模糊强度", 1, 0.1, 5.0, 0.1, backgroundBlur::getValue, true);
-    public final ModeSetting blurMode = modeSetting("模糊方式", "仅侧边栏", new String[]{"全屏", "仅侧边栏"}, backgroundBlur::getValue);
+    public final DoubleSetting blurStrength = doubleSetting("模糊强度", 10.5, 1.0, 15, 0.5, backgroundBlur::getValue);
+    public final ModeSetting blurMode = modeSetting("模糊方式", "全屏", new String[]{"全屏", "仅侧边栏"}, backgroundBlur::getValue);
 
     @Override
     protected void onEnable() {

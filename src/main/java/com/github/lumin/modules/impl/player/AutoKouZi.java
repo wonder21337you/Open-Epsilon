@@ -39,7 +39,7 @@ public class AutoKouZi extends Module {
     private String lastMode = null;
 
     public AutoKouZi() {
-        super("自动扣字", "喷系少年", Category.PLAYER);
+        super("自动扣字", "AutoKouZi", Category.PLAYER);
     }
 
     private void loadMessages() {
