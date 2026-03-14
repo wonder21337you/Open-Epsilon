@@ -1,6 +1,5 @@
 package com.github.lumin.modules;
 
-import com.github.lumin.Lumin;
 import com.github.lumin.assets.i18n.TranslateComponent;
 import com.github.lumin.settings.Setting;
 import com.github.lumin.settings.impl.*;
@@ -27,7 +26,7 @@ public class Module {
 
     public final List<Setting<?>> settings = new ArrayList<>();
 
-    protected static final Minecraft mc = Minecraft.getInstance();
+    protected final Minecraft mc;
 
     public final TranslateComponent translateComponent;
 
@@ -36,6 +35,7 @@ public class Module {
         this.category = category;
 
         translateComponent = TranslateComponent.create("modules", name.toLowerCase());
+        mc = Minecraft.getInstance();
     }
 
     protected boolean nullCheck() {
@@ -48,37 +48,30 @@ public class Module {
     protected void onDisable() {
     }
 
-    public void toggle() {
-        enabled = !enabled;
-
-        if (enabled) {
-            try {
-                NeoForge.EVENT_BUS.register(this);
-            } catch (Exception ignored) {
-            }
-
-            onEnable();
-
-            Lumin.LOGGER.info("{} 已启用", name);
-        } else {
-            try {
-                NeoForge.EVENT_BUS.unregister(this);
-            } catch (Exception ignored) {
-            }
-
-            onDisable();
-
-            Lumin.LOGGER.info("{} 已禁用", name);
-        }
-    }
-
     public boolean isEnabled() {
         return enabled;
     }
 
+    public void toggle() {
+        setEnabled(!enabled);
+    }
+
     public void setEnabled(boolean enabled) {
-        if (enabled != this.enabled) {
-            toggle();
+        if (this.enabled != enabled) {
+            this.enabled = enabled;
+            if (enabled) {
+                try {
+                    NeoForge.EVENT_BUS.register(this);
+                } catch (Exception ignored) {
+                }
+                onEnable();
+            } else {
+                try {
+                    NeoForge.EVENT_BUS.unregister(this);
+                } catch (Exception ignored) {
+                }
+                onDisable();
+            }
         }
     }
 

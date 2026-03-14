@@ -133,7 +133,7 @@ public class Scaffold extends Module {
     @SubscribeEvent
     private void onMotion(MotionEvent event) {
         if (safeWalk.getValue() && mode.is(Mode.GodBridge)) {
-            mc.options.keyShift.setDown(mc.player.onGround() && SafeWalk.isOnBlockEdge(0.3F));
+            mc.options.keyShift.setDown(mc.player.onGround() && SafeWalk.INSTANCE.isOnBlockEdge(0.3F));
         }
     }
 

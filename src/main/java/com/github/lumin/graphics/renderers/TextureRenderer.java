@@ -24,7 +24,10 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
 
 public class TextureRenderer implements IRenderer {
     private final Minecraft mc = Minecraft.getInstance();

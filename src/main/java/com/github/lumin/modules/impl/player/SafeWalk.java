@@ -14,7 +14,7 @@ public class SafeWalk extends Module {
         super("SafeWalk", Category.PLAYER);
     }
 
-    public static boolean isOnBlockEdge(float sensitivity) {
+    public boolean isOnBlockEdge(float sensitivity) {
         return !mc.level
                 .getCollisions(mc.player, mc.player.getBoundingBox().move(0.0, -0.5, 0.0).inflate(-sensitivity, 0.0, -sensitivity))
                 .iterator()

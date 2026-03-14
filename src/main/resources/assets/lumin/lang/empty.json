@@ -1,4 +1,13 @@
 {
+  "lumin": {
+    "modules": {
+      "stealer": {
+        "enderchest": "",
+        "maxdelay": "",
+        "mindelay": ""
+      }
+    }
+  },
   "lumin.categories.client": "",
   "lumin.categories.combat": "",
   "lumin.categories.player": "",
