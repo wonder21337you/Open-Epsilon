@@ -1,6 +1,6 @@
 package com.github.lumin.utils.rotation;
 
-import com.github.lumin.managers.Managers;
+import com.github.lumin.managers.RotationManager;
 import com.github.lumin.utils.math.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -181,7 +181,7 @@ public class RotationUtils {
     }
 
     public static Vector2f smooth(final Vector2f targetRotation, final double speed) {
-        return smooth(Managers.ROTATION.lastRotations, targetRotation, speed);
+        return smooth(RotationManager.INSTANCE.lastRotations, targetRotation, speed);
     }
 
     public static Vector2f smooth(final Vector2f lastRotation, final Vector2f targetRotation, final double speed) {

@@ -58,7 +58,8 @@ public class TtfTextRenderer implements ITextRenderer {
         float xOffset = 0f;
         float yOffset = 0f;
 
-        for (char ch : text.toCharArray()) {
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
             if (ch == ' ') {
                 xOffset += 3.0f * scale;
                 continue;
@@ -75,7 +76,6 @@ public class TtfTextRenderer implements ITextRenderer {
             TtfGlyphAtlas atlas = glyph.atlas();
 
             Batch batch = batches.computeIfAbsent(atlas, k -> new Batch(new LuminRingBuffer(bufferSize, GpuBuffer.USAGE_VERTEX)));
-
             batch.buffer.tryMap();
 
             float baselineY = yOffset + y + (fontLoader.fontFile.pixelAscent * finalScale);

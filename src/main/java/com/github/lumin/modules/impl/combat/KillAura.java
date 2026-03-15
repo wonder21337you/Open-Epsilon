@@ -1,7 +1,7 @@
 package com.github.lumin.modules.impl.combat;
 
 import com.github.lumin.assets.resources.ResourceLocationUtils;
-import com.github.lumin.managers.Managers;
+import com.github.lumin.managers.RotationManager;
 import com.github.lumin.modules.Category;
 import com.github.lumin.modules.Module;
 import com.github.lumin.settings.impl.*;
@@ -144,7 +144,7 @@ public class KillAura extends Module {
 
         if (target != null) {
             float[] rotations = RotationUtils.getRotationsToEntity(target);
-            Managers.ROTATION.setRotations(new Vector2f(rotations[0], rotations[1]), rotationSpeed.getValue().floatValue(), MovementFix.ON, Priority.Medium);
+            RotationManager.INSTANCE.setRotations(new Vector2f(rotations[0], rotations[1]), rotationSpeed.getValue().floatValue(), MovementFix.ON, Priority.Medium);
         }
     }
 

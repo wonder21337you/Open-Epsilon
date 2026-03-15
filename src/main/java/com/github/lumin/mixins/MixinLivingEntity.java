@@ -1,7 +1,7 @@
 package com.github.lumin.mixins;
 
 import com.github.lumin.events.JumpEvent;
-import com.github.lumin.managers.Managers;
+import com.github.lumin.managers.RotationManager;
 import com.github.lumin.modules.impl.player.JumpCooldown;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,7 +31,7 @@ public abstract class MixinLivingEntity {
     @Redirect(method = "tickHeadTurn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getYRot()F"))
     private float modifyHeadYaw(LivingEntity entity) {
         if (entity == Minecraft.getInstance().player) {
-            Vector2f animationRotation = Managers.ROTATION.animationRotation;
+            Vector2f animationRotation = RotationManager.INSTANCE.animationRotation;
             if (animationRotation != null) {
                 return animationRotation.x;
             }

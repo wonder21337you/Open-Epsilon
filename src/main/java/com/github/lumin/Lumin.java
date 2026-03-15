@@ -1,8 +1,8 @@
 package com.github.lumin;
 
 import com.github.lumin.assets.i18n.I18NFileGenerator;
-import com.github.lumin.managers.Managers;
-import com.github.lumin.utils.AuthUtils;
+import com.github.lumin.managers.ConfigManager;
+import com.github.lumin.managers.ModuleManager;
 import com.mojang.logging.LogUtils;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -86,22 +86,22 @@ public class Lumin {
 
     @SubscribeEvent
     private static void onClientSetup(FMLClientSetupEvent event) {
-
-        AuthUtils.checkConnection();
-
         LOGGER.info("Welcome to Lumin, Meow~");
 
-        Managers.initManagers();
+        // 初始化 Managers
+        ModuleManager.INSTANCE.initModules();
+        ConfigManager.INSTANCE.initConfig();
 
+        // 生成空的 i18n 文件
         I18NFileGenerator.generate("lumin-config/empty-i18n.json");
 
+        // 添加一个退出游戏时候的钩子
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            Managers.CONFIG.saveNow();
+            ConfigManager.INSTANCE.saveNow();
             Lumin.LOGGER.info("お兄ちゃん、私はあなたを一番愛しています~");
         }));
 
         Lumin.LOGGER.info("Lumin has loaded successfully, Meow~");
-
     }
 
 }

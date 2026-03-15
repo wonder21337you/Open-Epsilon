@@ -1,7 +1,6 @@
-package com.github.lumin.managers.impl;
+package com.github.lumin.managers;
 
 import com.github.lumin.Lumin;
-import com.github.lumin.managers.Managers;
 import com.github.lumin.modules.Module;
 import com.github.lumin.settings.Setting;
 import com.github.lumin.settings.impl.*;
@@ -15,8 +14,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ConfigManager {
+
+    public static final ConfigManager INSTANCE = new ConfigManager();
 
     private static final int CONFIG_VERSION = 1;
 
@@ -27,18 +29,22 @@ public class ConfigManager {
 
     private static final Path configFile = Paths.get("lumin-config").resolve("config.json");
 
-    private JsonObject root = new JsonObject();
-    private boolean dirty;
     private boolean modulesApplied;
 
-    public ConfigManager() {
+    private JsonObject root = new JsonObject();
+    private final AtomicBoolean dirty = new AtomicBoolean(false);
+
+    private ConfigManager() {
+    }
+
+    public void initConfig() {
         try {
             loadFromDisk();
             if (!root.has("version")) {
                 root.addProperty("version", CONFIG_VERSION);
-                dirty = true;
+                dirty.set(true);
             }
-            applyToModules(Managers.MODULE.getModules());
+            applyToModules(ModuleManager.INSTANCE.getModules());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -51,9 +57,7 @@ public class ConfigManager {
     public synchronized void reload() {
         loadFromDisk();
         modulesApplied = false;
-        if (Managers.MODULE != null) {
-            applyToModules(Managers.MODULE.getModules());
-        }
+        applyToModules(ModuleManager.INSTANCE.getModules());
     }
 
     public synchronized void applyToModules(List<Module> modules) {
@@ -110,9 +114,7 @@ public class ConfigManager {
     }
 
     public synchronized void saveNow() {
-        if (Managers.MODULE != null) {
-            saveModulesToRoot(Managers.MODULE.getModules());
-        }
+        saveModulesToRoot(ModuleManager.INSTANCE.getModules());
         writeToDiskIfDirty();
     }
 
@@ -150,12 +152,12 @@ public class ConfigManager {
         JsonElement old = root.get("modules");
         if (old == null || !old.equals(newModulesObj)) {
             root.add("modules", newModulesObj);
-            dirty = true;
+            dirty.set(true);
         }
 
         if (!root.has("version")) {
             root.addProperty("version", CONFIG_VERSION);
-            dirty = true;
+            dirty.set(true);
         }
     }
 
@@ -199,7 +201,7 @@ public class ConfigManager {
     }
 
     private void writeToDiskIfDirty() {
-        if (!dirty) {
+        if (!dirty.compareAndSet(true, false)) {
             return;
         }
 
@@ -214,9 +216,9 @@ public class ConfigManager {
                     StandardOpenOption.TRUNCATE_EXISTING,
                     StandardOpenOption.WRITE
             );
-            dirty = false;
         } catch (IOException e) {
             Lumin.LOGGER.error("写入配置文件失败: {}", configFile, e);
+            dirty.set(true);
         }
     }
 

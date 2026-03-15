@@ -1,10 +1,9 @@
-package com.github.lumin.managers.impl;
+package com.github.lumin.managers;
 
 import com.github.lumin.events.JumpEvent;
 import com.github.lumin.events.MotionEvent;
 import com.github.lumin.events.RayTraceEvent;
 import com.github.lumin.events.StrafeEvent;
-import com.github.lumin.utils.AuthUtils;
 import com.github.lumin.utils.player.MoveUtils;
 import com.github.lumin.utils.rotation.MovementFix;
 import com.github.lumin.utils.rotation.Priority;
@@ -14,6 +13,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -23,7 +23,9 @@ import java.util.function.Function;
 
 public class RotationManager {
 
-    Minecraft mc = Minecraft.getInstance();
+    public static final RotationManager INSTANCE = new RotationManager();
+
+    private final Minecraft mc = Minecraft.getInstance();
 
     private final Vector2f offset = new Vector2f(0, 0);
     public Vector2f rotations;
@@ -41,7 +43,7 @@ public class RotationManager {
 
     private int priority;
 
-    public RotationManager() {
+    private RotationManager() {
         NeoForge.EVENT_BUS.register(this);
     }
 
@@ -54,7 +56,6 @@ public class RotationManager {
     }
 
     public void setRotations(final Vector2f rotations, final double rotationSpeed, final MovementFix correctMovement, Priority priority) {
-        AuthUtils.checkConnection();
         setRotations(rotations, rotationSpeed, correctMovement, null, priority);
     }
 

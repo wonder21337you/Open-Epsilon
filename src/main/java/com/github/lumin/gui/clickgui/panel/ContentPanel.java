@@ -3,7 +3,7 @@ package com.github.lumin.gui.clickgui.panel;
 import com.github.lumin.graphics.shaders.BlurShader;
 import com.github.lumin.gui.IComponent;
 import com.github.lumin.gui.clickgui.component.impl.ColorSettingComponent;
-import com.github.lumin.managers.Managers;
+import com.github.lumin.managers.ModuleManager;
 import com.github.lumin.modules.Category;
 import com.github.lumin.modules.Module;
 import com.github.lumin.modules.impl.client.ClickGui;
@@ -65,7 +65,7 @@ public class ContentPanel implements IComponent {
         targetState = ViewState.LIST;
         viewAnimation.setStartValue(0.0f);
         List<Module> modules = new ArrayList<>();
-        for (Module module : Managers.MODULE.getModules()) {
+        for (Module module : ModuleManager.INSTANCE.getModules()) {
             if (module.category == category) {
                 modules.add(module);
             }

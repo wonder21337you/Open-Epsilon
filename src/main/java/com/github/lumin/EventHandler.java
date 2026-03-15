@@ -3,7 +3,7 @@ package com.github.lumin;
 import com.github.lumin.assets.i18n.LanguageReloadListener;
 import com.github.lumin.assets.resources.ResourceLocationUtils;
 import com.github.lumin.graphics.LuminRenderPipelines;
-import com.github.lumin.managers.Managers;
+import com.github.lumin.managers.ModuleManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -21,7 +21,7 @@ public class EventHandler {
 
     @SubscribeEvent
     private static void onKeyPress(InputEvent.Key event) {
-        Managers.MODULE.onKeyEvent(event.getKey(), event.getAction());
+        ModuleManager.INSTANCE.onKeyEvent(event.getKey(), event.getAction());
     }
 
     @SubscribeEvent

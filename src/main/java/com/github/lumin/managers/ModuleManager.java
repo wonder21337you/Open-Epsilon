@@ -1,4 +1,4 @@
-package com.github.lumin.managers.impl;
+package com.github.lumin.managers;
 
 import com.github.lumin.modules.Module;
 import com.github.lumin.modules.impl.client.ClickGui;
@@ -14,13 +14,14 @@ import java.util.List;
 
 public class ModuleManager {
 
+    public static final ModuleManager INSTANCE = new ModuleManager();
+
     private List<Module> modules;
 
-    public ModuleManager() {
-        initModules();
+    private ModuleManager() {
     }
 
-    private void initModules() {
+    public void initModules() {
         modules = List.of(
 
                 // Client

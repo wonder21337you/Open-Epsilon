@@ -2,7 +2,7 @@ package com.github.lumin.modules.impl.player;
 
 import com.github.lumin.events.MotionEvent;
 import com.github.lumin.events.StrafeEvent;
-import com.github.lumin.managers.Managers;
+import com.github.lumin.managers.RotationManager;
 import com.github.lumin.modules.Category;
 import com.github.lumin.modules.Module;
 import com.github.lumin.settings.impl.BoolSetting;
@@ -150,12 +150,12 @@ public class Scaffold extends Module {
                 airTicks = 0;
                 blockInfo = null;
                 Vector2f rotation = new Vector2f(mc.player.getYRot(), mc.player.getXRot());
-                Managers.ROTATION.setRotations(rotation, rotationBackSpeed.getValue(), movementFix);
+                RotationManager.INSTANCE.setRotations(rotation, rotationBackSpeed.getValue(), movementFix);
             } else {
                 if (airTicks >= tellyTick.getValue() && blockInfo != null) {
                     FindItemResult item = findItem();
                     if (item.found()) {
-                        Managers.ROTATION.setRotations(getRotation(blockInfo), rotationSpeed.getValue(), movementFix);
+                        RotationManager.INSTANCE.setRotations(getRotation(blockInfo), rotationSpeed.getValue(), movementFix);
                         place(item);
                     }
                 }
@@ -164,7 +164,7 @@ public class Scaffold extends Module {
         } else if (blockInfo != null) {
             FindItemResult item = findItem();
             if (item.found()) {
-                Managers.ROTATION.setRotations(getRotation(blockInfo), rotationSpeed.getValue(), movementFix);
+                RotationManager.INSTANCE.setRotations(getRotation(blockInfo), rotationSpeed.getValue(), movementFix);
                 place(item);
             }
         }
@@ -285,7 +285,7 @@ public class Scaffold extends Module {
             }
         }
 
-        boolean hasRotated = RaytraceUtils.overBlock(Managers.ROTATION.getRotation(), blockInfo.dir, blockInfo.position, sideCheck.getValue());
+        boolean hasRotated = RaytraceUtils.overBlock(RotationManager.INSTANCE.getRotation(), blockInfo.dir, blockInfo.position, sideCheck.getValue());
         if (hasRotated) {
             InteractionResult result = mc.gameMode.useItemOn(mc.player, item.getHand(), new BlockHitResult(getVec3(blockInfo.position, blockInfo.dir), blockInfo.dir, blockInfo.position, false));
             if (result.consumesAction()) {

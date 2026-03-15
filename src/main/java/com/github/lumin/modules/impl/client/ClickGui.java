@@ -23,8 +23,8 @@ public class ClickGui extends Module {
 
     public final BoolSetting backgroundBlackColor = boolSetting("BackgroundBlackColor", true);
     private final BoolSetting backgroundBlur = boolSetting("BackgroundBlur", true);
-    private final DoubleSetting blurStrength = doubleSetting("BlurStrength", 10.5, 1.0, 15, 0.5, backgroundBlur::getValue);
-    private final EnumSetting<BlurMode> blurMode = enumSetting("BlurMode", BlurMode.FullScreen, backgroundBlur::getValue);
+    private final DoubleSetting blurStrength = doubleSetting("BlurStrength", 5, 1.0, 15, 0.5, backgroundBlur::getValue);
+    private final EnumSetting<BlurMode> blurMode = enumSetting("BlurMode", BlurMode.OnlySideBar, backgroundBlur::getValue);
 
     @Override
     protected void onEnable() {

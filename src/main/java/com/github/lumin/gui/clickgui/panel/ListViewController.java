@@ -21,7 +21,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-final class ListViewController {
+public final class ListViewController {
     private final Minecraft mc = Minecraft.getInstance();
 
     private final RoundRectRenderer listRoundRect = new RoundRectRenderer();
@@ -49,7 +49,7 @@ final class ListViewController {
     private static final float CARD_ASPECT_WIDTH = 16.0f;
     private static final float CARD_ASPECT_HEIGHT = 9.0f;
 
-    void setModules(List<Module> modules) {
+    public void setModules(List<Module> modules) {
         moduleCards.clear();
         for (Module module : modules) {
             moduleCards.add(new ModuleCard(module));
@@ -63,13 +63,13 @@ final class ListViewController {
         openRequest = null;
     }
 
-    OpenRequest consumeOpenRequest() {
+    public OpenRequest consumeOpenRequest() {
         OpenRequest value = openRequest;
         openRequest = null;
         return value;
     }
 
-    void render(IComponent.RendererSet set, int mouseX, int mouseY, float deltaTicks, float alpha, float panelX, float panelY, float panelWidth, float panelHeight, float guiScale, Module suppressModule) {
+    public void render(IComponent.RendererSet set, int mouseX, int mouseY, float deltaTicks, float alpha, float panelX, float panelY, float panelWidth, float panelHeight, float guiScale, Module suppressModule) {
         float padding = 8 * guiScale;
         float spacing = 4 * guiScale;
         float searchHeight = 24 * guiScale;
@@ -357,23 +357,31 @@ final class ListViewController {
         }
 
         private float getRenderX() {
-            float rw = width;
+            float scaleProgress = Mth.clamp(scaleAnimation.getValue(), 0.0f, 1.0f);
+            float baseScale = 0.5f + 0.5f * scaleProgress;
+            float rw = width * baseScale;
             float centerX = x + width / 2.0f;
             return centerX - rw / 2.0f;
         }
 
         private float getRenderY() {
-            float rh = height;
+            float scaleProgress = Mth.clamp(scaleAnimation.getValue(), 0.0f, 1.0f);
+            float baseScale = 0.5f + 0.5f * scaleProgress;
+            float rh = height * baseScale;
             float centerY = y + height / 2.0f;
             return centerY - rh / 2.0f;
         }
 
         private float getRenderW() {
-            return width;
+            float scaleProgress = Mth.clamp(scaleAnimation.getValue(), 0.0f, 1.0f);
+            float baseScale = 0.5f + 0.5f * scaleProgress;
+            return width * baseScale;
         }
 
         private float getRenderH() {
-            return height;
+            float scaleProgress = Mth.clamp(scaleAnimation.getValue(), 0.0f, 1.0f);
+            float baseScale = 0.5f + 0.5f * scaleProgress;
+            return height * baseScale;
         }
 
         private void render(RoundRectRenderer round, TextRenderer text, int mouseX, int mouseY, float guiScale, float alpha) {
