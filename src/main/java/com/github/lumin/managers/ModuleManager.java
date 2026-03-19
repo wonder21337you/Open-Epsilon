@@ -39,6 +39,7 @@ public class ModuleManager {
                 Disabler.INSTANCE,
                 InvManager.INSTANCE,
                 JumpCooldown.INSTANCE,
+                NoRotate.INSTANCE,
                 NoSlow.INSTANCE,
                 Phase.INSTANCE,
                 SafeWalk.INSTANCE,
