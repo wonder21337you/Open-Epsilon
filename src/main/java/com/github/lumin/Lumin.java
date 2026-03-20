@@ -86,14 +86,14 @@ public class Lumin {
 
     @SubscribeEvent
     private static void onClientSetup(FMLClientSetupEvent event) {
-        LOGGER.info("Welcome to Lumin, Meow~");
+        LOGGER.info("Welcome to Epsilon, Meow~");
 
         // 初始化 Managers
         ModuleManager.INSTANCE.initModules();
         ConfigManager.INSTANCE.initConfig();
 
         // 生成空的 i18n 文件
-        I18NFileGenerator.generate("lumin-config/empty-i18n.json");
+        I18NFileGenerator.generate("epsilon-config/empty-i18n.json");
 
         // 添加一个退出游戏时候的钩子
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -101,7 +101,7 @@ public class Lumin {
             Lumin.LOGGER.info("お兄ちゃん、私はあなたを一番愛しています~");
         }));
 
-        Lumin.LOGGER.info("Lumin has loaded successfully, Meow~");
+        Lumin.LOGGER.info("Epsilon has loaded successfully, Meow~");
     }
 
 }

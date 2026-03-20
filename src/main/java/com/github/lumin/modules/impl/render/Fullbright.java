@@ -30,13 +30,13 @@ public class Fullbright extends Module {
 
     @Override
     public void onDisable() {
-        if (nullCheck() || !mode.is(Mode.Gamma)) return;
+        if (nullCheck() || mode.is(Mode.Gamma)) return;
         mc.player.removeEffect(MobEffects.NIGHT_VISION);
     }
 
     @SubscribeEvent
     public void onTick(ClientTickEvent.Pre event) {
-        if (nullCheck() || !mode.is(Mode.Gamma)) return;
+        if (nullCheck() || mode.is(Mode.Gamma)) return;
         mc.player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, -1, 0));
     }
 

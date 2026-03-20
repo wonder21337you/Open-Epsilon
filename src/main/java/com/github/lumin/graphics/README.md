@@ -1,8 +1,8 @@
-# Hikari Graphics
+# Epsilon Graphics
 
 **English** | [简体中文](README_zh.md)
 
-Hikari Graphics is a lightweight, high-performance rendering framework designed for modern Minecraft modding.
+Epsilon Graphics is a lightweight, high-performance rendering framework designed for modern Minecraft modding.
 
 ### IMPORTANT: The English version may occasionally be out of sync.
 
@@ -39,7 +39,7 @@ Alternatively, you can specify a smaller buffer size than the default value when
 
 ## Quick Start
 
-All rendering operations in Hikari Graphics are performed through specialized **Renderers**.
+All rendering operations in Epsilon Graphics are performed through specialized **Renderers**.
 
 ### Available Renderers
 
@@ -76,28 +76,14 @@ For most immediate-mode UI tasks, you need to add shapes and clear the buffer wi
 
 ```java
 // 1. Add shapes to the buffer
-rectRenderer.get().
-
-addRect(10f,10f,200f,200f,Color.WHITE);
+rectRenderer.get().addRect(10f,10f,200f,200f,Color.WHITE);
 
 // 2. Draw to the screen and clear data before the next frame
-rectRenderer.
-
-get().
-
-draw();
-rectRenderer.
-
-get().
-
-clear();
+rectRenderer.get().draw();
+rectRenderer.get().clear();
 
 // Alternatively, you can use the shortcut:
-rectRenderer.
-
-get().
-
-drawAndClear();
+rectRenderer.get().drawAndClear();
 
 ```
 
@@ -125,14 +111,15 @@ draw(); // Content remains in the GPU buffer until .clear() is called.
 
 ### 💡 Optimization Tips
 
-When using **Hikari Graphics**, keep in mind: calling `.draw()` multiple times without calling `.clear()` is extremely
+When using **Epsilon Graphics**, keep in mind: calling `.draw()` multiple times without calling `.clear()` is extremely
 efficient. It simply re-triggers the draw command for existing GPU data without the need to re-upload vertex data.
 
 ---
 
 ## License
 
-* **Hikari Graphics**: The core rendering components (located in `src/main/java/com/github/lumin/graphics/`) are licensed
+* **Epsilon Graphics**: The core rendering components (located in `src/main/java/com/github/lumin/graphics/`) are
+  licensed
   under the [MIT License](https://www.google.com/search?q=LICENSE).
 
 ---

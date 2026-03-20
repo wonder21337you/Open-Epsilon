@@ -1,8 +1,6 @@
 package com.github.lumin.mixins;
 
-import com.github.lumin.gui.menu.MainMenuScreen;
 import com.github.lumin.modules.impl.client.ClickGui;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,11 +16,6 @@ public class MixinTitleScreen {
         ClickGui clickGui = ClickGui.INSTANCE;
         if (clickGui.getKeyBind() == -1) {
             clickGui.setKeyBind(GLFW.GLFW_KEY_RIGHT_SHIFT);
-        }
-
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.screen instanceof TitleScreen) {
-            mc.setScreen(new MainMenuScreen());
         }
     }
 

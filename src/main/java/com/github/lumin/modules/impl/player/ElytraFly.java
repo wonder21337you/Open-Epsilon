@@ -11,6 +11,7 @@ import com.github.lumin.utils.player.FindItemResult;
 import com.github.lumin.utils.player.InvUtils;
 import com.github.lumin.utils.player.MoveUtils;
 import com.github.lumin.utils.rotation.MovementFix;
+import com.github.lumin.utils.timer.TimerUtils;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -31,38 +33,49 @@ import java.util.Set;
 public class ElytraFly extends Module {
 
     public static final ElytraFly INSTANCE = new ElytraFly();
+    private static final int CHEST_ARMOR_MENU_SLOT = 8 - EquipmentSlot.CHEST.getIndex();
 
     private ElytraFly() {
         super("ElytraFly", Category.PLAYER);
     }
 
     private enum Mode {
+        Control,
         Firework
     }
 
+    private enum SwapMode {
+        Silent,
+        InvSwitch
+    }
+
     private final EnumSetting<Mode> mode = enumSetting("Mode", Mode.Firework);
+    private final EnumSetting<SwapMode> swapMode = enumSetting("SwapMode", SwapMode.InvSwitch);
+    private final BoolSetting armored = boolSetting("Armored", false);
     private final BoolSetting autoStart = boolSetting("AutoStart", true, () -> mode.is(Mode.Firework));
     private final BoolSetting onlyMoving = boolSetting("OnlyMoving", false, () -> mode.is(Mode.Firework));
     private final DoubleSetting horizontalSpeed = doubleSetting("HorizontalSpeed", 1.35, 0.1, 5.0, 0.05, () -> mode.is(Mode.Firework));
     private final DoubleSetting verticalSpeed = doubleSetting("VerticalSpeed", 0.8, 0.1, 2.0, 0.05, () -> mode.is(Mode.Firework));
-    private final DoubleSetting glideDown = doubleSetting("GlideDown", -0.02, -0.2, 0.1, 0.01, () -> mode.is(Mode.Firework));
     private final DoubleSetting accel = doubleSetting("Acceleration", 0.35, 0.05, 1.0, 0.05, () -> mode.is(Mode.Firework));
     private final IntSetting boostDelay = intSetting("BoostDelay", 9, 2, 50, 1, () -> mode.is(Mode.Firework));
     private final IntSetting rotationSpeed = intSetting("RotationSpeed", 10, 1, 10, 1, () -> mode.is(Mode.Firework));
 
-    private int rocketCooldown;
+    private final TimerUtils timer = new TimerUtils();
     private final Set<Integer> fireworkIds = new HashSet<>();
+    private boolean armoredFirstBoostUsed = false;
 
     @Override
     protected void onEnable() {
-        rocketCooldown = 0;
+        timer.reset();
         fireworkIds.clear();
+        armoredFirstBoostUsed = false;
     }
 
     @Override
     protected void onDisable() {
-        rocketCooldown = 0;
+        timer.reset();
         fireworkIds.clear();
+        armoredFirstBoostUsed = false;
     }
 
     public boolean isFirework(FireworkRocketEntity firework) {
@@ -74,32 +87,73 @@ public class ElytraFly extends Module {
         if (nullCheck()) return;
 
         if (mode.is(Mode.Firework)) {
+            if (mc.player.onGround() || mc.player.isInWater()) {
+                armoredFirstBoostUsed = false;
+            }
             fireworkIds.removeIf(id -> mc.level.getEntity(id) == null);
 
             if (!canGlide()) {
-                rocketCooldown = 0;
+                timer.reset();
                 return;
             }
 
             if (!mc.player.isFallFlying()) {
+                boolean keepDelayTimer = false;
                 if (autoStart.getValue() && !mc.player.onGround() && !mc.player.isInWater()) {
-                    startFallFlying();
+                    if (armored.getValue()) {
+                        if (hasInput()) {
+                            keepDelayTimer = tryArmoredTick();
+                        }
+                    } else {
+                        boolean started = startFallFlying();
+                        keepDelayTimer = started;
+                        if (started && useFirework()) {
+                            timer.reset();
+                        }
+                    }
                 }
-                rocketCooldown = 0;
+                if (!keepDelayTimer) {
+                    timer.reset();
+                }
                 return;
             }
 
-            if (rocketCooldown > 0) {
-                rocketCooldown--;
-            }
-
-            boolean controlling = hasControlInput();
-            if (((!onlyMoving.getValue() || MoveUtils.isMoving()) && controlling) && rocketCooldown <= 0) {
-                if (useFirework()) {
-                    rocketCooldown = boostDelay.getValue();
-                }
+            if (shouldUseFirework() && useFirework()) {
+                timer.reset();
             }
         }
+    }
+
+    private boolean shouldUseFirework() {
+        return ((!onlyMoving.getValue() || MoveUtils.isMoving()) && hasInput()) && timer.delay(boostDelay.getValue());
+    }
+
+    private boolean tryArmoredTick() {
+        if (!mc.player.containerMenu.getCarried().isEmpty()) return false;
+
+        int elytraSlot = findElytra();
+        if (elytraSlot == -1) return false;
+
+        int elytraContainerSlot = toContainerSlot(elytraSlot);
+
+        clickSlot(elytraContainerSlot);
+
+        boolean started = startFallFlying();
+        boolean canBoost = started || mc.player.isFallFlying();
+        if (started && !armoredFirstBoostUsed) {
+            if (useFirework()) {
+                timer.reset();
+                armoredFirstBoostUsed = true;
+            }
+        } else if (canBoost && shouldUseFirework()) {
+            if (useFirework()) {
+                timer.reset();
+            }
+        }
+
+        clickSlot(elytraContainerSlot);
+
+        return true;
     }
 
     @SubscribeEvent
@@ -112,13 +166,18 @@ public class ElytraFly extends Module {
         }
     }
 
-    private void startFallFlying() {
+    private boolean startFallFlying() {
         if (mc.player.tryToStartFallFlying()) {
             mc.getConnection().send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
+            return true;
         }
+        return false;
     }
 
     private boolean canGlide() {
+        if (armored.getValue() && mode.is(Mode.Firework) && findElytra() != -1) {
+            return true;
+        }
         for (EquipmentSlot slot : EquipmentSlot.VALUES) {
             if (LivingEntity.canGlideUsing(mc.player.getItemBySlot(slot), slot)) {
                 return true;
@@ -128,7 +187,7 @@ public class ElytraFly extends Module {
     }
 
     private void applyMotion() {
-        if (!hasControlInput()) {
+        if (!hasInput()) {
             mc.player.setDeltaMovement(Vec3.ZERO);
             mc.player.fallDistance = 0.0f;
             return;
@@ -162,7 +221,7 @@ public class ElytraFly extends Module {
         RotationManager.INSTANCE.setRotations(new Vector2f(Mth.wrapDegrees(yaw), Mth.clamp(pitch, -90.0f, 90.0f)), rotationSpeed.getValue(), MovementFix.OFF);
     }
 
-    private boolean hasControlInput() {
+    private boolean hasInput() {
         return MoveUtils.isMoving() || mc.options.keyJump.isDown() || mc.options.keyShift.isDown();
     }
 
@@ -186,28 +245,46 @@ public class ElytraFly extends Module {
     }
 
     private boolean useFirework() {
-        FindItemResult rocket = InvUtils.findInHotbar(Items.FIREWORK_ROCKET);
-        if (!rocket.found()) {
-            return false;
-        }
+        FindItemResult rocket = swapMode.is(SwapMode.Silent) ? InvUtils.findInHotbar(Items.FIREWORK_ROCKET) : InvUtils.find(Items.FIREWORK_ROCKET);
+        if (!rocket.found()) return false;
 
         InteractionHand hand = rocket.getHand();
-        boolean swapped = false;
-        if (hand == InteractionHand.MAIN_HAND && rocket.slot() != mc.player.getInventory().getSelectedSlot()) {
-            swapped = InvUtils.swap(rocket.slot(), true);
-        }
+        boolean swapped = swapMode.is(SwapMode.Silent) ? InvUtils.swap(rocket.slot(), true) : InvUtils.invSwap(rocket.slot());
 
         InteractionResult result = mc.gameMode.useItem(mc.player, hand);
+
         if (result.consumesAction()) {
             mc.player.swing(hand);
             updateFireworks();
         }
 
         if (swapped) {
-            InvUtils.swapBack();
+            if (swapMode.is(SwapMode.Silent)) {
+                InvUtils.swapBack();
+            } else {
+                InvUtils.invSwapBack();
+            }
         }
 
         return result.consumesAction();
+    }
+
+    private int findElytra() {
+        return InvUtils.find(Items.ELYTRA).slot();
+    }
+
+    private int toContainerSlot(int slot) {
+        if (slot < 9) {
+            return slot + 36;
+        }
+        return slot;
+    }
+
+    private void clickSlot(int slot) {
+        int id = mc.player.containerMenu.containerId;
+        mc.gameMode.handleInventoryMouseClick(id, slot, 0, ClickType.PICKUP, mc.player);
+        mc.gameMode.handleInventoryMouseClick(id, CHEST_ARMOR_MENU_SLOT, 0, ClickType.PICKUP, mc.player);
+        mc.gameMode.handleInventoryMouseClick(id, slot, 0, ClickType.PICKUP, mc.player);
     }
 
     private void updateFireworks() {
@@ -217,5 +294,4 @@ public class ElytraFly extends Module {
             }
         }
     }
-
 }

@@ -238,7 +238,8 @@ public final class HudEditorViewController {
 
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollY, float guiScale) {
         if (maxScroll <= 0.0f) return false;
-        if (!MouseUtils.isHovering(lastListX, lastListY, lastListW + lastScrollbarW, lastListH, mouseX, mouseY)) return false;
+        if (!MouseUtils.isHovering(lastListX, lastListY, lastListW + lastScrollbarW, lastListH, mouseX, mouseY))
+            return false;
         float step = 24.0f * guiScale;
         scrollTarget = Mth.clamp(scrollTarget - (float) scrollY * step, 0.0f, maxScroll);
         return true;
