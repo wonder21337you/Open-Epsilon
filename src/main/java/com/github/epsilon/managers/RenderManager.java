@@ -22,13 +22,11 @@ public class RenderManager {
         renderQueue.add((delta) -> func.run());
     }
 
-    public void callAndClear(DeltaTracker t) {
-        if (renderQueue.isEmpty()) {
-            return;
-        }
+    public void callAndClear(DeltaTracker tracker) {
+        if (renderQueue.isEmpty()) return;
         ArrayList<Consumer<DeltaTracker>> pending = new ArrayList<>(renderQueue);
         renderQueue.clear();
-        pending.forEach((func) -> func.accept(t));
+        pending.forEach(func -> func.accept(tracker));
     }
 
 }

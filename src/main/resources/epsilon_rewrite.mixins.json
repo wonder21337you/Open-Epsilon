@@ -11,6 +11,7 @@
     "MixinGlDebug",
     "MixinGui",
     "MixinHumanoidMobRenderer",
+    "MixinLightmap",
     "MixinLivingEntity",
     "MixinLivingEntityRenderer",
     "MixinLocalPlayer",
