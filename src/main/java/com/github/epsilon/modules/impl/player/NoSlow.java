@@ -17,7 +17,7 @@ public class NoSlow extends Module {
         super("NoSlow", Category.PLAYER);
     }
 
-    private final EnumSetting<Mode> mode = enumSetting("Mode", Mode.Jump);
+    private final EnumSetting<Mode> mode = enumSetting("Mode", Mode.Vanilla);
     private final BoolSetting food = boolSetting("Food", true);
     private final BoolSetting bow = boolSetting("Bow", true);
     private final BoolSetting crossbow = boolSetting("Crossbow", true);

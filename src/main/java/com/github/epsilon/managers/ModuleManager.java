@@ -29,8 +29,9 @@ public class ModuleManager {
                 AimAssist.INSTANCE,
                 AntiBot.INSTANCE,
                 AutoClicker.INSTANCE,
-                KillAura.INSTANCE,
+                Breaker.INSTANCE,
                 CrystalAura.INSTANCE,
+                KillAura.INSTANCE,
 
                 // Player
                 AutoAccount.INSTANCE,
@@ -43,14 +44,15 @@ public class ModuleManager {
                 MovementFix.INSTANCE,
                 NoRotate.INSTANCE,
                 NoSlow.INSTANCE,
+                PacketMine.INSTANCE,
                 Phase.INSTANCE,
                 SafeWalk.INSTANCE,
                 Scaffold.INSTANCE,
                 Sprint.INSTANCE,
                 Stealer.INSTANCE,
                 Stuck.INSTANCE,
-                Velocity.INSTANCE,
                 VClip.INSTANCE,
+                Velocity.INSTANCE,
 
                 // Render
                 ESP.INSTANCE,

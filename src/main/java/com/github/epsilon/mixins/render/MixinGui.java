@@ -14,7 +14,8 @@ public class MixinGui {
 
     @Inject(method = "extractEffects", at = @At("HEAD"), cancellable = true)
     private void onRenderEffects(GuiGraphicsExtractor GuiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (NoRender.INSTANCE.noPotionEffects()) {
+        NoRender noRender = NoRender.INSTANCE;
+        if (noRender.isEnabled() && noRender.potionEffects.getValue()) {
             ci.cancel();
         }
     }

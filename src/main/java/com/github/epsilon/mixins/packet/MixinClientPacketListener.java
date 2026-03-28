@@ -47,13 +47,4 @@ public abstract class MixinClientPacketListener extends ClientCommonPacketListen
         minecraft.player.yBodyRot = savedYaw;
     }
 
-    @Inject(method = "handleSoundEvent", at = @At("HEAD"), cancellable = true)
-    private void onHandleSoundEvent(ClientboundSoundPacket packet, CallbackInfo ci) {
-        if (minecraft.player == null || minecraft.level == null) return;
-        String soundId = Objects.requireNonNull(BuiltInRegistries.SOUND_EVENT.getKey(packet.getSound().value())).toString();
-        if (ElytraFly.INSTANCE.shouldVisualSpoof() && soundId.startsWith("minecraft:item.armor.equip_")) {
-            ci.cancel();
-        }
-    }
-
 }

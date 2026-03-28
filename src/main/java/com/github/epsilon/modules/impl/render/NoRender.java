@@ -24,8 +24,4 @@ public class NoRender extends Module {
     public final BoolSetting negativeEffects = boolSetting("NegativeEffects", true);
     public final BoolSetting potionParticles = boolSetting("PotionParticles", true);
 
-    public boolean noPotionEffects() {
-        return isEnabled() && potionEffects.getValue();
-    }
-
 }
