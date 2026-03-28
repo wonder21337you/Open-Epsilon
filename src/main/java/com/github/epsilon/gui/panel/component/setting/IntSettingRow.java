@@ -93,9 +93,7 @@ public class IntSettingRow extends SettingRow<IntSetting> {
                 : MD3Theme.lerp(fieldBase, fieldHover, animatedHover * 0.85f);
         Color fieldTextColor = focused ? MD3Theme.INVERSE_ON_SURFACE : MD3Theme.TEXT_PRIMARY;
         roundRectRenderer.addRoundRect(fieldBounds.x(), fieldBounds.y(), fieldBounds.width(), fieldBounds.height(), 7.0f, fieldColor);
-        if (focused) {
-            rectRenderer.addRect(fieldBounds.x() + 5.0f, fieldBounds.bottom() - 2.0f, fieldBounds.width() - 10.0f, 1.5f, MD3Theme.PRIMARY);
-        }
+
         String display = focused ? getDisplayBuffer() : formatValue();
         float displayScale = 0.60f;
         float textWidth = textRenderer.getWidth(display, displayScale);

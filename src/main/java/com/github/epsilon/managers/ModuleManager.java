@@ -1,11 +1,11 @@
 package com.github.epsilon.managers;
 
 import com.github.epsilon.modules.Module;
-import com.github.epsilon.modules.impl.client.*;
+import com.github.epsilon.modules.impl.client.ClickGui;
 import com.github.epsilon.modules.impl.combat.*;
 import com.github.epsilon.modules.impl.player.*;
 import com.github.epsilon.modules.impl.render.*;
-import com.github.epsilon.modules.impl.world.*;
+import com.github.epsilon.modules.impl.world.AutoFarm;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import java.util.List;
@@ -37,6 +37,7 @@ public class ModuleManager {
                 BreakCooldown.INSTANCE,
                 Disabler.INSTANCE,
                 ElytraFly.INSTANCE,
+                FakePlayer.INSTANCE,
                 InvManager.INSTANCE,
                 JumpCooldown.INSTANCE,
                 MovementFix.INSTANCE,

@@ -338,7 +338,6 @@ public class ColorPickerPopup implements PanelPopupHost.Popup {
         float textY = bounds.y() + (bounds.height() - textHeight) / 2.0f - 1.0f;
         textRenderer.addText(valueText, textX, textY, textScale, textColor);
         if (focused) {
-            rectRenderer.addRect(bounds.x() + 3.0f, bounds.bottom() - 2.0f, bounds.width() - 6.0f, 1.5f, MD3Theme.withAlpha(MD3Theme.PRIMARY, alpha));
             float caretX = textX + textRenderer.getWidth(valueText.substring(0, Math.min(cursorIndex, valueText.length())), textScale);
             rectRenderer.addRect(caretX, bounds.y() + 3.0f, 1.0f, bounds.height() - 6.0f, MD3Theme.INVERSE_ON_SURFACE);
         }

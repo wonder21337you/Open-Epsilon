@@ -51,7 +51,8 @@ public class Velocity extends Module {
         LAG
     }
 
-    private final EnumSetting<Mode> mode = enumSetting("Mode", Mode.NoXZ);
+    private final EnumSetting<Mode> mode = enumSetting("Mode", Mode.Vanilla);
+    private final BoolSetting explosion = boolSetting("Explosion", true, () -> mode.is(Mode.Vanilla));
     public final BoolSetting waterPush = boolSetting("NoWaterPush", true, () -> mode.is(Mode.Vanilla));
     public final BoolSetting entityPush = boolSetting("NoEntityPush", true, () -> mode.is(Mode.Vanilla));
     public final BoolSetting blockPush = boolSetting("NoBlockPush", true, () -> mode.is(Mode.Vanilla));

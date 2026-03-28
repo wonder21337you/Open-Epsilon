@@ -185,7 +185,8 @@ public class CrystalAura extends Module {
                 switch (antiWeakSwapMode.getValue()) {
                     case Swap -> InvUtils.swap(sword.slot(), false);
                     case Silent -> swapped = InvUtils.swap(sword.slot(), true);
-                    default -> { }
+                    default -> {
+                    }
                 }
             }
         }
@@ -303,7 +304,7 @@ public class CrystalAura extends Module {
     }
 
     private PlaceCandidate findBestCandidate(List<PlaceCandidate> candidates,
-                                              float minDmg, float maxSelfDmg, float minBalance) {
+                                             float minDmg, float maxSelfDmg, float minBalance) {
         List<PlaceCandidate> valid = new ArrayList<>();
 
         for (PlaceCandidate c : candidates) {
@@ -359,7 +360,8 @@ public class CrystalAura extends Module {
             switch (placeSwapMode.getValue()) {
                 case Swap -> InvUtils.swap(crystalItem.slot(), false);
                 case Silent -> swapped = InvUtils.swap(crystalItem.slot(), true);
-                default -> { }
+                default -> {
+                }
             }
             hand = InteractionHand.MAIN_HAND;
         }
@@ -438,7 +440,8 @@ public class CrystalAura extends Module {
         switch (mode) {
             case Client -> mc.player.swing(InteractionHand.MAIN_HAND);
             case Packet -> mc.getConnection().send(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
-            default -> { }
+            default -> {
+            }
         }
     }
 
@@ -483,7 +486,8 @@ public class CrystalAura extends Module {
         }
     }
 
-    private record PlaceCandidate(BlockPos supportPos, Vec3 crystalPos, float targetDmg, float selfDmg) { }
+    private record PlaceCandidate(BlockPos supportPos, Vec3 crystalPos, float targetDmg, float selfDmg) {
+    }
 
     private EndCrystal selectBestBreakCandidate(List<BreakCandidate> candidates) {
         if (candidates.isEmpty()) return null;
@@ -534,9 +538,11 @@ public class CrystalAura extends Module {
             float targetDmg,
             Vector2f targetRotation,
             float rotationDelta
-    ) { }
+    ) {
+    }
 
-    private record RenderRecord(BlockPos pos, long time) { }
+    private record RenderRecord(BlockPos pos, long time) {
+    }
 
     private enum SwapMode {
         None,

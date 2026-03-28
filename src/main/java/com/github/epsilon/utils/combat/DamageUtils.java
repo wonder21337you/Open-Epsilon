@@ -26,10 +26,14 @@ public class DamageUtils {
 
     private static final Minecraft mc = Minecraft.getInstance();
 
-    /** End Crystal explosion radius as defined in {@code EndCrystal.hurtServer}. */
+    /**
+     * End Crystal explosion radius as defined in {@code EndCrystal.hurtServer}.
+     */
     public static final float CRYSTAL_EXPLOSION_RADIUS = 6.0f;
 
-    /** Respawn Anchor explosion radius as defined in {@code RespawnAnchorBlock.explode}. */
+    /**
+     * Respawn Anchor explosion radius as defined in {@code RespawnAnchorBlock.explode}.
+     */
     public static final float ANCHOR_EXPLOSION_RADIUS = 5.0f;
 
     private static final EquipmentSlot[] ARMOR_SLOTS = {

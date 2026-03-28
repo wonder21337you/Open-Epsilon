@@ -37,11 +37,9 @@ public class ElytraFly extends Module {
     }
 
     public enum Mode {
+        Vanilla,
         Control,
-        Boost,
         Bounce,
-        Freeze,
-        None,
         Rotation,
         Pitch,
         Armored
@@ -98,10 +96,6 @@ public class ElytraFly extends Module {
 
     private void releaseShiftKey() {
         this.setShiftKey(false);
-    }
-
-    private boolean shouldFreezeNow() {
-        return this.mode.is(Mode.Freeze) && this.freezePos != null;
     }
 
     @Override
@@ -214,8 +208,6 @@ public class ElytraFly extends Module {
                 mc.player.stopFallFlying();
             } else if (this.mode.is(Mode.Armored) && event.getPacket() instanceof ClientboundPlayerPositionPacket) {
                 mc.player.stopFallFlying();
-            } else if (this.shouldFreezeNow() && event.getPacket() instanceof ClientboundPlayerPositionPacket) {
-                this.freezePos = null;
             }
         }
     }
