@@ -16,11 +16,6 @@ public final class WorldToScreen {
     private static final Minecraft mc = Minecraft.getInstance();
 
     public static Vector4d getEntityPositionsOn2D(LivingEntity target, float tickDelta) {
-        final int[] viewport = new int[]{0, 0, mc.getWindow().getWidth(), mc.getWindow().getHeight()};
-
-        CameraRenderState cameraState = mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState;
-        Matrix4f viewProjectionMatrix = new Matrix4f(cameraState.projectionMatrix).mul(cameraState.viewRotationMatrix);
-
         final Vec3 position = interpolate(target, tickDelta);
         final float width = target.getBbWidth() / 2f;
         final float height = target.getBbHeight() + (target.isCrouching() ? 0.1f : 0.2f);
@@ -30,7 +25,17 @@ public final class WorldToScreen {
                 position.x + width, position.y + height, position.z + width
         );
 
-        final Vector4d projection = projectEntity(viewport, viewProjectionMatrix, boundingBox);
+        return projectAbsoluteAABBOn2D(boundingBox);
+    }
+
+    public static Vector4d projectAbsoluteAABBOn2D(AABB absoluteBoundingBox) {
+        final int[] viewport = new int[]{0, 0, mc.getWindow().getWidth(), mc.getWindow().getHeight()};
+        CameraRenderState cameraState = mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState;
+        Matrix4f viewProjectionMatrix = new Matrix4f(cameraState.projectionMatrix).mul(cameraState.viewRotationMatrix);
+        Vec3 cameraPos = mc.gameRenderer.getMainCamera().position();
+
+        final Vector4d projection = projectEntity(viewport, viewProjectionMatrix, absoluteBoundingBox, cameraPos);
+        if (projection == null) return null;
 
         double guiScale = mc.getWindow().getGuiScale();
         projection.x /= guiScale;
@@ -41,15 +46,15 @@ public final class WorldToScreen {
         return projection;
     }
 
-    public static Vector4d projectEntity(final int[] viewport, final Matrix4f matrix, final AABB boundingBox) {
+    public static Vector4d projectEntity(final int[] viewport, final Matrix4f matrix, final AABB absoluteBoundingBox, final Vec3 cameraPos) {
         final Vector4f out = new Vector4f();
         Vector4d result = null;
 
         for (int i = 0; i < 8; i++) {
             Vector3f point = new Vector3f(
-                    (i & 1) == 0 ? (float) boundingBox.minX : (float) boundingBox.maxX,
-                    (i & 2) == 0 ? (float) boundingBox.minY : (float) boundingBox.maxY,
-                    (i & 4) == 0 ? (float) boundingBox.minZ : (float) boundingBox.maxZ
+                    ((i & 1) == 0 ? (float) absoluteBoundingBox.minX : (float) absoluteBoundingBox.maxX) - (float) cameraPos.x,
+                    ((i & 2) == 0 ? (float) absoluteBoundingBox.minY : (float) absoluteBoundingBox.maxY) - (float) cameraPos.y,
+                    ((i & 4) == 0 ? (float) absoluteBoundingBox.minZ : (float) absoluteBoundingBox.maxZ) - (float) cameraPos.z
             );
 
             matrix.project(point, viewport, out);
@@ -65,6 +70,11 @@ public final class WorldToScreen {
             }
         }
         return result;
+    }
+
+    public static Vector4d projectEntity(final int[] viewport, final Matrix4f matrix, final AABB absoluteBoundingBox) {
+        Vec3 cameraPos = mc.gameRenderer.getMainCamera().position();
+        return projectEntity(viewport, matrix, absoluteBoundingBox, cameraPos);
     }
 
     private static Vec3 interpolate(LivingEntity entity, float tickDelta) {

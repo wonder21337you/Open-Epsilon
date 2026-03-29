@@ -279,9 +279,9 @@ public class DamageUtils {
     /**
      * Shortcut: calculates how much crystal damage the local player would take.
      */
-    public static float selfCrystalDamage(Vec3 crystalPos) {
+    public static float selfCrystalDamage(Vec3 crystalPos, ArmorEnchantmentMode mode) {
         if (mc.player == null) return 0f;
-        return crystalDamage(mc.player, crystalPos, ArmorEnchantmentMode.None);
+        return crystalDamage(mc.player, crystalPos, mode);
     }
 
     private DamageUtils() {

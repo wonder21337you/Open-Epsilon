@@ -9,24 +9,37 @@ public class RenderManager {
 
     public static final RenderManager INSTANCE = new RenderManager();
 
-    private final ArrayList<Consumer<DeltaTracker>> renderQueue = new ArrayList<>();
+    private final ArrayList<Consumer<DeltaTracker>> renderGuiQueue = new ArrayList<>();
+    private final ArrayList<Consumer<DeltaTracker>> renderWorldHudQueue = new ArrayList<>();
 
     private RenderManager() {
     }
 
+    public void applyRenderWorldHud(Runnable func) {
+        renderWorldHudQueue.add(_ -> func.run());
+    }
+
     public void applyRenderAfterFrame(Consumer<DeltaTracker> func) {
-        renderQueue.add(func);
+        renderGuiQueue.add(func);
     }
 
     public void applyRenderAfterFrame(Runnable func) {
-        renderQueue.add(_ -> func.run());
+        renderGuiQueue.add(_ -> func.run());
     }
 
     public void callAndClear(DeltaTracker tracker) {
-        if (renderQueue.isEmpty()) return;
-        ArrayList<Consumer<DeltaTracker>> pending = new ArrayList<>(renderQueue);
-        renderQueue.clear();
-        pending.forEach(func -> func.accept(tracker));
+        if (!renderWorldHudQueue.isEmpty()) {
+            ArrayList<Consumer<DeltaTracker>> pending = new ArrayList<>(renderWorldHudQueue);
+            renderWorldHudQueue.clear();
+            pending.forEach(func -> func.accept(tracker));
+        }
+
+        if (!renderGuiQueue.isEmpty()) {
+            ArrayList<Consumer<DeltaTracker>> pending = new ArrayList<>(renderGuiQueue);
+            renderGuiQueue.clear();
+            pending.forEach(func -> func.accept(tracker));
+        }
+
     }
 
 }
