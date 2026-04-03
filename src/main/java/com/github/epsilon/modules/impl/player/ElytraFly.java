@@ -26,7 +26,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * By Nemophilist2009
+ * @author Nemophilist2009
  */
 public class ElytraFly extends Module {
 
