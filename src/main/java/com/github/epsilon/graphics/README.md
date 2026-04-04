@@ -58,11 +58,7 @@ Minecraft libraries) to ensure safe and lazy initialization.
 private final Supplier<RectRenderer> rectRenderer = Suppliers.memoize(RectRenderer::new);
 
 // Use .get() to access the renderer instance
-rectRenderer.
-
-get().
-
-addRect(10f,10f,100f,100f,Color.WHITE);
+rectRenderer.get().addRect(10f,10f,100f,100f,Color.WHITE);
 
 ```
 
@@ -94,16 +90,10 @@ frames, thereby saving CPU overhead.
 
 ```java
 // During the initialization phase or the first frame:
-rectRenderer.get().
-
-addRect(10f,10f,200f,200f,Color.CYAN);
+rectRenderer.get().addRect(10f,10f,200f,200f,Color.CYAN);
 
 // In the rendering loop:
-rectRenderer.
-
-get().
-
-draw(); // Content remains in the GPU buffer until .clear() is called.
+rectRenderer.get().draw(); // Content remains in the GPU buffer until .clear() is called.
 
 ```
 
