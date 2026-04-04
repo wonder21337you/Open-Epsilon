@@ -6,6 +6,7 @@ import com.github.epsilon.assets.i18n.I18NFileGenerator;
 import com.github.epsilon.managers.ConfigManager;
 import com.github.epsilon.managers.ModuleManager;
 import com.github.epsilon.managers.TargetManager;
+import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -25,11 +26,12 @@ public class Epsilon {
     public static final Logger LOGGER = LogManager.getLogger("Epsilon");
 
     public static int skipTicks;
+    public static Minecraft mc;
 
     @SubscribeEvent
     private static void onClientSetup(FMLClientSetupEvent event) {
         LOGGER.info("Welcome to Epsilon, Meow~");
-
+        mc = Minecraft.getInstance();
         VERSION = event.getContainer().getModInfo().getVersion().toString();
 
         // 初始化 Managers

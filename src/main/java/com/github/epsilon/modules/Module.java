@@ -1,6 +1,8 @@
 package com.github.epsilon.modules;
 
 import com.github.epsilon.assets.i18n.TranslateComponent;
+import com.github.epsilon.modules.impl.render.notification.NotificationManager;
+import com.github.epsilon.modules.impl.render.notification.NotificationMode;
 import com.github.epsilon.settings.Setting;
 import com.github.epsilon.settings.impl.*;
 import net.minecraft.client.Minecraft;
@@ -73,12 +75,15 @@ public class Module {
             this.enabled = enabled;
             if (enabled) {
                 try {
+                    NotificationManager.INSTANCE.post("Module","Toggled " + this.name + " on", NotificationMode.Success,2000);
                     NeoForge.EVENT_BUS.register(this);
+
                 } catch (Exception ignored) {
                 }
                 onEnable();
             } else {
                 try {
+                    NotificationManager.INSTANCE.post("Module","Toggled " + this.name + " off", NotificationMode.Error,2000);
                     NeoForge.EVENT_BUS.unregister(this);
                 } catch (Exception ignored) {
                 }

@@ -12,32 +12,37 @@ import com.github.epsilon.settings.impl.ColorSetting;
 import com.github.epsilon.settings.impl.DoubleSetting;
 import com.google.common.base.Suppliers;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.util.Mth;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ModuleList extends HudModule {
 
-    private static final float HORIZONTAL_PADDING = 4.0f;
     private static final float ROW_HEIGHT = 16.0f;
     private static final float ROW_SPACING = 2.0f;
     private static final float MODULE_PADDING = 4.0f;
     private static final float ICON_GAP = 2.0f;
 
     public static final ModuleList INSTANCE = new ModuleList();
+    private final Map<Module, Float> moduleAlphaMap = new HashMap<>();
 
     private ModuleList() {
         super("ModuleList", Category.RENDER, 0f, 0f, 50f, 50f);
     }
 
     private final DoubleSetting scale = doubleSetting("Scale", 1.0, 0.5, 2.0, 0.1);
-    private final ColorSetting shadowColor = colorSetting("ShadowColor", new Color(68, 0, 0, 94));
+    private final DoubleSetting textScaleOffset = doubleSetting("TextScaleOffset", -0.2, -0.5, 0.5, 0.05);
+    private final DoubleSetting horizontalPadding = doubleSetting("HorizontalPadding", 4.0, 0.0, 15.0, 1.0);
+    private final DoubleSetting animSpeed = doubleSetting("AnimationSpeed", 10.0, 1.0, 20.0, 0.5);
+    
+    private final ColorSetting shadowColor = colorSetting("ShadowColor", new Color(20, 20, 20, 120));
     private final BoolSetting showCategory = boolSetting("ShowCategory", false);
     private final BoolSetting showIcon = boolSetting("ShowIcon", true);
+
     private final Supplier<TextRenderer> textRendererSupplier = Suppliers.memoize(TextRenderer::new);
     private final Supplier<RoundRectRenderer> roundRectRendererSupplier = Suppliers.memoize(RoundRectRenderer::new);
 
@@ -45,7 +50,7 @@ public class ModuleList extends HudModule {
     protected void updateBounds(DeltaTracker delta) {
         if (nullCheck()) return;
 
-        List<ItemInfo> items = collectItems();
+        List<ItemInfo> items = collectItems(delta);
         if (items.isEmpty()) {
             setBounds(0.0f, 0.0f);
             return;
@@ -54,9 +59,13 @@ public class ModuleList extends HudModule {
         float moduleScale = scale.getValue().floatValue();
         float maxTotalWidth = 0.0f;
         float totalHeight = 0.0f;
+
         for (ItemInfo item : items) {
-            if (item.totalWidth() > maxTotalWidth) maxTotalWidth = item.totalWidth();
-            totalHeight += item.boxHeight() + ROW_SPACING * moduleScale;
+            if (item.alpha() > 0.001f) {
+                if (item.totalWidth() > maxTotalWidth) maxTotalWidth = item.totalWidth();
+                
+                totalHeight += (item.boxHeight() + ROW_SPACING * moduleScale) * item.alpha();
+            }
         }
 
         setBounds(maxTotalWidth + MODULE_PADDING * moduleScale, totalHeight);
@@ -66,80 +75,104 @@ public class ModuleList extends HudModule {
     public void render(DeltaTracker delta) {
         if (nullCheck()) return;
 
-        List<ItemInfo> items = collectItems();
-        if (items.isEmpty()) {
-            setBounds(0.0f, 0.0f);
-            return;
-        }
+        List<ItemInfo> items = collectItems(delta);
+        if (items.isEmpty()) return;
 
         TextRenderer textRenderer = textRendererSupplier.get();
         RoundRectRenderer roundRectRenderer = roundRectRendererSupplier.get();
 
         float moduleScale = scale.getValue().floatValue();
+        float renderScale = moduleScale + textScaleOffset.getValue().floatValue();
+        float hPadding = horizontalPadding.getValue().floatValue();
 
+        HorizontalAnchor hAnchor = getHorizontalAnchor(); 
         float currentY = this.y;
 
         for (ItemInfo item : items) {
-            float totalX = this.x + this.width - item.totalWidth();
-            float boxY = currentY;
+            if (item.alpha() <= 0.001f) continue;
 
-            float textBoxX = totalX;
-            float iconBoxX = totalX + item.boxWidth() + ICON_GAP * moduleScale;
+            float alpha = item.alpha();
+            float boxHeight = item.boxHeight();
+            float boxWidth = item.boxWidth();
 
-            roundRectRenderer.addRoundRect(textBoxX, boxY, item.boxWidth(), item.boxHeight(), 6.0f * moduleScale, shadowColor.getValue());
+            float itemX;
+            switch (hAnchor) {
+                case Right -> itemX = this.x + this.width - item.totalWidth();
+                case Center -> itemX = this.x + (this.width - item.totalWidth()) / 2.0f;
+                default -> itemX = this.x;
+            }
 
-            float textX = textBoxX + HORIZONTAL_PADDING * moduleScale - 1.5f;
-            float textY = boxY + (item.boxHeight() - textRenderer.getHeight(moduleScale)) / 5.0f;
-            textRenderer.addText(item.text(), textX + 1, textY, moduleScale, new Color(255, 255, 255, 126));
+            Color baseShadow = shadowColor.getValue();
+            Color animatedShadow = new Color(baseShadow.getRed(), baseShadow.getGreen(), baseShadow.getBlue(), (int) (baseShadow.getAlpha() * alpha));
+            Color animatedText = new Color(255, 255, 255, (int) (220 * alpha));
+
+            roundRectRenderer.addRoundRect(itemX, currentY, boxWidth, boxHeight, 6.0f * moduleScale, animatedShadow);
+
+            float textX = itemX + hPadding * moduleScale;
+            float textY = currentY + (boxHeight - textRenderer.getHeight(renderScale)) / 2.0f - 0.5f;
+            textRenderer.addText(item.text(), textX, textY, renderScale, animatedText);
 
             if (showIcon.getValue() && item.module().category != null) {
-                roundRectRenderer.addRoundRect(iconBoxX, boxY, item.boxHeight(), item.boxHeight(), 6.0f * moduleScale, shadowColor.getValue());
+                float iconBoxX = itemX + boxWidth + ICON_GAP * moduleScale;
+                roundRectRenderer.addRoundRect(iconBoxX, currentY, boxHeight, boxHeight, 6.0f * moduleScale, animatedShadow);
 
                 String iconChar = item.module().category.icon;
                 float iconScale = moduleScale * 0.8f;
                 float iconWidth = textRenderer.getWidth(iconChar, iconScale, StaticFontLoader.ICONS);
                 float iconHeight = textRenderer.getHeight(iconScale, StaticFontLoader.ICONS);
-                float iconX = iconBoxX + (item.boxHeight() - iconWidth) / 3.0f;
-                float iconY = boxY + (item.boxHeight() - iconHeight) / 5.0f;
-                textRenderer.addText(iconChar, iconX, iconY, iconScale, new Color(255, 255, 255, 92), StaticFontLoader.ICONS);
+                
+                float iconX = iconBoxX + (boxHeight - iconWidth) / 2.0f;
+                float iconY = currentY + (boxHeight - iconHeight) / 2.0f;
+                
+                textRenderer.addText(iconChar, iconX, iconY, iconScale, new Color(255, 255, 255, (int) (180 * alpha)), StaticFontLoader.ICONS);
             }
-
-            currentY += item.boxHeight() + ROW_SPACING * moduleScale;
+            currentY += (boxHeight + ROW_SPACING * moduleScale) * alpha;
         }
-
         roundRectRenderer.drawAndClear();
         textRenderer.drawAndClear();
     }
 
-    private List<ItemInfo> collectItems() {
-        List<Module> enabledModules = ModuleManager.INSTANCE.getModules().stream()
-                .filter(Module::isEnabled)
-                .collect(Collectors.toList());
+    private List<ItemInfo> collectItems(DeltaTracker delta) {
+        List<Module> allModules = ModuleManager.INSTANCE.getModules();
+        float frameTime = delta == null ? 0.05f : delta.getGameTimeDeltaTicks() / 20.0f;
+        float speed = animSpeed.getValue().floatValue();
 
-        if (enabledModules.isEmpty()) {
-            return List.of();
+        for (Module module : allModules) {
+            float target = module.isEnabled() ? 1.0f : 0.0f;
+            float current = moduleAlphaMap.getOrDefault(module, 0.0f);
+            
+            if (Math.abs(current - target) > 0.001f) {
+                current = Mth.lerp(speed * frameTime, current, target);
+                moduleAlphaMap.put(module, current);
+            } else {
+                moduleAlphaMap.put(module, target);
+            }
         }
 
-        enabledModules.sort(Comparator.comparingInt(m -> -getTextWidth(m)));
-
+        List<Module> activeModules = allModules.stream()
+                .filter(m -> moduleAlphaMap.getOrDefault(m, 0.0f) > 0.001f)
+                .sorted(Comparator.comparingInt(m -> -getTextWidth(m)))
+                .collect(Collectors.toList());
         TextRenderer textRenderer = textRendererSupplier.get();
         float moduleScale = scale.getValue().floatValue();
+        float renderScale = moduleScale + textScaleOffset.getValue().floatValue();
+        float hPadding = horizontalPadding.getValue().floatValue();
+        
         List<ItemInfo> items = new ArrayList<>();
+        for (Module module : activeModules) {
+            String text = getFormattedName(module);
+            float alpha = moduleAlphaMap.get(module);
 
-        for (Module module : enabledModules) {
-            String text = module.getTranslatedName();
-            if (showCategory.getValue() && module.category != null) {
-                text += " [" + module.category.getName() + "]";
-            }
-
-            float textWidth = textRenderer.getWidth(text, moduleScale);
-            float boxWidth = textWidth + HORIZONTAL_PADDING * moduleScale * 2.0f;
+            float textWidth = textRenderer.getWidth(text, renderScale);
+            float boxWidth = textWidth + (hPadding * moduleScale * 2.0f);
             float boxHeight = ROW_HEIGHT * moduleScale;
             float totalWidth = boxWidth;
+            
             if (showIcon.getValue() && module.category != null) {
                 totalWidth += boxHeight + ICON_GAP * moduleScale;
             }
-            items.add(new ItemInfo(module, text, boxWidth, boxHeight, totalWidth));
+
+            items.add(new ItemInfo(module, text, boxWidth, boxHeight, totalWidth, alpha));
         }
 
         return items;
@@ -147,13 +180,18 @@ public class ModuleList extends HudModule {
 
     private int getTextWidth(Module module) {
         TextRenderer textRenderer = textRendererSupplier.get();
+        float renderScale = scale.getValue().floatValue() + textScaleOffset.getValue().floatValue();
+        return (int) textRenderer.getWidth(getFormattedName(module), renderScale);
+    }
+
+    private String getFormattedName(Module module) {
         String text = module.getTranslatedName();
         if (showCategory.getValue() && module.category != null) {
             text += " [" + module.category.getName() + "]";
         }
-        return (int) textRenderer.getWidth(text, scale.getValue().floatValue());
+        return text;
     }
 
-    private record ItemInfo(Module module, String text, float boxWidth, float boxHeight, float totalWidth) {
+    private record ItemInfo(Module module, String text, float boxWidth, float boxHeight, float totalWidth, float alpha) {
     }
 }

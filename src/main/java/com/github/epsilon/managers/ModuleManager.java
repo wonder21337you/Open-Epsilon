@@ -9,6 +9,7 @@ import com.github.epsilon.modules.impl.ClientSetting;
 import com.github.epsilon.modules.impl.combat.*;
 import com.github.epsilon.modules.impl.player.*;
 import com.github.epsilon.modules.impl.render.*;
+import com.github.epsilon.modules.impl.render.notification.Notifications;
 import com.github.epsilon.modules.impl.world.AutoAccount;
 import com.github.epsilon.modules.impl.world.AutoFarm;
 import com.github.epsilon.modules.impl.world.FakePlayer;
@@ -73,6 +74,7 @@ public class ModuleManager {
                 ESP.INSTANCE,
                 Fullbright.INSTANCE,
                 ModuleList.INSTANCE,
+                Notifications.INSTANCE,
                 NameTags.INSTANCE,
                 NoRender.INSTANCE,
                 PopChams.INSTANCE,
