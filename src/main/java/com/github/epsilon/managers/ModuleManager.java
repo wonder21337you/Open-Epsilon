@@ -70,6 +70,7 @@ public class ModuleManager {
                 UseCooldown.INSTANCE,
                 VClip.INSTANCE,
                 Blink.INSTANCE,
+                NoFall.INSTANCE,
 
                 // Render
                 CameraClip.INSTANCE,
