@@ -1,5 +1,6 @@
 package com.github.epsilon.modules.impl.render.notification;
 
+import com.github.epsilon.graphics.renderers.RectRenderer;
 import com.github.epsilon.graphics.renderers.RoundRectRenderer;
 import com.github.epsilon.graphics.renderers.TextRenderer;
 import com.github.epsilon.modules.Category;
@@ -23,7 +24,7 @@ public class Notifications extends HudModule {
     private final IntSetting displayTime = intSetting("DisplayTime", 2000, 500, 5000, 100);
 
     private final Supplier<TextRenderer> textRendererSupplier = Suppliers.memoize(TextRenderer::new);
-    private final Supplier<RoundRectRenderer> roundRectRendererSupplier = Suppliers.memoize(RoundRectRenderer::new);
+    private final Supplier<RectRenderer> rectRendererSupplier = Suppliers.memoize(RectRenderer::new);
 
     private Notifications() {
         super("Notifications", Category.RENDER, 4f, 4f, 150f, 35f);
@@ -43,7 +44,7 @@ public class Notifications extends HudModule {
         if (NotificationManager.INSTANCE.isEmpty()) return;
 
         TextRenderer textRenderer = textRendererSupplier.get();
-        RoundRectRenderer roundRectRenderer = roundRectRendererSupplier.get();
+        RectRenderer rectRenderer = rectRendererSupplier.get();
 
         float s = scale.getValue().floatValue();
         float boxHeight = textRenderer.getLineHeight(s) * 4.0f - 20.0f;
@@ -77,36 +78,36 @@ public class Notifications extends HudModule {
             if (time <= 300L) {
                 float p = easeOutCubic(time / 300.0f);
                 float w = boxWidth * p;
-                roundRectRenderer.addRoundRect(renderX + boxWidth - w, y, w, boxHeight, 0.0f, new Color(118, 185, 0, 255));
-                roundRectRenderer.drawAndClear();
+                rectRenderer.addRect(renderX + boxWidth - w, y, w, boxHeight, new Color(118, 185, 0, 255));
+                rectRenderer.drawAndClear();
             } else if (time <= 500L) {
                 float p = easeOutCubic((time - 300L) / 200.0f);
                 int a = (int) (bgAlpha * p);
-                roundRectRenderer.addRoundRect(renderX, y, boxWidth, boxHeight, 0.0f, new Color(0, 0, 0, a));
+                rectRenderer.addRect(renderX, y, boxWidth, boxHeight, new Color(0, 0, 0, a));
                 float sliderWidth = 4.0f * s + (boxWidth - 4.0f * s) * (1.0f - p);
-                roundRectRenderer.addRoundRect(renderX, y, sliderWidth, boxHeight, 0.0f, new Color(118, 185, 0, 255));
-                roundRectRenderer.drawAndClear();
+                rectRenderer.addRect(renderX, y, sliderWidth, boxHeight, new Color(118, 185, 0, 255));
+                rectRenderer.drawAndClear();
                 renderText(textRenderer, n, renderX, y, boxHeight, s, (int) (255 * p));
             } else if (exitTime < 0) {
-                roundRectRenderer.addRoundRect(renderX, y, boxWidth, boxHeight, 0.0f, new Color(0, 0, 0, bgAlpha));
-                roundRectRenderer.addRoundRect(renderX, y, 4.0f * s, boxHeight, 0.0f, new Color(118, 185, 0, 255));
-                roundRectRenderer.drawAndClear();
+                rectRenderer.addRect(renderX, y, boxWidth, boxHeight, new Color(0, 0, 0, bgAlpha));
+                rectRenderer.addRect(renderX, y, 4.0f * s, boxHeight, new Color(118, 185, 0, 255));
+                rectRenderer.drawAndClear();
                 renderText(textRenderer, n, renderX, y, boxHeight, s, 255);
             } else if (exitTime <= 200L) {
                 float p = easeOutCubicDec(exitTime / 200.0f);
                 int a = (int) (bgAlpha * p);
-                roundRectRenderer.addRoundRect(renderX, y, boxWidth, boxHeight, 0.0f, new Color(0, 0, 0, a));
+                rectRenderer.addRect(renderX, y, boxWidth, boxHeight, new Color(0, 0, 0, a));
                 float sliderWidth = 4.0f * s + (boxWidth - 4.0f * s) * (1.0f - p);
-                roundRectRenderer.addRoundRect(renderX, y, sliderWidth, boxHeight, 0.0f, new Color(118, 185, 0, 255));
-                roundRectRenderer.drawAndClear();
+                rectRenderer.addRect(renderX, y, sliderWidth, boxHeight, new Color(118, 185, 0, 255));
+                rectRenderer.drawAndClear();
                 renderText(textRenderer, n, renderX, y, boxHeight, s, (int) (255 * p));
             } else if (exitTime <= 500L) {
                 float p = easeOutCubicDec((exitTime - 200L) / 300.0f);
                 float w = boxWidth * p;
-                roundRectRenderer.addRoundRect(renderX + boxWidth - w, y, w, boxHeight, 0.0f, new Color(118, 185, 0, 255));
+                rectRenderer.addRect(renderX + boxWidth - w, y, w, boxHeight, new Color(118, 185, 0, 255));
             }
 
-            roundRectRenderer.drawAndClear();
+            rectRenderer.drawAndClear();
             textRenderer.drawAndClear();
             index++;
         }

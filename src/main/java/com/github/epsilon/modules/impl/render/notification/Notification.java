@@ -12,9 +12,10 @@ public class Notification {
     private final int displayDuration;
     private final boolean isModule;
 
-    private Animation yAnimation;
     private float currentY;
     private float targetY;
+
+    private final Animation yAnimation;
 
     public Notification(String title, String subTitle, NotificationMode mode, int displayTime, float initialY, boolean isModule) {
         this.title = title;

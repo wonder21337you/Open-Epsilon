@@ -21,7 +21,9 @@ public class ConfigManager {
 
     private static final int CONFIG_VERSION = 2;
 
-    /** Root directory: epsilon-config/ */
+    /**
+     * Root directory: epsilon-config/
+     */
     private static final Path configDir = Paths.get("epsilon-config");
 
     private static final Path friendFile = configDir.resolve("friends.json");
@@ -51,7 +53,9 @@ public class ConfigManager {
         }
     }
 
-    /** Returns the root config directory (replaces the old single-file getter). */
+    /**
+     * Returns the root config directory (replaces the old single-file getter).
+     */
     public synchronized Path getConfigDir() {
         return configDir;
     }
@@ -103,13 +107,15 @@ public class ConfigManager {
         if (moduleObj.has("keyBind") && moduleObj.get("keyBind").isJsonPrimitive()) {
             try {
                 module.setKeyBind(moduleObj.get("keyBind").getAsInt());
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         if (moduleObj.has("bindMode") && moduleObj.get("bindMode").isJsonPrimitive()) {
             try {
                 module.setBindMode(Module.BindMode.valueOf(moduleObj.get("bindMode").getAsString()));
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         if (module instanceof HudModule hud) {
@@ -228,12 +234,12 @@ public class ConfigManager {
     // -------------------------------------------------------------------------
 
     private static JsonElement serializeSetting(Setting<?> setting) {
-        if (setting instanceof KeybindSetting s)  return new JsonPrimitive(s.getValue());
-        if (setting instanceof BoolSetting s)     return new JsonPrimitive(s.getValue());
-        if (setting instanceof IntSetting s)      return new JsonPrimitive(s.getValue());
-        if (setting instanceof DoubleSetting s)   return new JsonPrimitive(s.getValue());
-        if (setting instanceof StringSetting s)   return new JsonPrimitive(s.getValue());
-        if (setting instanceof EnumSetting s)     return new JsonPrimitive(s.getValue().toString());
+        if (setting instanceof KeybindSetting s) return new JsonPrimitive(s.getValue());
+        if (setting instanceof BoolSetting s) return new JsonPrimitive(s.getValue());
+        if (setting instanceof IntSetting s) return new JsonPrimitive(s.getValue());
+        if (setting instanceof DoubleSetting s) return new JsonPrimitive(s.getValue());
+        if (setting instanceof StringSetting s) return new JsonPrimitive(s.getValue());
+        if (setting instanceof EnumSetting s) return new JsonPrimitive(s.getValue().toString());
         if (setting instanceof ColorSetting s) {
             Color c = s.getValue();
             return c == null ? null : new JsonPrimitive(c.getRGB());
@@ -244,19 +250,20 @@ public class ConfigManager {
     private static void applySetting(Setting<?> setting, JsonElement value) {
         if (value == null || !value.isJsonPrimitive()) return;
         try {
-            if (setting instanceof BoolSetting s)     s.setValue(value.getAsBoolean());
+            if (setting instanceof BoolSetting s) s.setValue(value.getAsBoolean());
             else if (setting instanceof KeybindSetting s) s.setValue(value.getAsInt());
-            else if (setting instanceof IntSetting s)     s.setValue(value.getAsInt());
-            else if (setting instanceof DoubleSetting s)  s.setValue(value.getAsDouble());
-            else if (setting instanceof StringSetting s)  s.setValue(value.getAsString());
-            else if (setting instanceof EnumSetting s)    s.setMode(value.getAsString());
+            else if (setting instanceof IntSetting s) s.setValue(value.getAsInt());
+            else if (setting instanceof DoubleSetting s) s.setValue(value.getAsDouble());
+            else if (setting instanceof StringSetting s) s.setValue(value.getAsString());
+            else if (setting instanceof EnumSetting s) s.setMode(value.getAsString());
             else if (setting instanceof ColorSetting s) {
                 int argb = value.getAsInt();
                 Color c = new Color(argb, true);
                 if (!s.isAllowAlpha()) c = new Color(c.getRed(), c.getGreen(), c.getBlue());
                 s.setValue(c);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     private static JsonObject getObject(JsonObject parent, String key) {
@@ -267,18 +274,30 @@ public class ConfigManager {
     private static Float readFloat(JsonObject object, String key) {
         JsonElement value = object.get(key);
         if (value == null || !value.isJsonPrimitive()) return null;
-        try { return value.getAsFloat(); } catch (Exception ignored) { return null; }
+        try {
+            return value.getAsFloat();
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     private static HudModule.HorizontalAnchor readHorizontalAnchor(JsonObject object, String key) {
         JsonElement value = object.get(key);
         if (value == null || !value.isJsonPrimitive()) return null;
-        try { return HudModule.HorizontalAnchor.valueOf(value.getAsString()); } catch (Exception ignored) { return null; }
+        try {
+            return HudModule.HorizontalAnchor.valueOf(value.getAsString());
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     private static HudModule.VerticalAnchor readVerticalAnchor(JsonObject object, String key) {
         JsonElement value = object.get(key);
         if (value == null || !value.isJsonPrimitive()) return null;
-        try { return HudModule.VerticalAnchor.valueOf(value.getAsString()); } catch (Exception ignored) { return null; }
+        try {
+            return HudModule.VerticalAnchor.valueOf(value.getAsString());
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 }

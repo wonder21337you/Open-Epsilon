@@ -2,7 +2,10 @@ package com.github.epsilon.assets.config;
 
 import com.github.epsilon.Epsilon;
 import com.github.epsilon.modules.Module;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -110,6 +113,7 @@ public class LegacyConfigMigrator {
 
         return candidate;
     }
+
     private static JsonObject getObject(JsonObject parent, String key) {
         JsonElement el = parent.get(key);
         return (el != null && el.isJsonObject()) ? el.getAsJsonObject() : null;
