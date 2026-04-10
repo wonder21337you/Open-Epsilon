@@ -46,37 +46,40 @@ public class MovementFix extends Module {
     }
 
     private float getDirection(float forward, float strafe) {
-        float direction = mc.player.getYRot();
+        float yaw = mc.player.getYRot();
+
         boolean isMovingForward = forward > 0;
         boolean isMovingBack = forward < 0;
         boolean isMovingRight = strafe > 0;
         boolean isMovingLeft = strafe < 0;
         boolean isMovingSideways = isMovingRight || isMovingLeft;
         boolean isMovingStraight = isMovingForward || isMovingBack;
+
         if (forward != 0.0F || strafe != 0.0F) {
             if (isMovingBack && !isMovingSideways) {
-                return direction + 180.0F;
+                return yaw + 180.0F;
             }
             if (isMovingForward && isMovingLeft) {
-                return direction + 45.0F;
+                return yaw + 45.0F;
             }
             if (isMovingForward && isMovingRight) {
-                return direction - 45.0F;
+                return yaw - 45.0F;
             }
             if (!isMovingStraight && isMovingLeft) {
-                return direction + 90.0F;
+                return yaw + 90.0F;
             }
             if (!isMovingStraight) {
-                return direction - 90.0F;
+                return yaw - 90.0F;
             }
             if (isMovingBack && isMovingLeft) {
-                return direction + 135.0F;
+                return yaw + 135.0F;
             }
             if (isMovingBack) {
-                return direction - 135.0F;
+                return yaw - 135.0F;
             }
         }
-        return direction;
+
+        return yaw;
     }
 
 }

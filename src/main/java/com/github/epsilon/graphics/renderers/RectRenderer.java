@@ -15,10 +15,12 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
 public class RectRenderer implements IRenderer {
+
     private static final long BUFFER_SIZE = 1024 * 1024;
     private static final int STRIDE = 16;
 
     private final LuminRingBuffer buffer = new LuminRingBuffer(BUFFER_SIZE, GpuBuffer.USAGE_VERTEX);
+
     private long currentOffset = 0;
     private int vertexCount = 0;
 
@@ -146,4 +148,5 @@ public class RectRenderer implements IRenderer {
         clear();
         buffer.close();
     }
+
 }

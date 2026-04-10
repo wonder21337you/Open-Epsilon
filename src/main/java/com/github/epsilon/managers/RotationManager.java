@@ -85,7 +85,7 @@ public class RotationManager {
     }
 
     public void applyRotation(final Vector2f rotations, final double rotationSpeed, final Function<Vector2f, Boolean> raycast, final Priority priority, final Consumer<RotationApplyRecord> callback) {
-        if (rotations == null || Double.isNaN(rotations.x) || Double.isNaN(rotations.y) || Double.isInfinite(rotations.x) || Double.isInfinite(rotations.y)) {
+        if (Double.isNaN(rotations.x) || Double.isNaN(rotations.y) || Double.isInfinite(rotations.x) || Double.isInfinite(rotations.y)) {
             return;
         }
 
@@ -101,7 +101,7 @@ public class RotationManager {
     }
 
     public void applyRotation(final Vector2f rotations, final double rotationSpeed, final Function<Vector2f, Boolean> raycast, final int priority, final Consumer<RotationApplyRecord> callback) {
-        if (rotations == null || Double.isNaN(rotations.x) || Double.isNaN(rotations.y) || Double.isInfinite(rotations.x) || Double.isInfinite(rotations.y)) {
+        if (Double.isNaN(rotations.x) || Double.isNaN(rotations.y) || Double.isInfinite(rotations.x) || Double.isInfinite(rotations.y)) {
             return;
         }
 
@@ -322,7 +322,7 @@ public class RotationManager {
     @SubscribeEvent
     private void onKeyboardInput(KeyboardInputEvent event) {
         MovementFix moveFix = MovementFix.INSTANCE;
-        if (active && moveFix.isEnabled() && rotations != null) {
+        if (active && moveFix.isEnabled() && rotations != null && !mc.player.isFallFlying()) {
             moveFix.fixMovement(event, rotations.x);
         }
     }

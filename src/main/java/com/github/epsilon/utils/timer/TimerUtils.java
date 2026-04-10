@@ -24,7 +24,7 @@ public class TimerUtils {
         return passedMillise((long) seconds * 1000L);
     }
 
-    public boolean delay(int ticks) {
+    public boolean hasDelayed(int ticks) {
         return passedMillise((long) ticks * 50L);
     }
 

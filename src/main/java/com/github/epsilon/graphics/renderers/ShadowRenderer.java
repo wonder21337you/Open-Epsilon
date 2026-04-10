@@ -15,6 +15,7 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
 public class ShadowRenderer implements IRenderer {
+
     private static final long BUFFER_SIZE = 2 * 1024 * 1024;
     private final LuminRingBuffer buffer = new LuminRingBuffer(BUFFER_SIZE, GpuBuffer.USAGE_VERTEX);
 

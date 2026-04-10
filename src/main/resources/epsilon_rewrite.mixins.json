@@ -8,9 +8,9 @@
     "debug.MixinGlDebug",
     "level.MixinBlockCollisions",
     "level.MixinClientLevel",
-    "level.MixinItem",
     "level.MixinEntity",
     "level.MixinFlowingFluid",
+    "level.MixinItem",
     "level.MixinLivingEntity",
     "level.MixinLocalPlayer",
     "level.MixinMobEffectFogEnvironment",
@@ -18,15 +18,17 @@
     "level.MixinPlayer",
     "packet.MixinClientPacketListener",
     "packet.MixinConnection",
+    "render.MixinAvatarRenderer",
     "render.MixinCamera",
     "render.MixinEntityRenderer",
     "render.MixinGui",
+    "render.MixinGuiRenderer",
+    "render.MixinHumanoidMobRenderer",
     "render.MixinLightmap",
     "render.MixinLivingEntityRenderer",
     "render.MixinParticleManager",
     "render.MixinScreenEffectRenderer",
-    "render.MixinWindow",
-    "render.MixinGuiRenderer"
+    "render.MixinWindow"
   ],
   "injectors": {
     "defaultRequire": 1

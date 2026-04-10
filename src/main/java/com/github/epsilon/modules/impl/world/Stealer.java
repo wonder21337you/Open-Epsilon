@@ -40,7 +40,7 @@ public class Stealer extends Module {
     private final TimerUtils timer = new TimerUtils();
 
     public boolean isWorking() {
-        return !timer.delay(3);
+        return !timer.hasDelayed(3);
     }
 
     public static boolean isItemUseful(ItemStack stack) {

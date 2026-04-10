@@ -30,19 +30,13 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
 public class TextureRenderer implements IRenderer {
+
     private final Minecraft mc = Minecraft.getInstance();
 
     private static final int STRIDE = 56;
-    private final long bufferSize;
+    private static final long BUFFER_SIZE = 32 * 1024;
+
     private final Map<Object, Batch> batches = new LinkedHashMap<>();
-
-    public TextureRenderer() {
-        this(32 * 1024);
-    }
-
-    public TextureRenderer(long bufferSize) {
-        this.bufferSize = bufferSize;
-    }
 
     public void addQuadTexture(Identifier texture, float x, float y, float width, float height, float u0, float v0, float u1, float v1, Color color) {
         addRoundedTexture(texture, x, y, width, height, 0f, u0, v0, u1, v1, color, false);
@@ -79,14 +73,14 @@ public class TextureRenderer implements IRenderer {
 
     private void addRoundedTexture(Object textureKey, float x, float y, float width, float height, float rTL, float rTR, float rBR, float rBL, float u0, float v0, float u1, float v1, Color color, boolean useLinearFilter) {
         Batch batch = batches.computeIfAbsent(textureKey, k -> {
-            Batch b = new Batch(new LuminRingBuffer(bufferSize, GpuBuffer.USAGE_VERTEX));
+            Batch b = new Batch(new LuminRingBuffer(BUFFER_SIZE, GpuBuffer.USAGE_VERTEX));
             b.useLinearFilter = useLinearFilter;
             return b;
         });
 
         batch.buffer.tryMap();
 
-        if (batch.currentOffset + (long) STRIDE * 4L > bufferSize) {
+        if (batch.currentOffset + (long) STRIDE * 4L > BUFFER_SIZE) {
             return;
         }
 
@@ -253,4 +247,5 @@ public class TextureRenderer implements IRenderer {
             this.buffer = buffer;
         }
     }
+
 }
