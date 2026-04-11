@@ -1,5 +1,6 @@
 package com.github.epsilon.modules.impl.combat;
 
+import com.github.epsilon.Epsilon;
 import com.github.epsilon.graphics.renderers.TextRenderer;
 import com.github.epsilon.managers.RenderManager;
 import com.github.epsilon.managers.RotationManager;
@@ -168,14 +169,15 @@ public class CrystalAura extends Module {
 
         Vec3 predictedPos = getPredictedTargetPos(target);
 
+        // 在一个 tick 内先敲击后放置
         if (!tryBreakCrystal()) {
-            tryPlaceCrystal(predictedPos);
+            if (!tryPlaceCrystal(predictedPos)) {
+                deactivateRenderTarget();
+            }
         }
     }
 
     private boolean tryBreakCrystal() {
-        if (!breakTimer.passedMillise(breakDelay.getValue())) return false;
-
         List<BreakCandidate> candidates = new ArrayList<>();
 
         final var breakRangeSq = breakRange.getValue() * breakRange.getValue();
@@ -204,11 +206,13 @@ public class CrystalAura extends Module {
         }
 
         EndCrystal bestCrystal = selectBestBreakCandidate(candidates);
-        if (bestCrystal != null) {
+        if (bestCrystal == null) return false;
+
+        // 有有效目标：计时器就绪才实际执行，但无论如何都返回 true 以保持渲染
+        if (breakTimer.passedMillise(breakDelay.getValue())) {
             doBreakCrystal(bestCrystal);
-            return true;
         }
-        return false;
+        return true;
     }
 
     private void doBreakCrystal(EndCrystal crystal) {
@@ -258,11 +262,10 @@ public class CrystalAura extends Module {
         });
     }
 
-    private void tryPlaceCrystal(Vec3 predictedTargetPos) {
-        if (!placeTimer.passedMillise(placeDelay.getValue())) return;
-
+    private boolean tryPlaceCrystal(Vec3 predictedTargetPos) {
         FindItemResult crystalItem = findCrystalItem();
-        if (!crystalItem.found()) return;
+        if (!crystalItem.found()) return false;
+
         List<PlaceCandidate> candidates = collectPlaceCandidates(predictedTargetPos);
 
         PlaceCandidate bestPlacement = findBestCandidate(candidates,
@@ -277,13 +280,14 @@ public class CrystalAura extends Module {
                     forcePlaceBalance.getValue().floatValue());
         }
 
-        if (bestPlacement == null) return;
+        if (bestPlacement == null) return false;
 
-        Direction bestDirection = getPlacementDirection(bestPlacement.targetRotation, bestPlacement.supportPos);
+        // 有有效放置点：计时器就绪才实际执行，但无论如何都返回 true 以保持渲染
+        if (!placeTimer.passedMillise(placeDelay.getValue())) return true;
 
-        // 检查 smooth 是否能转到最佳目标
-        Vector2f smoothedRotation = RotationUtils.smooth(bestPlacement.targetRotation, placeRotationSpeed.getValue());
-        if (!RaytraceUtils.overBlock(smoothedRotation, bestPlacement.supportPos, bestDirection, false)) {
+        Vector2f smoothedRotation = RotationUtils.smooth(bestPlacement.targetRotation, placeRotationSpeed.getValue() * 18);
+        if (!RaytraceUtils.overBlock(smoothedRotation, bestPlacement.supportPos, null, false, placeRange.getValue())) {
+
             BlockHitResult hitResult = RaytraceUtils.rayCast(smoothedRotation, placeRange.getValue());
             BlockPos placePos = hitResult.getBlockPos();
 
@@ -298,14 +302,14 @@ public class CrystalAura extends Module {
             ) {
                 if (candidate.supportPos.equals(placePos)) {
                     doPlaceCrystal(candidate, crystalItem);
-                    return;
+                    return true;
                 }
             }
         }
 
         // smooth 旋转能对准最佳目标或者实际命中位置不在候选列表中，直接放置
         doPlaceCrystal(bestPlacement, crystalItem);
-
+        return true;
     }
 
     private boolean shouldForcePlace() {
@@ -354,7 +358,7 @@ public class CrystalAura extends Module {
                     float targetDmg = DamageUtils.crystalDamage(target, crystalPos, predictedTargetPos, armorMode.getValue());
                     float selfDmg = DamageUtils.selfCrystalDamage(crystalPos, armorForSelf.getValue() ? armorMode.getValue() : DamageUtils.ArmorEnchantmentMode.None);
                     Vector2f targetRotation = RotationUtils.calculate(supportPos, Direction.UP);
-                    boolean visible = RaytraceUtils.overBlock(targetRotation, supportPos, Direction.UP, false);
+                    boolean visible = RaytraceUtils.overBlock(targetRotation, supportPos, Direction.UP, false, placeRange.getValue());
                     boolean wallBypassAllowed = !visible && distanceSq <= wallRangeSq;
                     if (!visible && !wallBypassAllowed) continue;
 
@@ -497,12 +501,11 @@ public class CrystalAura extends Module {
             }
             if (record.selectedPriorityValue() != requestPriority) return;
 
-            Direction placementDirection = getPlacementDirection(record.currentRotation(), candidate.supportPos);
-            if (placementDirection == null) return;
+            Direction placementDirection = RotationUtils.getDirection(candidate.supportPos, Direction.UP);
 
             boolean canPlace = candidate.throughWall
                     ? candidate.wallBypassAllowed && isAimingAtBlock(record.currentRotation(), candidate.targetRotation)
-                    : RaytraceUtils.overBlock(record.currentRotation(), candidate.supportPos, placementDirection, false);
+                    : RaytraceUtils.overBlock(record.currentRotation(), candidate.supportPos, placementDirection, false, placeRange.getValue());
             if (!canPlace) {
                 InvUtils.swapBack();
                 return;
@@ -579,24 +582,6 @@ public class CrystalAura extends Module {
         }
     }
 
-    private Direction getPlacementDirection(Vector2f currentRotation, BlockPos placePos) {
-        Vec3 playerEye = mc.player.getEyePosition();
-        Vec3 blockCenter = Vec3.atCenterOf(placePos);
-        Vec3 toPlayer = playerEye.subtract(blockCenter);
-
-        List<Direction> directions = new ArrayList<>(List.of(Direction.values()));
-        directions.sort((a, b) -> {
-            double dotA = a.getStepX() * toPlayer.x + a.getStepY() * toPlayer.y + a.getStepZ() * toPlayer.z;
-            double dotB = b.getStepX() * toPlayer.x + b.getStepY() * toPlayer.y + b.getStepZ() * toPlayer.z;
-            return Double.compare(dotB, dotA);
-        });
-
-        for (Direction direction : directions) {
-            if (RaytraceUtils.overBlock(currentRotation, placePos, direction, true)) return direction;
-        }
-        return null;
-    }
-
     private void updateRenderTarget(BlockPos pos, float damage, float selfDmg) {
         long now = System.currentTimeMillis();
         if (!pos.equals(renderBlockPos)) {
@@ -607,6 +592,10 @@ public class CrystalAura extends Module {
                 renderFadeStartTime = now;
             }
             renderBlockPos = pos;
+        }
+        // 从隐藏状态重新出现时，重置渐变计时器以播放放大动画
+        if (!renderHasTarget) {
+            renderFadeStartTime = now;
         }
         renderHasTarget = true;
         renderDamage = damage;
@@ -649,7 +638,7 @@ public class CrystalAura extends Module {
 
     private static float toDelta(long startTime, int lengthMs) {
         long elapsed = System.currentTimeMillis() - startTime;
-        return Math.min(1.0f, Math.max(0.0f, (float) elapsed / Math.max(1, lengthMs)));
+        return Math.clamp((float) elapsed / Math.max(1, lengthMs), 0.0f, 1.0f);
     }
 
     @SubscribeEvent
@@ -682,9 +671,9 @@ public class CrystalAura extends Module {
         Color oc = outlineColor.getValue();
 
         Color filled = new Color(fc.getRed(), fc.getGreen(), fc.getBlue(),
-                Math.max(0, Math.min(255, (int) (fc.getAlpha() * renderScale))));
+                Math.clamp((int) (fc.getAlpha() * renderScale), 0, 255));
         Color outline = new Color(oc.getRed(), oc.getGreen(), oc.getBlue(),
-                Math.max(0, Math.min(255, (int) (oc.getAlpha() * renderScale))));
+                Math.clamp((int) (oc.getAlpha() * renderScale), 0, 255));
 
         Render3DUtils.drawFilledBox(box, filled);
         Render3DUtils.drawOutlineBox(event.getPoseStack(), box, outline.getRGB(), outlineWidth.getValue().floatValue());

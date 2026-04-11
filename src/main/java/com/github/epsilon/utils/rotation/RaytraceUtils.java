@@ -101,9 +101,13 @@ public class RaytraceUtils {
     }
 
     public static boolean overBlock(Vector2f rotation, BlockPos pos, Direction direction, boolean strict) {
+        return overBlock(rotation, pos, direction, strict, 6.0);
+    }
+
+    public static boolean overBlock(Vector2f rotation, BlockPos pos, Direction direction, boolean strict, double range) {
         Vec3 cameraPos = mc.player.getEyePosition(1.0F);
         Vec3 rotationVec = Vec3.directionFromRotation(rotation.y, rotation.x);
-        Vec3 reachVec = cameraPos.add(rotationVec.scale(4.5));
+        Vec3 reachVec = cameraPos.add(rotationVec.scale(range));
 
         BlockHitResult hitResult = mc.level.clip(new ClipContext(cameraPos, reachVec, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, mc.player));
 
