@@ -264,34 +264,33 @@ public class Scaffold extends Module {
             if (!isEnabled() || nullCheck()) return;
             if (record.selectedPriorityValue() != requestPriority) return;
             if (blockInfo == null || !blockInfo.equals(targetBlockInfo)) return;
-            place(targetBlockInfo, item);
+            place(targetBlockInfo, item, record.currentRotation());
         });
     }
 
-    private void place(FindItemResult item) {
-        place(blockInfo, item);
+    private void place(FindItemResult item, Vector2f rotation) {
+        place(blockInfo, item, rotation);
     }
 
-    private void place(BlockInfo currentBlockInfo, FindItemResult item) {
+    private void place(BlockInfo currentBlockInfo, FindItemResult item, Vector2f rotation) {
         if (currentBlockInfo == null) return;
         if (!onAir()) return;
         if (!BlockUtils.canPlaceAt(currentBlockInfo.blockPos)) return;
 
-        switch (swapMode.getValue()) {
-            case Normal -> {
-                boolean should = swapBack.getValue();
-                InvUtils.swap(item.slot(), should);
-                shouldSwapBack = should;
-            }
-            case Silent -> InvUtils.swap(item.slot(), true);
-            case InvSwitch -> InvUtils.invSwap(item.slot());
-            default -> {
-            }
-        }
-
-        boolean hasRotated = RaytraceUtils.overBlock(RotationManager.INSTANCE.getRotation(), currentBlockInfo.position, currentBlockInfo.dir, sideCheck.getValue());
+        boolean hasRotated = RaytraceUtils.overBlock(rotation, currentBlockInfo.position, currentBlockInfo.dir, sideCheck.getValue());
         if (hasRotated) {
+            switch (swapMode.getValue()) {
+                case Normal -> {
+                    boolean should = swapBack.getValue();
+                    InvUtils.swap(item.slot(), should);
+                    shouldSwapBack = should;
+                }
+                case Silent -> InvUtils.swap(item.slot(), true);
+                case InvSwitch -> InvUtils.invSwap(item.slot());
+            }
+
             InteractionResult result = mc.gameMode.useItemOn(mc.player, item.getHand(), new BlockHitResult(getVec3(currentBlockInfo.position, currentBlockInfo.dir), currentBlockInfo.dir, currentBlockInfo.position, false));
+
             if (result.consumesAction()) {
                 if (swingHand.getValue()) {
                     mc.player.swing(item.getHand());

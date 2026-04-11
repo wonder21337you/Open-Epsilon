@@ -338,19 +338,7 @@ public class PacketMine extends Module {
     }
 
     public void placeCrystal() {
-//        if (AutoCrystal.target == null) return;
-//
-//        AutoCrystal.PlaceData data = getCevData();
-//
-//        if (data == null)
-//            data = getBestData();
-//
-//        if (data != null) {
-//            ModuleManager.autoCrystal.placeCrystal(data.bhr(), true, false);
-//            debug("placing..");
-//            ModuleManager.autoTrap.pause();
-//            ModuleManager.breaker.pause();
-//        }
+
     }
 
     public class MineAction {
@@ -411,9 +399,9 @@ public class PacketMine extends Module {
             boolean instant = mineBreaks > 0 && mode.is(Mode.Instant);
 
             if (progress >= 1 || instant) {
-                if (placeCrystal.getValue())
+                if (placeCrystal.getValue()) {
                     placeCrystal();
-
+                }
                 switchTo(pickSlot, -1);
 
                 if (mode.getValue() == Mode.Instant || doubleMine.getValue()) {
