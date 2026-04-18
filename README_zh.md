@@ -1,10 +1,19 @@
-# Epsilon Rewrite
+<h1 align="center">Open Epsilon</h1>
 <h4 align="center">
     <p>
         <a href="https://github.com/KonekokoHouse/Epsilon-Rewrite/blob/main/README.md">English</a> |
         <b>中文</b>
     </p>
 </h4>
+
+<p align="center">
+  <a href="https://github.com/KonekokoHouse/Epsilon-Rewrite/actions"><img alt="构建" src="https://img.shields.io/badge/build-gradle-4c1?style=flat-square"></a>
+  <a href="LICENSE"><img alt="许可证" src="https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square"></a>
+  <img alt="加载器" src="https://img.shields.io/badge/loaders-NeoForge%20%26%20Fabric-6a5acd?style=flat-square">
+  <a href="https://discord.gg/vYbaae3X7e"><img alt="Discord" src="https://img.shields.io/badge/Discord-加入社区-5865F2?style=flat-square&logo=discord&logoColor=white"></a>
+</p>
+
+## 📌 项目简介
 基于 NeoForge & Fabric 构建的多加载器现代化 Minecraft 辅助客户端，拥有先进的渲染系统和模块化架构。
 
 ## 🚀 插件系统

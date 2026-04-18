@@ -1,10 +1,19 @@
-# Epsilon Rewrite
+<h1 align="center">Open Epsilon</h1>
 <h4 align="center">
     <p>
         <b>English</b> |
         <a href="https://github.com/KonekokoHouse/Epsilon-Rewrite/blob/main/README_zh.md">中文</a>
     </p>
 </h4>
+
+<p align="center">
+  <a href="https://github.com/KonekokoHouse/Epsilon-Rewrite/actions"><img alt="Build" src="https://img.shields.io/badge/build-gradle-4c1?style=flat-square"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square"></a>
+  <img alt="Loaders" src="https://img.shields.io/badge/loaders-NeoForge%20%26%20Fabric-6a5acd?style=flat-square">
+  <a href="https://discord.gg/vYbaae3X7e"><img alt="Discord" src="https://img.shields.io/badge/Discord-Join%20Server-5865F2?style=flat-square&logo=discord&logoColor=white"></a>
+</p>
+
+## 📌 Overview
 A modern multi loader Minecraft utility client built on NeoForge & Fabric with advanced rendering system and modular architecture.
 
 ## 🚀 Addon System
@@ -23,7 +32,7 @@ The Lumin rendering system provides custom render pipelines for:
 
 See [Lumin Graphics README](src/main/java/com/github/epsilon/graphics/README.md) for details.
 
-## ⚙️ Building
+## ⚙️ Build & Run
 
 ```bash
 # Build the mod
