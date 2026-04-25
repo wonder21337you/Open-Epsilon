@@ -2,6 +2,8 @@ package com.github.epsilon.gui.panel.panel.clientsettings;
 
 import com.github.epsilon.gui.panel.MD3Theme;
 import com.github.epsilon.gui.panel.PanelLayout;
+import com.github.epsilon.gui.panel.dsl.PanelUiCompiler;
+import com.github.epsilon.gui.panel.dsl.PanelUiTree;
 import com.github.epsilon.gui.panel.util.IMEFocusHelper;
 import com.github.epsilon.graphics.renderers.RectRenderer;
 import com.github.epsilon.graphics.renderers.RoundRectRenderer;
@@ -19,8 +21,6 @@ import java.awt.*;
 public final class ClientSettingTextField {
 
     private static final long HOVER_DURATION = 120L;
-    private static final float CORNER_RADIUS = 9.0f;
-
     private final int maxLength;
     private final Animation hoverAnimation = new Animation(Easing.EASE_OUT_CUBIC, HOVER_DURATION);
     private final Animation focusAnimation = new Animation(Easing.EASE_OUT_CUBIC, HOVER_DURATION);
@@ -38,26 +38,15 @@ public final class ClientSettingTextField {
     public void render(PanelLayout.Rect bounds, int mouseX, int mouseY,
                        RoundRectRenderer roundRectRenderer, RectRenderer rectRenderer, TextRenderer textRenderer,
                        String placeholder, float textScale, String trailingHint) {
+        PanelUiTree tree = PanelUiTree.build(scope -> buildUi(scope, bounds, mouseX, mouseY, textRenderer, placeholder, textScale, trailingHint));
+        PanelUiCompiler.render(tree, roundRectRenderer, rectRenderer, textRenderer);
+    }
+
+    public void buildUi(PanelUiTree.Scope scope, PanelLayout.Rect bounds, int mouseX, int mouseY,
+                        TextRenderer textRenderer, String placeholder, float textScale, String trailingHint) {
         boolean hovered = bounds.contains(mouseX, mouseY);
-        hoverAnimation.run(hovered ? 1.0f : 0.0f);
-        focusAnimation.run(focused ? 1.0f : 0.0f);
-
-        float hoverProgress = hoverAnimation.getValue();
-        float focusProgress = focusAnimation.getValue();
-        Color fieldBase = MD3Theme.isLightTheme() ? MD3Theme.SURFACE_CONTAINER : MD3Theme.SURFACE_CONTAINER_LOW;
-        Color fieldHover = MD3Theme.SURFACE_CONTAINER_HIGHEST;
-        Color fieldColor = focused
-                ? MD3Theme.lerp(MD3Theme.SURFACE_CONTAINER_HIGH, MD3Theme.SURFACE_CONTAINER_HIGHEST, 0.5f)
-                : MD3Theme.lerp(fieldBase, fieldHover, hoverProgress * 0.6f);
-
-        roundRectRenderer.addRoundRect(bounds.x(), bounds.y(), bounds.width(), bounds.height(), CORNER_RADIUS, fieldColor);
-        if (focusProgress > 0.01f) {
-            roundRectRenderer.addRoundRect(bounds.x() - 1.0f, bounds.y() - 1.0f,
-                    bounds.width() + 2.0f, bounds.height() + 2.0f, CORNER_RADIUS + 1.0f,
-                    MD3Theme.withAlpha(MD3Theme.PRIMARY, (int) (48 * focusProgress)));
-            roundRectRenderer.addRoundRect(bounds.x(), bounds.y(), bounds.width(), bounds.height(), CORNER_RADIUS, fieldColor);
-        }
-
+        float hoverProgress = scope.animate(hoverAnimation, hovered);
+        float focusProgress = scope.animate(focusAnimation, focused);
         float textInset = 10.0f;
         float textHeight = textRenderer.getHeight(textScale);
         float textX = bounds.x() + textInset;
@@ -66,21 +55,19 @@ public final class ClientSettingTextField {
         boolean showPlaceholder = text.isEmpty() && !focused;
         String display = showPlaceholder ? placeholder : text;
         Color textColor = showPlaceholder ? MD3Theme.TEXT_MUTED : MD3Theme.TEXT_PRIMARY;
-        textRenderer.addText(display, textX, textY, textScale, textColor);
+        scope.input(bounds, focused, hovered ? 0.6f : 0.0f,
+                focusProgress, MD3Theme.PRIMARY, 1.0f,
+                textInset, display, textScale, textColor,
+                null, null,
+                focused ? Math.min(cursor, text.length()) : null, focused ? MD3Theme.TEXT_PRIMARY : null,
+                focused && trailingHint != null && !trailingHint.isBlank() && !text.isEmpty() ? trailingHint : null,
+                0.56f,
+                focused && trailingHint != null && !trailingHint.isBlank() && !text.isEmpty() ? MD3Theme.TEXT_MUTED : null);
 
         if (focused) {
             int safeCursor = Math.min(cursor, text.length());
             float caretX = textX + textRenderer.getWidth(text.substring(0, safeCursor), textScale);
-            rectRenderer.addRect(caretX, bounds.y() + 6.0f, 1.0f, bounds.height() - 12.0f, MD3Theme.TEXT_PRIMARY);
             IMEFocusHelper.updateCursorPos(caretX, textY);
-        }
-
-        if (focused && trailingHint != null && !trailingHint.isBlank() && !text.isEmpty()) {
-            float hintScale = 0.56f;
-            float hintWidth = textRenderer.getWidth(trailingHint, hintScale);
-            float hintX = bounds.right() - textInset - hintWidth;
-            float hintY = bounds.y() + (bounds.height() - textRenderer.getHeight(hintScale)) / 2.0f - 1.0f;
-            textRenderer.addText(trailingHint, hintX, hintY, hintScale, MD3Theme.TEXT_MUTED);
         }
     }
 
