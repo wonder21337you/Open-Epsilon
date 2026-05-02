@@ -1,8 +1,8 @@
 package com.github.epsilon.modules;
 
 import com.github.epsilon.assets.i18n.TranslateComponent;
-import com.github.epsilon.events.bus.EpsilonEventBus;
-import com.github.epsilon.modules.impl.render.notification.Notifications;
+import com.github.epsilon.events.bus.EventBus;
+import com.github.epsilon.modules.impl.hud.notification.NotificationsHud;
 import com.github.epsilon.settings.Setting;
 import com.github.epsilon.settings.impl.*;
 import net.minecraft.client.Minecraft;
@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Module {
 
@@ -17,11 +18,14 @@ public class Module {
 
     private String addonId;
 
-    public Category category;
+    private final Category category;
 
     private int keyBind = -1;
 
-    public enum BindMode {Toggle, Hold}
+    public enum BindMode {
+        Toggle,
+        Hold
+    }
 
     private BindMode bindMode = BindMode.Toggle;
 
@@ -41,12 +45,6 @@ public class Module {
         this.category = category;
     }
 
-    /**
-     * Initializes i18n for this module and all its settings.
-     * Called by ModuleManager after registration.
-     *
-     * @param moduleComponent the TranslateComponent for this module (e.g. "epsilon.modules.killaura")
-     */
     public void initI18n(TranslateComponent moduleComponent) {
         this.translateComponent = moduleComponent;
         for (Setting<?> setting : settings) {
@@ -84,18 +82,12 @@ public class Module {
         if (this.enabled != enabled) {
             this.enabled = enabled;
             if (enabled) {
-                try {
-                    EpsilonEventBus.INSTANCE.subscribe(this);
-                    Notifications.addModuleNotification(this.getTranslatedName(), true);
-                } catch (Exception ignored) {
-                }
+                EventBus.INSTANCE.subscribe(this);
+                NotificationsHud.addModuleNotification(this.getTranslatedName(), true);
                 onEnable();
             } else {
-                try {
-                    EpsilonEventBus.INSTANCE.unsubscribe(this);
-                    Notifications.addModuleNotification(this.getTranslatedName(), false);
-                } catch (Exception ignored) {
-                }
+                EventBus.INSTANCE.unsubscribe(this);
+                NotificationsHud.addModuleNotification(this.getTranslatedName(), false);
                 onDisable();
             }
         }
@@ -118,6 +110,11 @@ public class Module {
 
     public List<Setting<?>> getSettings() {
         return settings;
+    }
+
+
+    public Category getCategory() {
+        return category;
     }
 
     public int getKeyBind() {
@@ -153,75 +150,99 @@ public class Module {
     }
 
     protected IntSetting intSetting(String name, int defaultValue, int min, int max, int step, Setting.Dependency dependency) {
-        return addSetting(new IntSetting(name, this, defaultValue, min, max, step, dependency, false));
+        return addSetting(new IntSetting(name, defaultValue, min, max, step, dependency, false));
     }
 
     protected IntSetting intSetting(String name, int defaultValue, int min, int max, int step, Setting.Dependency dependency, boolean percentageMode) {
-        return addSetting(new IntSetting(name, this, defaultValue, min, max, step, dependency, percentageMode));
+        return addSetting(new IntSetting(name, defaultValue, min, max, step, dependency, percentageMode));
     }
 
     protected IntSetting intSetting(String name, int defaultValue, int min, int max, int step) {
-        return addSetting(new IntSetting(name, this, defaultValue, min, max, step));
+        return addSetting(new IntSetting(name, defaultValue, min, max, step, () -> true, false));
     }
 
     protected BoolSetting boolSetting(String name, boolean defaultValue, Setting.Dependency dependency) {
-        return addSetting(new BoolSetting(name, this, defaultValue, dependency));
+        return addSetting(new BoolSetting(name, defaultValue, dependency, null));
     }
 
     protected BoolSetting boolSetting(String name, boolean defaultValue) {
-        return addSetting(new BoolSetting(name, this, defaultValue));
+        return addSetting(new BoolSetting(name, defaultValue, () -> true, null));
+    }
+
+    protected BoolSetting boolSetting(String name, boolean defaultValue, Setting.Dependency dependency, Consumer<Boolean> onChanged) {
+        return addSetting(new BoolSetting(name, defaultValue, dependency, onChanged));
+    }
+
+    protected BoolSetting boolSetting(String name, boolean defaultValue, Consumer<Boolean> onChanged) {
+        return addSetting(new BoolSetting(name, defaultValue, () -> true, onChanged));
     }
 
     protected DoubleSetting doubleSetting(String name, double defaultValue, double min, double max, double step, Setting.Dependency dependency) {
-        return addSetting(new DoubleSetting(name, this, defaultValue, min, max, step, dependency, false));
+        return addSetting(new DoubleSetting(name, defaultValue, min, max, step, dependency, false));
     }
 
     protected DoubleSetting doubleSetting(String name, double defaultValue, double min, double max, double step, Setting.Dependency dependency, boolean percentageMode) {
-        return addSetting(new DoubleSetting(name, this, defaultValue, min, max, step, dependency, percentageMode));
+        return addSetting(new DoubleSetting(name, defaultValue, min, max, step, dependency, percentageMode));
     }
 
     protected DoubleSetting doubleSetting(String name, double defaultValue, double min, double max, double step) {
-        return addSetting(new DoubleSetting(name, this, defaultValue, min, max, step));
+        return addSetting(new DoubleSetting(name, defaultValue, min, max, step, () -> true, false));
     }
 
     protected StringSetting stringSetting(String name, String defaultValue, Setting.Dependency dependency) {
-        return addSetting(new StringSetting(name, this, defaultValue, dependency));
+        return addSetting(new StringSetting(name, defaultValue, dependency));
     }
 
     protected StringSetting stringSetting(String name, String defaultValue) {
-        return addSetting(new StringSetting(name, this, defaultValue));
+        return addSetting(new StringSetting(name, defaultValue, () -> true));
+    }
+
+    protected <E extends Enum<E>> EnumSetting<E> enumSetting(String name, E defaultValue, Setting.Dependency dependency, Consumer<E> onChanged) {
+        return addSetting(new EnumSetting<>(name, defaultValue, dependency, onChanged));
+    }
+
+    protected <E extends Enum<E>> EnumSetting<E> enumSetting(String name, E defaultValue, Consumer<E> onChanged) {
+        return addSetting(new EnumSetting<>(name, defaultValue, () -> true, onChanged));
     }
 
     protected <E extends Enum<E>> EnumSetting<E> enumSetting(String name, E defaultValue, Setting.Dependency dependency) {
-        return addSetting(new EnumSetting<>(name, this, defaultValue, dependency));
+        return addSetting(new EnumSetting<>(name, defaultValue, dependency, null));
     }
 
     protected <E extends Enum<E>> EnumSetting<E> enumSetting(String name, E defaultValue) {
-        return addSetting(new EnumSetting<>(name, this, defaultValue, () -> true));
+        return addSetting(new EnumSetting<>(name, defaultValue, () -> true, null));
+    }
+
+    protected ColorSetting colorSetting(String name, Color defaultValue, Setting.Dependency dependency, boolean allowAlpha) {
+        return addSetting(new ColorSetting(name, defaultValue, dependency, allowAlpha));
     }
 
     protected ColorSetting colorSetting(String name, Color defaultValue, Setting.Dependency dependency) {
-        return addSetting(new ColorSetting(name, this, defaultValue, dependency));
+        return addSetting(new ColorSetting(name, defaultValue, dependency, true));
+    }
+
+    protected ColorSetting colorSetting(String name, Color defaultValue, boolean allowAlpha) {
+        return addSetting(new ColorSetting(name, defaultValue, () -> true, allowAlpha));
     }
 
     protected ColorSetting colorSetting(String name, Color defaultValue) {
-        return addSetting(new ColorSetting(name, this, defaultValue));
+        return addSetting(new ColorSetting(name, defaultValue, () -> true, true));
     }
 
     protected KeybindSetting keybindSetting(String name, int defaultValue, Setting.Dependency dependency) {
-        return addSetting(new KeybindSetting(name, this, defaultValue, dependency));
+        return addSetting(new KeybindSetting(name, defaultValue, dependency));
     }
 
     protected KeybindSetting keybindSetting(String name, int defaultValue) {
-        return addSetting(new KeybindSetting(name, this, defaultValue));
-    }
-
-    protected ButtonSetting buttonSetting(String name, Runnable func) {
-        return addSetting(new ButtonSetting(name, this, func));
+        return addSetting(new KeybindSetting(name, defaultValue, () -> true));
     }
 
     protected ButtonSetting buttonSetting(String name, Runnable func, Setting.Dependency dependency) {
-        return addSetting(new ButtonSetting(name, this, func, dependency));
+        return addSetting(new ButtonSetting(name, func, dependency));
+    }
+
+    protected ButtonSetting buttonSetting(String name, Runnable func) {
+        return addSetting(new ButtonSetting(name, func, () -> true));
     }
 
 }

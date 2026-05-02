@@ -41,4 +41,3 @@ tasks.named<Jar>("sourcesJar") {
     dependsOn(commonResources)
     from(commonResources)
 }
-

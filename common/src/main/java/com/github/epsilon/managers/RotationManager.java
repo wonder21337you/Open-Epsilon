@@ -1,15 +1,9 @@
 package com.github.epsilon.managers;
 
-import com.github.epsilon.events.bus.EpsilonEventBus;
+import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.bus.EventPriority;
-import com.github.epsilon.events.input.KeyboardInputEvent;
-import com.github.epsilon.events.movement.FallFlyingEvent;
-import com.github.epsilon.events.movement.JumpEvent;
-import com.github.epsilon.events.movement.MotionEvent;
-import com.github.epsilon.events.movement.StrafeEvent;
-import com.github.epsilon.events.player.RaytraceEvent;
-import com.github.epsilon.events.tick.TickEvent;
+import com.github.epsilon.events.impl.*;
 import com.github.epsilon.modules.impl.player.MovementFix;
 import com.github.epsilon.utils.rotation.Priority;
 import com.github.epsilon.utils.rotation.RotationUtils;
@@ -44,29 +38,8 @@ public class RotationManager {
 
     private final List<RotationRequest> tickRequests = new ArrayList<>();
 
-    public record RotationApplyRecord(
-            Vector2f targetRotation,
-            Vector2f currentRotation,
-            Vector2f previousTickRotation,
-            Vector2f playerRotation,
-            Priority selectedPriority,
-            int selectedPriorityValue,
-            boolean active
-    ) {
-    }
-
-    private record RotationRequest(
-            Vector2f targetRotation,
-            double rotationSpeed,
-            Function<Vector2f, Boolean> raycast,
-            Priority priority,
-            int priorityValue,
-            Consumer<RotationApplyRecord> callback
-    ) {
-    }
-
     private RotationManager() {
-        EpsilonEventBus.INSTANCE.subscribe(this);
+        EventBus.INSTANCE.subscribe(this);
     }
 
     public void applyRotation(final Vector2f rotations, final double rotationSpeed) {
@@ -95,14 +68,7 @@ public class RotationManager {
         }
 
         final Priority safePriority = priority == null ? Priority.Lowest : priority;
-        tickRequests.add(new RotationRequest(
-                new Vector2f(rotations.x, rotations.y),
-                rotationSpeed * 18,
-                raycast,
-                safePriority,
-                safePriority.priority,
-                callback
-        ));
+        tickRequests.add(new RotationRequest(new Vector2f(rotations.x, rotations.y), rotationSpeed * 18, raycast, safePriority, safePriority.priority, callback));
     }
 
     public void applyRotation(final Vector2f rotations, final double rotationSpeed, final Function<Vector2f, Boolean> raycast, final int priority, final Consumer<RotationApplyRecord> callback) {
@@ -111,14 +77,7 @@ public class RotationManager {
         }
 
         final int safePriority = Math.max(Priority.Lowest.priority, priority);
-        tickRequests.add(new RotationRequest(
-                new Vector2f(rotations.x, rotations.y),
-                rotationSpeed * 18,
-                raycast,
-                resolvePriority(safePriority),
-                safePriority,
-                callback
-        ));
+        tickRequests.add(new RotationRequest(new Vector2f(rotations.x, rotations.y), rotationSpeed * 18, raycast, resolvePriority(safePriority), safePriority, callback));
     }
 
     private Priority resolvePriority(int priority) {
@@ -249,7 +208,7 @@ public class RotationManager {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    private void onClientTick(TickEvent.Pre event) {
+    private void onTick(TickEvent.Pre event) {
         if (mc.player == null || mc.level == null) {
             tickRequests.clear();
             return;
@@ -270,10 +229,6 @@ public class RotationManager {
                 }
             }
 
-            Vector2f previousTickRotation = lastRotations != null
-                    ? new Vector2f(lastRotations.x, lastRotations.y)
-                    : new Vector2f(mc.player.getYRot(), mc.player.getXRot());
-
             this.targetRotations = new Vector2f(selectedRequest.targetRotation().x, selectedRequest.targetRotation().y);
             this.rotationSpeed = selectedRequest.rotationSpeed();
             this.raycast = selectedRequest.raycast();
@@ -282,29 +237,14 @@ public class RotationManager {
 
             smooth();
 
-            Vector2f safeSmoothedRotation = rotations != null
-                    ? new Vector2f(rotations.x, rotations.y)
-                    : new Vector2f(mc.player.getYRot(), mc.player.getXRot());
-            Vector2f safeTargetRotation = targetRotations != null
-                    ? new Vector2f(targetRotations.x, targetRotations.y)
-                    : new Vector2f(mc.player.getYRot(), mc.player.getXRot());
+            Vector2f currentRot = rotations != null ? new Vector2f(rotations.x, rotations.y) : new Vector2f(mc.player.getYRot(), mc.player.getXRot());
 
-            RotationApplyRecord record = new RotationApplyRecord(
-                    safeTargetRotation,
-                    safeSmoothedRotation,
-                    previousTickRotation,
-                    new Vector2f(mc.player.getYRot(), mc.player.getXRot()),
-                    selectedRequest.priority(),
-                    selectedRequest.priorityValue(),
-                    active
-            );
+            RotationApplyRecord record = new RotationApplyRecord(currentRot, active);
 
-            for (RotationRequest request : tickRequests) {
-                if (request.callback() != null) {
-                    try {
-                        request.callback().accept(record);
-                    } catch (Exception ignored) {
-                    }
+            if (selectedRequest.callback() != null) {
+                try {
+                    selectedRequest.callback().accept(record);
+                } catch (Exception ignored) {
                 }
             }
 
@@ -354,7 +294,7 @@ public class RotationManager {
     }
 
     @EventHandler
-    private void onMotion(MotionEvent event) {
+    private void onSendPosition(SendPositionEvent event) {
         if (active && rotations != null) {
             float yaw = rotations.x;
             float pitch = rotations.y;
@@ -412,6 +352,13 @@ public class RotationManager {
             mc.player.setYRot(fixedRotations.x);
             mc.player.setXRot(fixedRotations.y);
         }
+    }
+
+    private record RotationRequest(Vector2f targetRotation, double rotationSpeed, Function<Vector2f, Boolean> raycast,
+                                   Priority priority, int priorityValue, Consumer<RotationApplyRecord> callback) {
+    }
+
+    public record RotationApplyRecord(Vector2f currentRotation, boolean active) {
     }
 
 }

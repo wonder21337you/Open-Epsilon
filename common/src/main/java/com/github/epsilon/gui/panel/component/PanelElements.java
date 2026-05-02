@@ -17,7 +17,7 @@ import java.awt.*;
  * 该类统一提供行内控件的对齐规则，以及 switch、filled field、chip、segmented、icon button
  * 等语义元素的绘制/建树辅助，便于不同设置行保持一致的视觉和布局语义。
  */
-public final class PanelElements {
+public class PanelElements {
 
     public static final float ROW_LABEL_INSET = MD3Theme.ROW_CONTENT_INSET + 4.0f;
     public static final float ICON_BUTTON_SIZE = 20.0f;
@@ -211,11 +211,12 @@ public final class PanelElements {
     /**
      * 标准 filled field 的语义色值集合。
      *
-     * @param text 文本颜色
-     * @param caret 光标颜色
+     * @param text      文本颜色
+     * @param caret     光标颜色
      * @param indicator 底部指示线颜色
      */
     public record FilledFieldColors(Color text, Color caret, Color indicator) {
     }
+
 }
 

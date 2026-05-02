@@ -1,6 +1,11 @@
 package com.github.epsilon.modules.impl.player;
 
-import com.github.epsilon.events.movement.MotionEvent;
+import com.github.epsilon.events.bus.EventBus;
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.bus.listeners.ConsumerListener;
+import com.github.epsilon.events.impl.Render3DEvent;
+import com.github.epsilon.events.impl.SendPositionEvent;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.managers.RotationManager;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
@@ -30,9 +35,6 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
-import com.github.epsilon.events.render.Render3DEvent;
 import org.joml.Vector2f;
 
 import java.awt.*;
@@ -45,43 +47,39 @@ public class Scaffold extends Module {
 
     private Scaffold() {
         super("Scaffold", Category.PLAYER);
-    }
+        EventBus.INSTANCE.subscribe(new ConsumerListener<>(Render3DEvent.class,
+                event -> {
+                    if (!render.getValue() || renderBoxes.isEmpty()) return;
 
-    @EventHandler
-    private void onRender3D(Render3DEvent event) {
-        if (nullCheck()) return;
+                    long time = System.currentTimeMillis();
+                    long fadeTime = this.fadeTime.getValue().longValue();
 
-        if (!render.getValue() || renderBoxes.isEmpty()) return;
+                    renderBoxes.removeIf(box -> time - box.startTime() > fadeTime);
 
-        long time = System.currentTimeMillis();
-        long fadeTime = this.fadeTime.getValue().longValue();
+                    for (RenderBox box : renderBoxes) {
+                        float progress = Mth.clamp((float) (time - box.startTime()) / fadeTime, 0.0f, 1.0f);
 
-        renderBoxes.removeIf(box -> time - box.startTime() > fadeTime);
+                        double scale = 1.0;
+                        if (box.shrink()) {
+                            scale = 1.0 - Easing.EASE_OUT_QUAD.getFunction().apply(progress);
+                            if (scale < 0) scale = 0;
+                        }
 
-        for (RenderBox box : renderBoxes) {
-            long age = time - box.startTime();
-            float progress = Mth.clamp((float) age / fadeTime, 0.0f, 1.0f);
+                        float alphaFactor = box.fade() ? Mth.clamp(1.0f - progress, 0.0f, 1.0f) : 1.0f;
 
-            double scale = 1.0;
-            if (box.shrink()) {
-                scale = 1.0 - Easing.EASE_OUT_QUAD.getFunction().apply(progress);
-                if (scale < 0) scale = 0;
-            }
+                        Color sideColor = box.sideColor();
+                        Color lineColor = box.lineColor();
 
-            float alphaFactor = box.fade() ? Mth.clamp(1.0f - progress, 0.0f, 1.0f) : 1.0f;
+                        Color side = new Color(sideColor.getRed(), sideColor.getGreen(), sideColor.getBlue(), (int) (sideColor.getAlpha() * alphaFactor));
+                        Color line = new Color(lineColor.getRed(), lineColor.getGreen(), lineColor.getBlue(), (int) (lineColor.getAlpha() * alphaFactor));
 
-            Color sideColor = box.sideColor();
-            Color lineColor = box.lineColor();
+                        AABB renderBox = getRenderBox(box, scale);
 
-            Color side = new Color(sideColor.getRed(), sideColor.getGreen(), sideColor.getBlue(), (int) (sideColor.getAlpha() * alphaFactor));
-            Color line = new Color(lineColor.getRed(), lineColor.getGreen(), lineColor.getBlue(), (int) (lineColor.getAlpha() * alphaFactor));
-
-
-            AABB renderBox = getRenderBox(box, scale);
-
-            Render3DUtils.drawFilledBox(renderBox, side);
-            Render3DUtils.drawOutlineBox(event.getPoseStack(), renderBox, line.getRGB(), 2f);
-        }
+                        Render3DUtils.drawFilledBox(renderBox, side);
+                        Render3DUtils.drawOutlineBox(event.getPoseStack(), renderBox, line.getRGB(), 2f);
+                    }
+                }
+        ));
     }
 
     private final EnumSetting<Mode> mode = enumSetting("Mode", Mode.TellyBridge);
@@ -132,7 +130,7 @@ public class Scaffold extends Module {
     }
 
     @EventHandler
-    private void onMotion(MotionEvent event) {
+    private void onMotion(SendPositionEvent event) {
         if (safeWalk.getValue() && mode.is(Mode.GodBridge)) {
             mc.options.keyShift.setDown(mc.player.onGround() && SafeWalk.INSTANCE.isOnBlockEdge(0.3F));
         }
@@ -257,22 +255,14 @@ public class Scaffold extends Module {
     }
 
     private void queuePlaceWithRotation(BlockInfo targetBlockInfo, FindItemResult item) {
-        final int requestPriority = Priority.High.priority;
         final Vector2f requestedRotation = getRotation(targetBlockInfo);
-
-        RotationManager.INSTANCE.applyRotation(requestedRotation, rotationSpeed.getValue(), requestPriority, record -> {
-            if (record.selectedPriorityValue() != requestPriority) return;
+        RotationManager.INSTANCE.applyRotation(requestedRotation, rotationSpeed.getValue(), Priority.High.priority, record -> {
             if (blockInfo == null || !blockInfo.equals(targetBlockInfo)) return;
             place(targetBlockInfo, item, record.currentRotation());
         });
     }
 
-    private void place(FindItemResult item, Vector2f rotation) {
-        place(blockInfo, item, rotation);
-    }
-
     private void place(BlockInfo currentBlockInfo, FindItemResult item, Vector2f rotation) {
-        if (currentBlockInfo == null) return;
         if (!onAir()) return;
         if (!BlockUtils.canPlaceAt(currentBlockInfo.blockPos)) return;
 

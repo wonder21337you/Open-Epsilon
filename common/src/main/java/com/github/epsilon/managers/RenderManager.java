@@ -1,6 +1,5 @@
 package com.github.epsilon.managers;
 
-import com.github.epsilon.gui.hudeditor.HudEditorScreen;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 
@@ -12,7 +11,6 @@ public class RenderManager {
     public static final RenderManager INSTANCE = new RenderManager();
 
     private final ArrayList<Consumer<DeltaTracker>> renderAfterFrameQueue = new ArrayList<>();
-    private final ArrayList<Consumer<DeltaTracker>> renderHudQueue = new ArrayList<>();
     private final ArrayList<Consumer<DeltaTracker>> renderAfterWorldQueue = new ArrayList<>();
 
     private RenderManager() {
@@ -24,22 +22,6 @@ public class RenderManager {
 
     public void applyRenderAfterWorld(Consumer<DeltaTracker> func) {
         renderAfterWorldQueue.add(func);
-    }
-
-    public void applyRenderHud(Runnable func) {
-        renderHudQueue.add(_ -> func.run());
-    }
-
-    public void applyRenderHud(Consumer<DeltaTracker> func) {
-        renderHudQueue.add(func);
-    }
-
-    public void applyRender(Consumer<DeltaTracker> func) {
-        func.accept(Minecraft.getInstance().getDeltaTracker());
-    }
-
-    public void applyRender(Runnable func) {
-        func.run();
     }
 
     public void applyRenderAfterFrame(Consumer<DeltaTracker> func) {
@@ -63,16 +45,10 @@ public class RenderManager {
             ArrayList<Consumer<DeltaTracker>> pending = new ArrayList<>(renderAfterWorldQueue);
             pending.forEach(func -> func.accept(tracker));
         }
-
-        if (!renderHudQueue.isEmpty() && screen != HudEditorScreen.INSTANCE) {
-            ArrayList<Consumer<DeltaTracker>> pending = new ArrayList<>(renderHudQueue);
-            pending.forEach(func -> func.accept(tracker));
-        }
     }
 
     public void clear() {
         renderAfterFrameQueue.clear();
-        renderHudQueue.clear();
         renderAfterWorldQueue.clear();
     }
 

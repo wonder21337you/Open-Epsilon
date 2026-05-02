@@ -12,7 +12,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 
 import java.util.function.Supplier;
 
-public final class MessagePopup implements PanelPopupHost.Popup {
+public class MessagePopup implements PanelPopupHost.Popup {
 
     private final PanelLayout.Rect bounds;
     private final Supplier<String> titleSupplier;

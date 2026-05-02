@@ -15,6 +15,7 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
 public class RoundRectRenderer implements IRenderer {
+
     private static final long BUFFER_SIZE = 2 * 1024 * 1024;
     private final LuminRingBuffer buffer = new LuminRingBuffer(BUFFER_SIZE, GpuBuffer.USAGE_VERTEX);
 
@@ -28,14 +29,42 @@ public class RoundRectRenderer implements IRenderer {
     }
 
     public void addRoundRect(float x, float y, float width, float height, float rTL, float rTR, float rBR, float rBL, Color color) {
+        addRoundRectGradient(x, y, width, height, rTL, rTR, rBR, rBL, color, color, color, color);
+    }
+
+    public void addVerticalGradient(float x, float y, float width, float height, float radius, Color top, Color bottom) {
+        addRoundRectGradient(x, y, width, height, radius, radius, radius, radius, top, bottom, bottom, top);
+    }
+
+    public void addVerticalGradient(float x, float y, float width, float height, float rTL, float rTR, float rBR, float rBL, Color top, Color bottom) {
+        addRoundRectGradient(x, y, width, height, rTL, rTR, rBR, rBL, top, bottom, bottom, top);
+    }
+
+    public void addHorizontalGradient(float x, float y, float width, float height, float radius, Color left, Color right) {
+        addRoundRectGradient(x, y, width, height, radius, radius, radius, radius, left, left, right, right);
+    }
+
+    public void addHorizontalGradient(float x, float y, float width, float height, float rTL, float rTR, float rBR, float rBL, Color left, Color right) {
+        addRoundRectGradient(x, y, width, height, rTL, rTR, rBR, rBL, left, left, right, right);
+    }
+
+    /**
+     * 颜色顺序对应四个角顶点：左上、左下、右下、右上 (TL, BL, BR, TR)
+     */
+    public void addRoundRectGradient(float x, float y, float width, float height,
+                                     float rTL, float rTR, float rBR, float rBL,
+                                     Color cTL, Color cBL, Color cBR, Color cTR) {
         buffer.tryMap();
         float x2 = x + width, y2 = y + height;
-        int argb = ARGB.toABGR(color.getRGB());
+        int argbTL = ARGB.toABGR(cTL.getRGB());
+        int argbBL = ARGB.toABGR(cBL.getRGB());
+        int argbBR = ARGB.toABGR(cBR.getRGB());
+        int argbTR = ARGB.toABGR(cTR.getRGB());
 
-        addVertex(x, y, x, y, x2, y2, rTL, rTR, rBR, rBL, argb);
-        addVertex(x, y2, x, y, x2, y2, rTL, rTR, rBR, rBL, argb);
-        addVertex(x2, y2, x, y, x2, y2, rTL, rTR, rBR, rBL, argb);
-        addVertex(x2, y, x, y, x2, y2, rTL, rTR, rBR, rBL, argb);
+        addVertex(x, y, x, y, x2, y2, rTL, rTR, rBR, rBL, argbTL);
+        addVertex(x, y2, x, y, x2, y2, rTL, rTR, rBR, rBL, argbBL);
+        addVertex(x2, y2, x, y, x2, y2, rTL, rTR, rBR, rBL, argbBR);
+        addVertex(x2, y, x, y, x2, y2, rTL, rTR, rBR, rBL, argbTR);
     }
 
     public void addElement(RoundRectElement element) {
@@ -125,4 +154,5 @@ public class RoundRectRenderer implements IRenderer {
     public void clearScissor() {
         scissorEnabled = false;
     }
+
 }

@@ -129,7 +129,7 @@ public class PanelState {
     public List<Module> getVisibleModules() {
         String loweredSearch = searchQuery.toLowerCase();
         List<Module> modules = new ArrayList<>(ModuleManager.INSTANCE.getModules().stream()
-                .filter(module -> module.category == selectedCategory)
+                .filter(module -> module.getCategory() == selectedCategory)
                 .filter(module -> loweredSearch.isBlank() || matchesSearch(module, loweredSearch))
                 .sorted(getComparator())
                 .toList());
@@ -186,7 +186,7 @@ public class PanelState {
     private void ensureValidSelection() {
         String loweredSearch = searchQuery.toLowerCase();
         List<Module> modules = ModuleManager.INSTANCE.getModules().stream()
-                .filter(module -> module.category == selectedCategory)
+                .filter(module -> module.getCategory() == selectedCategory)
                 .filter(module -> loweredSearch.isBlank() || matchesSearch(module, loweredSearch))
                 .sorted(getComparator())
                 .toList();
@@ -206,7 +206,7 @@ public class PanelState {
     private boolean matchesSearch(Module module, String loweredSearch) {
         return module.getName().toLowerCase().contains(loweredSearch)
                 || module.getTranslatedName().toLowerCase().contains(loweredSearch)
-                || (module.category != null && module.category.getName().toLowerCase().contains(loweredSearch));
+                || module.getCategory().getName().toLowerCase().contains(loweredSearch);
     }
 
     public boolean isClientSettingMode() {

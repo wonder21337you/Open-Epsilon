@@ -1,0 +1,53 @@
+package com.github.epsilon.mixins;
+
+import com.github.epsilon.modules.impl.render.HandsView;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.item.ItemStack;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(ItemInHandRenderer.class)
+public abstract class MixinItemInHandRenderer {
+
+    @Shadow
+    protected abstract void applyItemArmAttackTransform(PoseStack poseStack, HumanoidArm arm, float attackValue);
+
+    @Inject(method = "renderArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;applyItemArmTransform(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/entity/HumanoidArm;F)V", ordinal = 2, shift = At.Shift.AFTER))
+    private void addSwingToEating(AbstractClientPlayer player, float frameInterp, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, CallbackInfo ci) {
+        HandsView handsView = HandsView.INSTANCE;
+        if (handsView.isEnabled() && handsView.swingWhileUsing.getValue() && attack > 0.0F) {
+            HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
+            applyItemArmAttackTransform(poseStack, arm, attack);
+        }
+    }
+
+    @WrapOperation(method = "swingArm", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;translate(FFF)V"))
+    private void wrapSwingArmTranslate(PoseStack poseStack, float xo, float yo, float zo, Operation<Void> original) {
+        HandsView handsView = HandsView.INSTANCE;
+        boolean skip = handsView.isEnabled() && handsView.swingMode.is(HandsView.SwingMode.Flux);
+
+        if (skip && handsView.onlyWeapon.getValue()) {
+            ItemStack item = Minecraft.getInstance().player.getMainHandItem();
+            if (!item.is(ItemTags.SWORDS) && !item.is(ItemTags.AXES)) {
+                skip = false;
+            }
+        }
+
+        if (!skip) {
+            original.call(poseStack, xo, yo, zo);
+        }
+    }
+
+}

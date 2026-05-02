@@ -101,4 +101,5 @@ public class TextRenderer implements IRenderer {
     public void close() {
         textRenderer.close();
     }
+
 }

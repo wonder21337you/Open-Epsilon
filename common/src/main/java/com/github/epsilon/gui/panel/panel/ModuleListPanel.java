@@ -15,7 +15,9 @@ import com.github.epsilon.gui.panel.adapter.ModuleViewModel;
 import com.github.epsilon.gui.panel.component.ModuleRow;
 import com.github.epsilon.gui.panel.dsl.PanelUiCompiler;
 import com.github.epsilon.gui.panel.dsl.PanelUiTree;
-import com.github.epsilon.gui.panel.util.*;
+import com.github.epsilon.gui.panel.utils.*;
+import com.github.epsilon.managers.sound.SoundKey;
+import com.github.epsilon.managers.sound.SoundManager;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.utils.render.animation.Animation;
 import com.github.epsilon.utils.render.animation.Easing;
@@ -89,7 +91,7 @@ public class ModuleListPanel {
         state.setMaxModuleScroll(contentHeight - viewport.height());
         float maxModuleScroll = Math.max(0, contentHeight - viewport.height());
         boolean hasScrollBar = maxModuleScroll > 0;
-        float rowWidth = hasScrollBar ? viewport.width() - ScrollBarUtil.TOTAL_WIDTH : viewport.width();
+        float rowWidth = hasScrollBar ? viewport.width() - ScrollBarUtils.TOTAL_WIDTH : viewport.width();
         long contentSignature = buildContentSignature(modules);
         boolean rebuildContent = shouldRebuildContent(bounds, mouseX, mouseY, modules, GuiGraphicsExtractor.guiHeight(), contentSignature);
 
@@ -119,10 +121,12 @@ public class ModuleListPanel {
                     selectionAnimation.run(state.getSelectedModule() == module ? 1.0f : 0.0f);
                     toggleAnimation.run(module.isEnabled() ? 1.0f : 0.0f);
                     toggleHoverAnimation.run(row.getToggleBounds().contains(mouseX, mouseY) ? 1.0f : 0.0f);
+                    boolean marqueeActive = row.hasOverflowingKeybind(textRenderer);
                     contentState.noteAnimation(!hoverAnimation.isFinished()
                             || !selectionAnimation.isFinished()
                             || !toggleAnimation.isFinished()
-                            || !toggleHoverAnimation.isFinished());
+                            || !toggleHoverAnimation.isFinished()
+                            || marqueeActive);
                     row.buildUi(content, textRenderer, hoverAnimation.getValue(), selectionAnimation.getValue(), toggleAnimation.getValue(), toggleHoverAnimation.getValue());
                     y += ModuleRow.HEIGHT + MD3Theme.ROW_GAP;
                 }
@@ -190,6 +194,7 @@ public class ModuleListPanel {
             }
             if (row.getToggleBounds().contains(event.x(), event.y())) {
                 row.getModule().module().toggle();
+                SoundManager.INSTANCE.playInUi(row.getModule().module().isEnabled() ? SoundKey.SETTINGS_OPEN : SoundKey.SETTINGS_CLOSE);
             } else {
                 state.setSelectedModule(row.getModule().module());
             }

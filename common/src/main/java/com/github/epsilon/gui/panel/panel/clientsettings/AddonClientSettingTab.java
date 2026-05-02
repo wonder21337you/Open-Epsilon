@@ -16,10 +16,10 @@ import com.github.epsilon.gui.panel.component.setting.KeybindSettingRow;
 import com.github.epsilon.gui.panel.dsl.PanelUiCompiler;
 import com.github.epsilon.gui.panel.dsl.PanelUiTree;
 import com.github.epsilon.gui.panel.popup.PanelPopupHost;
-import com.github.epsilon.gui.panel.util.PanelContentBuffer;
-import com.github.epsilon.gui.panel.util.PanelContentInvalidationState;
-import com.github.epsilon.gui.panel.util.ScrollBarDragState;
-import com.github.epsilon.gui.panel.util.ScrollBarUtil;
+import com.github.epsilon.gui.panel.utils.PanelContentBuffer;
+import com.github.epsilon.gui.panel.utils.PanelContentInvalidationState;
+import com.github.epsilon.gui.panel.utils.ScrollBarDragState;
+import com.github.epsilon.gui.panel.utils.ScrollBarUtils;
 import com.github.epsilon.managers.AddonManager;
 import com.github.epsilon.settings.Setting;
 import com.github.epsilon.settings.impl.KeybindSetting;
@@ -31,13 +31,10 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public final class AddonClientSettingTab implements ClientSettingTabView {
+public class AddonClientSettingTab implements ClientSettingTabView {
 
     private static final TranslateComponent emptyComponent = EpsilonTranslateComponent.create("gui", "addon.empty");
     private static final TranslateComponent noSettingsComponent = EpsilonTranslateComponent.create("gui", "addon.no_settings");
@@ -104,13 +101,13 @@ public final class AddonClientSettingTab implements ClientSettingTabView {
         state.setMaxAddonListScroll(listContentHeight - listViewport.height());
         float maxListScroll = Math.max(0.0f, listContentHeight - listViewport.height());
         boolean listHasScrollBar = maxListScroll > 0.0f;
-        float listRowWidth = listHasScrollBar ? listViewport.width() - ScrollBarUtil.TOTAL_WIDTH : listViewport.width();
+        float listRowWidth = listHasScrollBar ? listViewport.width() - ScrollBarUtils.TOTAL_WIDTH : listViewport.width();
 
         float settingsContentHeight = selectedSettings.size() * (28.0f + MD3Theme.ROW_GAP);
         state.setMaxAddonDetailScroll(settingsContentHeight - settingsViewport.height());
         float maxDetailScroll = Math.max(0.0f, settingsContentHeight - settingsViewport.height());
         boolean detailHasScrollBar = maxDetailScroll > 0.0f;
-        float settingsRowWidth = detailHasScrollBar ? settingsViewport.width() - ScrollBarUtil.TOTAL_WIDTH : settingsViewport.width();
+        float settingsRowWidth = detailHasScrollBar ? settingsViewport.width() - ScrollBarUtils.TOTAL_WIDTH : settingsViewport.width();
 
         long contentSignature = buildContentSignature(addons, selectedAddon, selectedSettings);
         boolean popupConsumesHover = settingListController.isPopupHovered(mouseX, mouseY);
@@ -623,5 +620,5 @@ public final class AddonClientSettingTab implements ClientSettingTabView {
 
     private record AddonRowEntry(String addonId, PanelLayout.Rect bounds) {
     }
-}
 
+}

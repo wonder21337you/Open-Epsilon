@@ -1,9 +1,8 @@
 package com.github.epsilon.managers;
 
-import com.github.epsilon.events.bus.EpsilonEventBus;
+import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.bus.EventPriority;
-import com.github.epsilon.events.tick.TickEvent;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.modules.impl.combat.AntiBot;
 import com.github.epsilon.utils.rotation.RotationUtils;
 import net.minecraft.client.Minecraft;
@@ -28,10 +27,10 @@ public class TargetManager {
     private LivingEntity sharedTarget;
 
     private TargetManager() {
-        EpsilonEventBus.INSTANCE.subscribe(this);
+        EventBus.INSTANCE.subscribe(this);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler
     private void onTick(TickEvent.Pre event) {
         if (mc.player == null || mc.level == null) {
             sharedTarget = null;
@@ -45,8 +44,11 @@ public class TargetManager {
 
     public LivingEntity acquirePrimary(TargetRequest request) {
         List<LivingEntity> targets = acquireTargets(request);
-        if (targets.isEmpty()) return null;
-        return targets.getFirst();
+        if (targets.isEmpty()) {
+            return null;
+        } else {
+            return targets.getFirst();
+        }
     }
 
     public List<LivingEntity> acquireTargets(TargetRequest request) {
@@ -80,10 +82,6 @@ public class TargetManager {
             sharedTarget = null;
         }
         return sharedTarget;
-    }
-
-    public void clearSharedTarget() {
-        sharedTarget = null;
     }
 
     private List<LivingEntity> collectTargets(TargetRequest request) {
@@ -185,4 +183,5 @@ public class TargetManager {
             return new TargetRequest(range, fov, player, mob, animal, villager, invisible, extraFilter, maxTargets);
         }
     }
+
 }

@@ -85,7 +85,7 @@ public class DamageUtils {
 
         float doubleRadius = radius * 2.0f;
         Vec3 entityPos = targetPos != null ? targetPos : target.position();
-        double dist = Math.sqrt(entityPos.distanceToSqr(explosionPos)) / doubleRadius;
+        double dist = entityPos.distanceTo(explosionPos) / doubleRadius;
         if (dist > 1.0) return 0f;
 
         AABB box = targetPos != null ? getPredictedBoundingBox(target, targetPos) : target.getBoundingBox();

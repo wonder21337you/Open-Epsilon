@@ -1,19 +1,18 @@
 package com.github.epsilon.gui.hudeditor;
 
-import com.github.epsilon.modules.HudLayoutHelper;
 import com.github.epsilon.modules.HudModule;
 import net.minecraft.util.Mth;
 
 import java.util.List;
 
-final class HudEditorSnapper {
+public class HudEditorSnapper {
 
     private static final float SNAP_THRESHOLD = 8.0f;
 
     private HudEditorSnapper() {
     }
 
-    static SnapPosition snapPosition(HudModule module, float renderX, float renderY, int screenWidth, int screenHeight, List<HudModule> hudModules) {
+    public static SnapPosition snapPosition(HudModule module, float renderX, float renderY, int screenWidth, int screenHeight, List<HudModule> hudModules) {
         AxisSnap screenXSnap = snapAxis(
                 renderX,
                 module.width,
@@ -150,7 +149,7 @@ final class HudEditorSnapper {
     private record AxisSnap(float renderPosition, Float guide, float distance) {
     }
 
-    record SnapPosition(float renderX, float renderY, Float guideX, Float guideY) {
+    public record SnapPosition(float renderX, float renderY, Float guideX, Float guideY) {
     }
 
 }

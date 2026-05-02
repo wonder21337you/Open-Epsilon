@@ -1,7 +1,9 @@
 package com.github.epsilon.modules.impl.player;
 
-import com.github.epsilon.events.movement.CollisionEvent;
-import com.github.epsilon.events.world.DestroyBlockEvent;
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.CollisionEvent;
+import com.github.epsilon.events.impl.DestroyBlockEvent;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.BoolSetting;
@@ -24,8 +26,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
 import org.joml.Vector2f;
 
 public class Phase extends Module {

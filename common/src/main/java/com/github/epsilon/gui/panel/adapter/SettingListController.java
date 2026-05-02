@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class SettingListController {
+public class SettingListController {
 
     private final PanelPopupHost popupHost;
     private final TextRenderer measureTextRenderer = new TextRenderer();

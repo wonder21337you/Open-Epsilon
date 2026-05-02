@@ -1,11 +1,10 @@
 package com.github.epsilon.modules.impl.player;
-import com.github.epsilon.Epsilon;
 
-import com.github.epsilon.events.movement.MotionEvent;
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.SendPositionEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.github.epsilon.events.bus.EventHandler;
 
 public class SafeWalk extends Module {
 
@@ -23,13 +22,13 @@ public class SafeWalk extends Module {
     }
 
     @EventHandler
-    public void onMotion(MotionEvent e) {
+    public void onMotion(SendPositionEvent e) {
         mc.options.keyShift.setDown(mc.player.onGround() && isOnBlockEdge(0.3F));
     }
 
     @Override
     public void onDisable() {
-        boolean isHoldingShift = InputConstants.isKeyDown(mc.getWindow(), Epsilon.platform.getKeyMappingKey(mc.options.keyShift).getValue());
+        boolean isHoldingShift = InputConstants.isKeyDown(mc.getWindow(), mc.options.keyShift.getDefaultKey().getValue());
         mc.options.keyShift.setDown(isHoldingShift);
     }
 

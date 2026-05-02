@@ -1,0 +1,28 @@
+accessWidener v2 official
+
+accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode destroyProgress F
+
+mutable field net/minecraft/network/protocol/game/ServerboundUseItemPacket yRot F
+accessible field net/minecraft/network/protocol/game/ServerboundUseItemPacket yRot F
+mutable field net/minecraft/network/protocol/game/ServerboundUseItemPacket xRot F
+accessible field net/minecraft/network/protocol/game/ServerboundUseItemPacket xRot F
+
+accessible class net/minecraft/client/ResourceLoadStateTracker$ReloadState
+
+accessible field net/minecraft/client/player/LocalPlayer positionReminder I
+
+accessible method net/minecraft/client/multiplayer/ClientLevel getBlockStatePredictionHandler ()Lnet/minecraft/client/multiplayer/prediction/BlockStatePredictionHandler;
+
+accessible field net/minecraft/client/renderer/RenderPipelines MATRICES_PROJECTION_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible field net/minecraft/client/renderer/RenderPipelines GUI_TEXTURED_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible field net/minecraft/client/renderer/RenderPipelines DEBUG_FILLED_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible field net/minecraft/client/renderer/RenderPipelines LINES_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+
+accessible method net/minecraft/client/renderer/rendertype/RenderType create (Ljava/lang/String;Lnet/minecraft/client/renderer/rendertype/RenderSetup;)Lnet/minecraft/client/renderer/rendertype/RenderType;
+
+accessible class net/minecraft/core/component/DataComponentInitializers$InitializerEntry
+
+accessible field net/minecraft/client/renderer/ItemInHandRenderer mainHandHeight F
+accessible field net/minecraft/client/renderer/ItemInHandRenderer offHandHeight F
+accessible field net/minecraft/client/renderer/ItemInHandRenderer mainHandItem Lnet/minecraft/world/item/ItemStack;
+accessible field net/minecraft/client/renderer/ItemInHandRenderer offHandItem Lnet/minecraft/world/item/ItemStack;

@@ -1,10 +1,11 @@
 package com.github.epsilon.modules.impl.player;
 
-import com.github.epsilon.events.network.PacketEvent;
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.PacketEvent;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.gui.panel.PanelScreen;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
-import com.github.epsilon.modules.impl.world.Stealer;
 import com.github.epsilon.settings.impl.BoolSetting;
 import com.github.epsilon.settings.impl.DoubleSetting;
 import com.github.epsilon.settings.impl.EnumSetting;
@@ -23,8 +24,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.equipment.Equippable;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;

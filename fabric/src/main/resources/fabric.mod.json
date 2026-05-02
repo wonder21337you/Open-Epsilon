@@ -1,23 +1,20 @@
 {
-    "schemaVersion": 1,
-    "id": "${mod_id}",
-    "version": "${version}",
-    "name": "${mod_name}",
-    "description": "Open Epsilon - A Minecraft client mod",
-    "authors": [
-        "${mod_author}"
-    ],
-    "license": "${license}",
-    "icon": "${mod_id}.png",
-    "environment": "client",
-    "entrypoints": {
-        "client": [
-            "com.github.epsilon.fabric.EpsilonFabric"
-        ],
-        "open_epsilon:addon": [
-            "com.github.epsilon.fabric.addon.FabricSelfAddonEntrypoint"
-        ]
-    },
+  "schemaVersion": 1,
+  "id": "offlinemodefix",
+  "version": "1.0.0",
+  "name": "Offline Mode Fix",
+  "description": "Fixes chat lag spikes, removes 'Not Secure' indicators, and suppresses unverified server warnings on offline-mode servers.",
+  "authors": [
+    "Louiszn"
+  ],
+  "contact": {
+    "homepage": "https://github.com/louiszn/offline-mode-fix#readme",
+    "sources": "https://github.com/louiszn/offline-mode-fix",
+    "issues": "https://github.com/louiszn/offline-mode-fix/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/offlinemodefix/icon.png",
+  "environment": "*",
     "mixins": [
         "${mod_id}.mixins.json",
         "${mod_id}.fabric.mixins.json"

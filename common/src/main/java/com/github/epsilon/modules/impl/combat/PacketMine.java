@@ -1,8 +1,7 @@
 package com.github.epsilon.modules.impl.combat;
 
-import com.github.epsilon.events.world.AttackBlockEvent;
-import com.github.epsilon.events.movement.MotionEvent;
-import com.github.epsilon.events.network.PacketEvent;
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.*;
 import com.github.epsilon.managers.RotationManager;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
@@ -33,9 +32,6 @@ import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
-import com.github.epsilon.events.render.Render3DEvent;
 import org.joml.Vector2f;
 
 import java.awt.*;
@@ -51,38 +47,38 @@ public class PacketMine extends Module {
         super("Packet Mine", Category.COMBAT);
     }
 
-    public enum Mode {
+    private enum Mode {
         Packet,
         Instant,
         Damage
     }
 
-    public enum RenderMode {
+    private enum RenderMode {
         Block,
         Shrink,
         Grow
     }
 
-    public enum SwitchMode {
+    private enum SwitchMode {
         Silent,
         Normal,
         Alternative
     }
 
-    public enum StartMode {
+    private enum StartMode {
         StartAbort,
         StartStop
     }
 
     // General
-    public final EnumSetting<Mode> mode = enumSetting("Mode", Mode.Packet);
-    public final BoolSetting doubleMine = boolSetting("Double Mine", false);
+    private final EnumSetting<Mode> mode = enumSetting("Mode", Mode.Packet);
+    private final BoolSetting doubleMine = boolSetting("Double Mine", false);
     private final EnumSetting<StartMode> startMode = enumSetting("Start Mode", StartMode.StartAbort, () -> mode.is(Mode.Packet) && !doubleMine.getValue());
     private final EnumSetting<SwitchMode> switchMode = enumSetting("Switch Mode", SwitchMode.Alternative, () -> mode.getValue() != Mode.Damage);
     private final IntSetting swapDelay = intSetting("Swap Delay", 50, 0, 1000, 1, () -> mode.getValue() != Mode.Damage);
     private final DoubleSetting factor = doubleSetting("Factor", 1.0, 0.5, 2.0, 0.1, () -> mode.getValue() != Mode.Damage);
     private final DoubleSetting speed = doubleSetting("Speed", 0.5, 0.0, 1.0, 0.1, () -> mode.is(Mode.Damage));
-    public final DoubleSetting range = doubleSetting("Range", 4.2, 3.0, 10.0, 0.1, () -> mode.getValue() != Mode.Damage);
+    private final DoubleSetting range = doubleSetting("Range", 4.2, 3.0, 10.0, 0.1, () -> mode.getValue() != Mode.Damage);
     private final BoolSetting rotate = boolSetting("Rotate", false, () -> mode.getValue() != Mode.Damage);
     private final DoubleSetting rotationSpeed = doubleSetting("Rotation Speed", 10.0, 1.0, 10.0, 0.5, () -> rotate.getValue() && mode.getValue() != Mode.Damage);
     private final BoolSetting placeCrystal = boolSetting("Place Crystal", true);
@@ -168,7 +164,7 @@ public class PacketMine extends Module {
     }
 
     @EventHandler
-    private void onMotion(MotionEvent event) {
+    private void onMotion(SendPositionEvent event) {
         actions.forEach(MineAction::onRotationSync);
     }
 
@@ -442,8 +438,7 @@ public class PacketMine extends Module {
 
                 mineBreaks++;
 
-                prevProgress = 0;
-                progress = 0;
+                progress = prevProgress = 0;
 
                 if (doubleMine.getValue() && mode.is(Mode.Instant) && actions.size() >= 2)
                     return true;
@@ -491,8 +486,6 @@ public class PacketMine extends Module {
             Vector2f targetRotation = RotationUtils.calculate(pos, direction);
 
             RotationManager.INSTANCE.applyRotation(targetRotation, rotationSpeed.getValue(), Priority.Medium, record -> {
-                if (record.selectedPriorityValue() != Priority.Medium.priority) return;
-
                 // 检查是否对准方块
                 if (RaytraceUtils.overBlock(record.currentRotation(), pos, direction, false)) {
                     // 旋转已完成，方块挖掘将在update中继续处理
@@ -505,8 +498,7 @@ public class PacketMine extends Module {
                 return;
             }
 
-            prevProgress = 0;
-            progress = 0;
+            prevProgress = progress = 0;
             Direction dir = RotationUtils.getDirection(pos, null);
             mc.getConnection().send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, pos, dir));
             start(dir);

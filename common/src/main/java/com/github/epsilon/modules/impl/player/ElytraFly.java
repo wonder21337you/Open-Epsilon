@@ -1,5 +1,7 @@
 package com.github.epsilon.modules.impl.player;
 
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.managers.RotationManager;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
@@ -22,8 +24,6 @@ import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
 import org.joml.Vector2f;
 
 public class ElytraFly extends Module {

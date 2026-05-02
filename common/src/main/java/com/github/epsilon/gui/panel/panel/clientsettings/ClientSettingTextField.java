@@ -7,7 +7,7 @@ import com.github.epsilon.gui.panel.MD3Theme;
 import com.github.epsilon.gui.panel.PanelLayout;
 import com.github.epsilon.gui.panel.dsl.PanelUiCompiler;
 import com.github.epsilon.gui.panel.dsl.PanelUiTree;
-import com.github.epsilon.gui.panel.util.IMEFocusHelper;
+import com.github.epsilon.gui.panel.utils.IMEFocusHelper;
 import com.github.epsilon.utils.render.animation.Animation;
 import com.github.epsilon.utils.render.animation.Easing;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -18,7 +18,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 
-public final class ClientSettingTextField {
+public class ClientSettingTextField {
 
     private static final long HOVER_DURATION = 120L;
     private final int maxLength;

@@ -6,10 +6,6 @@ import java.awt.*;
 
 public class ColorUtils {
 
-    private static int clamp255(int value) {
-        return Mth.clamp(value, 0, 255);
-    }
-
     public static Color applyOpacity(Color color, float opacity) {
         opacity = Mth.clamp(opacity, 0.0f, 1.0f);
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (color.getAlpha() * opacity));
@@ -18,12 +14,12 @@ public class ColorUtils {
     public static Color interpolateColor(Color color1, Color color2, float fraction) {
         fraction = Mth.clamp(fraction, 0.0f, 1.0f);
 
-        int red = (int) (color1.getRed() + (color2.getRed() - color1.getRed()) * fraction);
-        int green = (int) (color1.getGreen() + (color2.getGreen() - color1.getGreen()) * fraction);
-        int blue = (int) (color1.getBlue() + (color2.getBlue() - color1.getBlue()) * fraction);
-        int alpha = (int) (color1.getAlpha() + (color2.getAlpha() - color1.getAlpha()) * fraction);
+        int red = Mth.clamp(Mth.lerpInt(fraction, color1.getRed(), color2.getRed()), 0, 255);
+        int green = Mth.clamp(Mth.lerpInt(fraction, color1.getGreen(), color2.getGreen()), 0, 255);
+        int blue = Mth.clamp(Mth.lerpInt(fraction, color1.getBlue(), color2.getBlue()), 0, 255);
+        int alpha = Mth.clamp(Mth.lerpInt(fraction, color1.getAlpha(), color2.getAlpha()), 0, 255);
 
-        return new Color(clamp255(red), clamp255(green), clamp255(blue), clamp255(alpha));
+        return new Color(red, green, blue, alpha);
     }
 
 }

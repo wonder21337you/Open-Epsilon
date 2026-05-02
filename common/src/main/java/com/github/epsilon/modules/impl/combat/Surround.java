@@ -1,5 +1,7 @@
 package com.github.epsilon.modules.impl.combat;
 
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.managers.RotationManager;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
@@ -28,8 +30,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
@@ -202,10 +202,7 @@ public class Surround extends Module {
             return;
         }
 
-        final int priority = Priority.High.priority;
-        RotationManager.INSTANCE.applyRotation(info.rotation(), 10, priority, record -> {
-            if (!isEnabled() || nullCheck()) return;
-            if (record.selectedPriorityValue() != priority) return;
+        RotationManager.INSTANCE.applyRotation(info.rotation(), 10, Priority.High.priority, record -> {
             if (!RaytraceUtils.overBlock(record.currentRotation(), info.neighborPos(), info.side(), false)) return;
 
             doPlaceBlock(info, itemResult);

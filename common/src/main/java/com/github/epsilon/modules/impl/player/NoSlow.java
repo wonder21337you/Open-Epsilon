@@ -1,20 +1,40 @@
 package com.github.epsilon.modules.impl.player;
 
-import com.github.epsilon.events.movement.SlowdownEvent;
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.KeyboardInputEvent;
+import com.github.epsilon.events.impl.SlowdownEvent;
+import com.github.epsilon.events.impl.TickEvent;
+import com.github.epsilon.managers.network.ClientboundPacketManager;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.BoolSetting;
 import com.github.epsilon.settings.impl.EnumSetting;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import com.github.epsilon.utils.network.PacketUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.item.Items;
-import com.github.epsilon.events.bus.EventHandler;
 
 public class NoSlow extends Module {
+
     public static final NoSlow INSTANCE = new NoSlow();
 
     private NoSlow() {
         super("No Slow", Category.PLAYER);
+    }
+
+    private enum Mode {
+        Vanilla,
+        Jump,
+        GrimFull,
+        Grim1_2,
+        Grim1_3
+    }
+
+    private enum State {
+        Idle,
+        Pending
     }
 
     private final EnumSetting<Mode> mode = enumSetting("Mode", Mode.Vanilla);
@@ -23,30 +43,52 @@ public class NoSlow extends Module {
     private final BoolSetting crossbow = boolSetting("Crossbow", true);
 
     private int onGroundTick = 0;
+    private State state = State.Idle;
 
     @Override
-    public void onEnable() {
+    protected void onEnable() {
         onGroundTick = 0;
+        state = State.Idle;
     }
 
-    @Override
-    public void onDisable() {
-        onGroundTick = 0;
+    @EventHandler
+    private void onTick(TickEvent.Pre event) {
+        if (nullCheck()) return;
+
+        if (!mc.player.isUsingItem() && state != State.Idle) {
+            state = State.Idle;
+            ClientboundPacketManager.INSTANCE.flush();
+            ClientboundPacketManager.INSTANCE.stopTracking();
+        }
     }
 
     @EventHandler
     private void onSlowdown(SlowdownEvent event) {
-        if (nullCheck() || (checkFood() && mc.player.getUseItemRemainingTicks() > 30)) return;
+        if (nullCheck()) return;
 
-        if (!food.getValue() && checkFood()) return;
-        if (!bow.getValue() && checkItem(Items.BOW)) return;
-        if (!crossbow.getValue() && checkItem(Items.CROSSBOW)) return;
+        if (mc.player.onGround()) {
+            onGroundTick++;
+        } else {
+            onGroundTick = 0;
+        }
+
+        if (!food.getValue() && mc.player.getUseItem().has(DataComponents.FOOD)) return;
+        if (!bow.getValue() && mc.player.getUseItem().is(Items.BOW)) return;
+        if (!crossbow.getValue() && mc.player.getUseItem().is(Items.CROSSBOW)) return;
 
         switch (mode.getValue()) {
-            case Mode.Vanilla -> cancel(event);
-            case Mode.Jump -> jump(event);
-            case Mode.Grim1_2 -> grim50(event);
-            case Mode.Grim1_3 -> grim33(event);
+            case Vanilla -> cancel(event);
+            case Jump -> jump(event);
+            case GrimFull -> grim(event);
+            case Grim1_2 -> grim50(event);
+            case Grim1_3 -> grim33(event);
+        }
+    }
+
+    @EventHandler
+    private void onKeyboardInput(KeyboardInputEvent event) {
+        if (mode.is(Mode.Jump) && mc.player.onGround() && mc.player.isUsingItem() && (event.getForward() != 0 || event.getStrafe() != 0)) {
+            event.setJump(true);
         }
     }
 
@@ -67,26 +109,19 @@ public class NoSlow extends Module {
     }
 
     private void grim33(SlowdownEvent event) {
-        if (mc.player.getUseItemRemainingTicks() % 3 == 0 && (!checkFood() || mc.player.getUseItemRemainingTicks() <= 30)) {
+        if (mc.player.getUseItemRemainingTicks() % 3 == 0 && mc.player.getUseItemRemainingTicks() <= 30) {
             event.setSlowdown(false);
         }
     }
 
-    private boolean checkItem(Item item) {
-        return mc.player.getMainHandItem().is(item) || mc.player.getOffhandItem().is(item);
-    }
+    private void grim(SlowdownEvent event) {
+        event.setSlowdown(false);
 
-    private boolean checkFood() {
-        ItemStack mainHandItem = mc.player.getMainHandItem();
-        ItemStack offhandItem = mc.player.getOffhandItem();
-        return mainHandItem.is(Items.GOLDEN_APPLE) || offhandItem.is(Items.GOLDEN_APPLE) || mainHandItem.is(Items.ENCHANTED_GOLDEN_APPLE) || offhandItem.is(Items.ENCHANTED_GOLDEN_APPLE) || mainHandItem.is(Items.POTION) || offhandItem.is(Items.POTION);
-    }
-
-    private enum Mode {
-        Vanilla,
-        Jump,
-        Grim1_2,
-        Grim1_3
+        if (state == State.Idle) {
+            state = State.Pending;
+            ClientboundPacketManager.INSTANCE.startTracking();
+            PacketUtils.sendSilently(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.RELEASE_USE_ITEM, BlockPos.ZERO, Direction.DOWN));
+        }
     }
 
 }

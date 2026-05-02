@@ -5,8 +5,6 @@ import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.EnumSetting;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.util.Mth;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
 
 public class VClip extends Module {
 
@@ -24,11 +22,9 @@ public class VClip extends Module {
 
     private final EnumSetting<Mode> mode = enumSetting("Mode", Mode.Jump);
 
-    @EventHandler
-    private void onTick(TickEvent.Pre event) {
+    @Override
+    protected void onEnable() {
         if (nullCheck()) return;
-
-        toggle();
 
         switch (mode.getValue()) {
             case Glitch -> {
@@ -56,6 +52,8 @@ public class VClip extends Module {
                 mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(mc.player.getX(), mc.player.getY(), mc.player.getZ(), true, false));
             }
         }
+
+        toggle();
     }
 
 }

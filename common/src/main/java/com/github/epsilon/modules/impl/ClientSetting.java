@@ -2,13 +2,21 @@ package com.github.epsilon.modules.impl;
 
 import com.github.epsilon.gui.hudeditor.HudEditorScreen;
 import com.github.epsilon.modules.Module;
-import com.github.epsilon.settings.impl.BoolSetting;
-import com.github.epsilon.settings.impl.ButtonSetting;
-import com.github.epsilon.settings.impl.EnumSetting;
-import com.github.epsilon.settings.impl.KeybindSetting;
+import com.github.epsilon.settings.impl.*;
+import com.mojang.blaze3d.platform.IconSet;
+import net.minecraft.SharedConstants;
 import org.lwjgl.glfw.GLFW;
 
+import java.awt.*;
+import java.io.IOException;
+
 public class ClientSetting extends Module {
+
+    public static final ClientSetting INSTANCE = new ClientSetting();
+
+    private ClientSetting() {
+        super("Client Setting", null);
+    }
 
     public enum ThemePreset {
         TonalSpot,
@@ -27,17 +35,9 @@ public class ClientSetting extends Module {
         Light
     }
 
-    private ClientSetting() {
-        super("Client Setting", null);
-    }
-
-    public static final ClientSetting INSTANCE = new ClientSetting();
-
     public final KeybindSetting guiKeybind = keybindSetting("Gui Keybind", GLFW.GLFW_KEY_RIGHT_SHIFT);
 
-    private final ButtonSetting openHudEditor = buttonSetting("Open Hud Editor", () -> {
-        mc.setScreen(HudEditorScreen.INSTANCE);
-    });
+    private final ButtonSetting openHudEditor = buttonSetting("Open Hud Editor", () -> mc.setScreen(HudEditorScreen.INSTANCE));
 
     public final BoolSetting i18nFallback = boolSetting("I18n Fallback", true);
 
@@ -46,14 +46,30 @@ public class ClientSetting extends Module {
     public final BoolSetting closeOnOutside = boolSetting("Close Gui On Outside", false);
 
     public final EnumSetting<ThemeMode> themeMode = enumSetting("Theme Mode", ThemeMode.Dark);
-    public final EnumSetting<ThemePreset> themePreset = enumSetting("Theme Preset", ThemePreset.TonalSpot);
 
-    public ThemePreset getThemePreset() {
-        return themePreset.getValue();
-    }
+    public final EnumSetting<ThemePreset> themePreset = enumSetting("Theme Preset", ThemePreset.Expressive);
 
-    public ThemeMode getThemeMode() {
-        return themeMode.getValue();
-    }
+    public final BoolSetting customIcon = boolSetting("Custom Icon", true, _ -> {
+        try {
+            mc.getWindow().setIcon(mc.getVanillaPackResources(), SharedConstants.getCurrentVersion().stable() ? IconSet.RELEASE : IconSet.SNAPSHOT);
+        } catch (IOException ignored) {
+        }
+    });
+
+    public final BoolSetting customTitle = boolSetting("Custom Title", true, _ -> mc.updateTitle());
+
+    public final BoolSetting useMainMenu = boolSetting("Use MainMenu", true);
+
+    public final BoolSetting soundNotify = boolSetting("Sound Notify", true);
+
+    public final BoolSetting chatNotify = boolSetting("Chat Notify", true);
+
+    public final BoolSetting animatedChatPrefix = boolSetting("Animated Chat Prefix", true);
+
+    public final ColorSetting chatPrefixColorStart = colorSetting("Chat Prefix Color Start", new Color(255, 175, 210), animatedChatPrefix::getValue);
+
+    public final ColorSetting chatPrefixColorEnd = colorSetting("Chat Prefix Color End", new Color(150, 220, 255), animatedChatPrefix::getValue);
+
+    public final DoubleSetting chatPrefixGradientSpeed = doubleSetting("Chat Prefix Gradient Speed", 0.5, 0.1, 1, 0.1, animatedChatPrefix::getValue);
 
 }

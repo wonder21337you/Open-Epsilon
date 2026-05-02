@@ -1,7 +1,8 @@
 package com.github.epsilon.settings;
 
 import com.github.epsilon.assets.i18n.TranslateComponent;
-import com.github.epsilon.modules.Module;
+
+import java.util.function.Consumer;
 
 public abstract class Setting<V> {
 
@@ -9,12 +10,14 @@ public abstract class Setting<V> {
     protected V value;
     protected V defaultValue;
     protected final Dependency dependency;
+    protected Consumer<V> onChanged;
+
     protected TranslateComponent translateComponent;
 
-    public Setting(String name, Module module, Dependency dependency) {
+    public Setting(String name, Dependency dependency, Consumer<V> onChanged) {
         this.name = name;
         this.dependency = dependency;
-        // TranslateComponent creation is deferred to initTranslateComponent()
+        this.onChanged = onChanged;
     }
 
     public void initTranslateComponent(TranslateComponent component) {
@@ -39,6 +42,7 @@ public abstract class Setting<V> {
 
     public void setValue(V value) {
         this.value = value;
+        if (this.onChanged != null) this.onChanged.accept(value);
     }
 
     public void reset() {
@@ -61,4 +65,5 @@ public abstract class Setting<V> {
     public Dependency getDependency() {
         return dependency;
     }
+
 }

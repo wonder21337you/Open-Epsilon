@@ -11,6 +11,7 @@ import com.mojang.blaze3d.textures.TextureFormat;
 import java.util.OptionalDouble;
 
 public class TtfGlyphAtlas {
+
     private static final int SIZE = 512;
     private final LuminTexture texture;
 
@@ -92,4 +93,5 @@ public class TtfGlyphAtlas {
 
     public record GlyphUV(float u0, float v0, float u1, float v1) {
     }
+
 }

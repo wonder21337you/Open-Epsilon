@@ -1,5 +1,7 @@
 package com.github.epsilon.modules.impl.player;
 
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.BoolSetting;
@@ -11,8 +13,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.EnderChestBlock;
 import net.minecraft.world.phys.BlockHitResult;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;

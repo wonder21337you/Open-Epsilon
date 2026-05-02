@@ -1,6 +1,5 @@
 package com.github.epsilon.utils.player;
 
-import com.github.epsilon.managers.SyncManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Item;
@@ -72,11 +71,7 @@ public class InvUtils {
     }
 
     public static void swap(int slot, boolean saveSwap) {
-        if (slot == 40) {
-            return;
-        }
-
-        if (mc.player.getInventory().getSelectedSlot() == slot && SyncManager.serverSlot == slot) {
+        if (slot == 40 || mc.player.getInventory().getSelectedSlot() == slot) {
             return;
         }
 
@@ -87,7 +82,6 @@ public class InvUtils {
         }
 
         mc.player.getInventory().setSelectedSlot(slot);
-        mc.gameMode.ensureHasSentCarriedItem();
     }
 
     public static void swapBack() {

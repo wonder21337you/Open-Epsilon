@@ -1,0 +1,27 @@
+{
+  "enable": {
+    "sounds": [
+      "sakura:enable"
+    ]
+  },
+  "disable": {
+    "sounds": [
+      "sakura:disable"
+    ]
+  },
+  "settings_open": {
+    "sounds": [
+      "sakura:settings-open"
+    ]
+  },
+  "settings_close": {
+    "sounds": [
+      "sakura:settings-close"
+    ]
+  },
+  "shutdown": {
+    "sounds": [
+      "sakura:shutdown"
+    ]
+  }
+}

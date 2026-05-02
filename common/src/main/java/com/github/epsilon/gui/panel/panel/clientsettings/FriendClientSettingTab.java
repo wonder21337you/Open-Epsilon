@@ -12,10 +12,10 @@ import com.github.epsilon.gui.panel.PanelState;
 import com.github.epsilon.gui.panel.component.PanelElements;
 import com.github.epsilon.gui.panel.dsl.PanelUiCompiler;
 import com.github.epsilon.gui.panel.dsl.PanelUiTree;
-import com.github.epsilon.gui.panel.util.PanelContentBuffer;
-import com.github.epsilon.gui.panel.util.PanelContentInvalidationState;
-import com.github.epsilon.gui.panel.util.ScrollBarDragState;
-import com.github.epsilon.gui.panel.util.ScrollBarUtil;
+import com.github.epsilon.gui.panel.utils.PanelContentBuffer;
+import com.github.epsilon.gui.panel.utils.PanelContentInvalidationState;
+import com.github.epsilon.gui.panel.utils.ScrollBarDragState;
+import com.github.epsilon.gui.panel.utils.ScrollBarUtils;
 import com.github.epsilon.managers.ConfigManager;
 import com.github.epsilon.managers.FriendManager;
 import com.github.epsilon.utils.render.animation.Animation;
@@ -26,13 +26,9 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-public final class FriendClientSettingTab implements ClientSettingTabView {
+public class FriendClientSettingTab implements ClientSettingTabView {
 
     private static final TranslateComponent noFriendsComponent = EpsilonTranslateComponent.create("gui", "friend.empty");
     private static final TranslateComponent addFriendPlaceholderComponent = EpsilonTranslateComponent.create("gui", "friend.input.placeholder");
@@ -77,7 +73,7 @@ public final class FriendClientSettingTab implements ClientSettingTabView {
         state.setMaxFriendScroll(contentHeight - listViewport.height());
         float maxScroll = Math.max(0.0f, contentHeight - listViewport.height());
         boolean hasScrollBar = maxScroll > 0.0f;
-        float rowWidth = hasScrollBar ? listViewport.width() - ScrollBarUtil.TOTAL_WIDTH : listViewport.width();
+        float rowWidth = hasScrollBar ? listViewport.width() - ScrollBarUtils.TOTAL_WIDTH : listViewport.width();
         long contentSignature = buildContentSignature(friends);
         boolean rebuildContent = shouldRebuild(listViewport, mouseX, mouseY, friends, guiGraphics.guiHeight(), contentSignature);
 
@@ -362,5 +358,5 @@ public final class FriendClientSettingTab implements ClientSettingTabView {
 
     private record FriendRowEntry(String name, PanelLayout.Rect rowBounds, PanelLayout.Rect removeBounds) {
     }
-}
 
+}

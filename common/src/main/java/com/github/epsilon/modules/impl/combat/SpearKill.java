@@ -1,5 +1,7 @@
 package com.github.epsilon.modules.impl.combat;
 
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.managers.TargetManager;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
@@ -13,12 +15,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
-
-/**
- * @author Moli
- */
 
 public class SpearKill extends Module {
 
@@ -28,7 +24,7 @@ public class SpearKill extends Module {
         super("Spear Kill", Category.COMBAT);
     }
 
-    public enum LungeMode {
+    private enum LungeMode {
         DirectionBased,
         Above
     }
@@ -221,4 +217,5 @@ public class SpearKill extends Module {
         mc.player.setYHeadRot(rotations.x);
         mc.player.setXRot(rotations.y);
     }
+
 }

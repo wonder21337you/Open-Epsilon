@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.github.epsilon.neoforge.mixins",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "MixinMinecraft",
+    "MixinGuiRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+

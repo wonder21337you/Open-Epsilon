@@ -3,18 +3,16 @@ package com.github.epsilon.gui.hudeditor;
 import com.github.epsilon.managers.ModuleManager;
 import com.github.epsilon.modules.HudModule;
 import com.github.epsilon.modules.Module;
-import net.minecraft.client.DeltaTracker;
-import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class HudEditorModules {
+public class HudEditorModules {
 
     private HudEditorModules() {
     }
 
-    public static List<HudModule> collectEnabledHudModules(@Nullable DeltaTracker delta) {
+    public static List<HudModule> collectEnabledHudModules() {
         List<HudModule> hudModules = new ArrayList<>();
         List<Module> modules = ModuleManager.INSTANCE.getModules();
         if (modules == null) {
@@ -23,7 +21,7 @@ public final class HudEditorModules {
 
         for (Module module : modules) {
             if (module.isEnabled() && module instanceof HudModule hudModule) {
-                hudModule.updateLayout(delta);
+                hudModule.updateLayout();
                 hudModules.add(hudModule);
             }
         }
@@ -31,7 +29,7 @@ public final class HudEditorModules {
         return hudModules;
     }
 
-    public static List<HudModule> collectHudModules(@Nullable DeltaTracker delta) {
+    public static List<HudModule> collectHudModules() {
         List<HudModule> hudModules = new ArrayList<>();
         List<Module> modules = ModuleManager.INSTANCE.getModules();
         if (modules == null) {
@@ -40,7 +38,7 @@ public final class HudEditorModules {
 
         for (Module module : modules) {
             if (module instanceof HudModule hudModule) {
-                hudModule.updateLayout(delta);
+                hudModule.updateLayout();
                 hudModules.add(hudModule);
             }
         }
@@ -59,4 +57,5 @@ public final class HudEditorModules {
 
         return null;
     }
+
 }

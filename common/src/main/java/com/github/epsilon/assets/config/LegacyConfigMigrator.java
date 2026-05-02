@@ -14,13 +14,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Handles one-time migration from the legacy monolithic {@code config.json}
- * to the per-module / per-addon file layout introduced in config version 2.
- *
- * <p>Old layout: {@code epsilon-config/config.json} (all modules in one file)</p>
- * <p>New layout: {@code epsilon-config/configs/{configName}/{addonId}/{moduleName}.json}</p>
- */
 public class LegacyConfigMigrator {
 
     private final Path legacyRootDir;
@@ -38,25 +31,9 @@ public class LegacyConfigMigrator {
      * {@code {targetConfigDir}/{addonId}/{moduleName}.json}
      */
     public Path getModuleFile(Module module) {
-        String addonId = module.getAddonId() != null ? module.getAddonId() : "unknown";
-        return targetConfigDir.resolve(addonId).resolve(module.getName() + ".json");
+        return targetConfigDir.resolve("modules").resolve(module.getName() + ".json");
     }
 
-    /**
-     * Checks whether a migration from the old {@code config.json} is needed and,
-     * if so, performs it automatically.
-     *
-     * <p>Migration is triggered when:</p>
-     * <ul>
-     *   <li>The legacy {@code config.json} file exists, AND</li>
-     *   <li>None of the per-module files have been written yet.</li>
-     * </ul>
-     *
-     * <p>After migration, the old file is renamed to {@code config.json.bak}
-     * so the migration never runs again.</p>
-     *
-     * @param modules the full module list (obtained from ModuleManager)
-     */
     public void migrateIfNeeded(List<Module> modules) {
         Path legacyConfigFile = legacyRootDir.resolve("config.json");
         if (!Files.exists(legacyConfigFile)) return;
@@ -120,5 +97,5 @@ public class LegacyConfigMigrator {
         JsonElement el = parent.get(key);
         return (el != null && el.isJsonObject()) ? el.getAsJsonObject() : null;
     }
-}
 
+}

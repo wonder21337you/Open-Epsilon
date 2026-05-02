@@ -11,9 +11,9 @@ import com.github.epsilon.gui.panel.MD3Theme;
 import com.github.epsilon.gui.panel.PanelLayout;
 import com.github.epsilon.gui.panel.adapter.SettingListController;
 import com.github.epsilon.gui.panel.popup.PanelPopupHost;
-import com.github.epsilon.gui.panel.util.PanelContentBuffer;
-import com.github.epsilon.gui.panel.util.ScrollBarDragState;
-import com.github.epsilon.gui.panel.util.ScrollBarUtil;
+import com.github.epsilon.gui.panel.utils.PanelContentBuffer;
+import com.github.epsilon.gui.panel.utils.ScrollBarDragState;
+import com.github.epsilon.gui.panel.utils.ScrollBarUtils;
 import com.github.epsilon.modules.HudModule;
 import com.github.epsilon.settings.Setting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -24,7 +24,7 @@ import net.minecraft.util.Mth;
 
 import java.util.List;
 
-final class HudEditorInspector {
+public class HudEditorInspector {
 
     private static final float PANEL_MARGIN = 10.0f;
     private static final float PANEL_WIDTH = 220.0f;
@@ -69,7 +69,7 @@ final class HudEditorInspector {
     private static final TranslateComponent titleComponent = EpsilonTranslateComponent.create("gui", "inspector");
     private static final TranslateComponent selectComponent = EpsilonTranslateComponent.create("gui", "inspector.select");
 
-    void queueRender(GuiGraphicsExtractor graphics, HudModule selectedModule, int screenWidth, int screenHeight, int mouseX, int mouseY, float partialTick, int guiHeight) {
+    public void queueRender(GuiGraphicsExtractor graphics, HudModule selectedModule, int screenWidth, int screenHeight, int mouseX, int mouseY, float partialTick, int guiHeight) {
         this.selectedModule = selectedModule;
         this.lastScreenWidth = screenWidth;
         this.lastScreenHeight = screenHeight;
@@ -138,7 +138,7 @@ final class HudEditorInspector {
         maxScroll = Math.max(0.0f, contentHeight - viewport.height());
         scroll = Mth.clamp(scroll, 0.0f, maxScroll);
         boolean hasScrollBar = maxScroll > 0.0f;
-        float rowWidth = hasScrollBar ? viewport.width() - ScrollBarUtil.TOTAL_WIDTH : viewport.width();
+        float rowWidth = hasScrollBar ? viewport.width() - ScrollBarUtils.TOTAL_WIDTH : viewport.width();
         boolean popupConsumesHover = settingList.isPopupHovered(mouseX, mouseY);
         int effectiveMouseX = popupConsumesHover ? Integer.MIN_VALUE : mouseX;
         int effectiveMouseY = popupConsumesHover ? Integer.MIN_VALUE : mouseY;
@@ -154,11 +154,11 @@ final class HudEditorInspector {
         contentBuffer.flushAndClear();
     }
 
-    void renderPopups(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void renderPopups(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         settingList.getPopupHost().render(graphics, mouseX, mouseY, partialTick);
     }
 
-    boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
         if (settingList.getPopupHost().mouseClicked(event, isDoubleClick)) {
             return true;
         }
@@ -204,7 +204,7 @@ final class HudEditorInspector {
         return true;
     }
 
-    boolean mouseReleased(MouseButtonEvent event) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         if (windowDragging) {
             windowDragging = false;
             return true;
@@ -218,7 +218,7 @@ final class HudEditorInspector {
         return settingList.mouseReleased(event);
     }
 
-    boolean mouseDragged(MouseButtonEvent event, double mouseX, double mouseY) {
+    public boolean mouseDragged(MouseButtonEvent event, double mouseX, double mouseY) {
         if (windowDragging) {
             panelX = (float) (event.x() - dragOffsetX);
             panelY = (float) (event.y() - dragOffsetY);
@@ -240,7 +240,7 @@ final class HudEditorInspector {
         return settingList.mouseDragged(event, mouseX, mouseY);
     }
 
-    boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (settingList.getPopupHost().mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
             return true;
         }
@@ -251,21 +251,21 @@ final class HudEditorInspector {
         return bounds != null && bounds.contains(mouseX, mouseY);
     }
 
-    boolean keyPressed(KeyEvent event) {
+    public boolean keyPressed(KeyEvent event) {
         if (settingList.getPopupHost().keyPressed(event)) {
             return true;
         }
         return settingList.keyPressed(event);
     }
 
-    boolean charTyped(CharacterEvent event) {
+    public boolean charTyped(CharacterEvent event) {
         if (settingList.getPopupHost().charTyped(event)) {
             return true;
         }
         return settingList.charTyped(event);
     }
 
-    void clearFocus() {
+    public void clearFocus() {
         settingList.clearFocus();
     }
 
@@ -326,4 +326,5 @@ final class HudEditorInspector {
             selectedModuleName = "";
         }
     }
+
 }

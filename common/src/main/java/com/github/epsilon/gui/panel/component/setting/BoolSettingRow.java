@@ -6,6 +6,8 @@ import com.github.epsilon.gui.panel.PanelLayout;
 import com.github.epsilon.gui.panel.component.PanelElements;
 import com.github.epsilon.gui.panel.component.SettingRow;
 import com.github.epsilon.gui.panel.dsl.PanelUiTree;
+import com.github.epsilon.managers.sound.SoundKey;
+import com.github.epsilon.managers.sound.SoundManager;
 import com.github.epsilon.settings.impl.BoolSetting;
 import com.github.epsilon.utils.render.animation.Animation;
 import com.github.epsilon.utils.render.animation.Easing;
@@ -45,6 +47,7 @@ public class BoolSettingRow extends SettingRow<BoolSetting> {
             return false;
         }
         setting.setValue(!setting.getValue());
+        SoundManager.INSTANCE.playInUi(setting.getValue() ? SoundKey.SETTINGS_OPEN : SoundKey.SETTINGS_CLOSE);
         return true;
     }
 
@@ -52,4 +55,5 @@ public class BoolSettingRow extends SettingRow<BoolSetting> {
     public boolean hasActiveAnimation() {
         return !hoverAnimation.isFinished() || !toggleAnimation.isFinished();
     }
+
 }

@@ -1,13 +1,13 @@
 package com.github.epsilon.modules.impl.player;
 
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.EnumSetting;
 import com.github.epsilon.settings.impl.IntSetting;
 import com.github.epsilon.settings.impl.StringSetting;
 import net.minecraft.network.chat.Component;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -175,7 +175,7 @@ public class AutoKouZi extends Module {
     private void loadFromDefaultPath() {
         try {
             InputStream is = getClass().getClassLoader().getResourceAsStream(
-                    "assets/open_epsilon/kouzi.txt"
+                    "assets/epsilon/kouzi.txt"
             );
 
             if (is == null) {
@@ -235,4 +235,5 @@ public class AutoKouZi extends Module {
             mc.player.sendSystemMessage(Component.literal("[AutoKouZi] " + message));
         }
     }
+
 }

@@ -15,7 +15,7 @@ public class NeoForgePlatformAddon extends EpsilonAddon {
     public static final NeoForgePlatformAddon INSTANCE = new NeoForgePlatformAddon();
 
     private NeoForgePlatformAddon() {
-        super("epsilon_neoforge");
+        super("sakura_neoforge");
     }
 
     @Override
@@ -41,7 +41,7 @@ public class NeoForgePlatformAddon extends EpsilonAddon {
 
     @Override
     public List<String> getAuthors() {
-        return List.of("Open Epsilon");
+        return List.of("Sakura");
     }
 
     public final BoolSetting testSetting0 = boolSetting("Test Setting 0", true);

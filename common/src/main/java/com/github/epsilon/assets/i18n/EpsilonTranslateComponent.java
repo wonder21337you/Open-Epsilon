@@ -6,10 +6,10 @@ package com.github.epsilon.assets.i18n;
  */
 public class EpsilonTranslateComponent {
 
-    private static final String EPSILON_PREFIX = "epsilon";
+    private static final String PREFIX = "epsilon";
 
     public static TranslateComponent create(String prefix, String suffix) {
-        return DefaultTranslateComponent.create(EPSILON_PREFIX + "." + prefix + "." + suffix);
+        return DefaultTranslateComponent.create(PREFIX + "." + prefix + "." + suffix);
     }
 
 }

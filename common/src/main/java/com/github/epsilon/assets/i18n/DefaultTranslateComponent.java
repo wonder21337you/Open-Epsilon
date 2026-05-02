@@ -41,7 +41,6 @@ public class DefaultTranslateComponent implements TranslateComponent {
         if (I18n.exists(key)) {
             return I18n.get(key);
         }
-
         return ClientSetting.INSTANCE.i18nFallback.getValue() ? formatKey(key) : key;
     }
 

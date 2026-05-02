@@ -13,6 +13,8 @@ import com.github.epsilon.gui.panel.PanelState;
 import com.github.epsilon.gui.panel.dsl.PanelUiCompiler;
 import com.github.epsilon.gui.panel.dsl.PanelUiTree;
 import com.github.epsilon.managers.ModuleManager;
+import com.github.epsilon.managers.sound.SoundKey;
+import com.github.epsilon.managers.sound.SoundManager;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.utils.render.animation.Animation;
 import com.github.epsilon.utils.render.animation.Easing;
@@ -102,10 +104,10 @@ public class CategoryRailPanel {
                 float subtitleY = titleY + titleHeight + pad;
                 float titleOffset = (1.0f - titleProgress) * 8.0f;
                 float subtitleOffset = (1.0f - subtitleProgress) * 10.0f;
-                scope.text("Epsilon", bounds.x() + 38.0f + titleOffset, titleY, titleScale,
+                scope.text("Open Epsilon " + Epsilon.VERSION, bounds.x() + 38.0f + titleOffset, titleY, titleScale,
                         MD3Theme.withAlpha(MD3Theme.TEXT_PRIMARY, (int) (255 * titleProgress)), StaticFontLoader.DUCKSANS);
                 if (subtitleProgress > 0.02f) {
-                    scope.text(Epsilon.VERSION, bounds.x() + 38.0f + subtitleOffset, subtitleY, subtitleScale,
+                    scope.text("Next-Generation", bounds.x() + 38.0f + subtitleOffset, subtitleY, subtitleScale,
                             MD3Theme.withAlpha(MD3Theme.TEXT_SECONDARY, (int) (210 * subtitleProgress)));
                 }
                 if (dividerProgress > 0.02f) {
@@ -202,6 +204,7 @@ public class CategoryRailPanel {
         }
         if (getMenuButtonBounds().contains(event.x(), event.y())) {
             state.toggleSidebarExpanded();
+            SoundManager.INSTANCE.playInUi(state.isSidebarExpanded() ? SoundKey.SETTINGS_OPEN : SoundKey.SETTINGS_CLOSE);
             return true;
         }
 
@@ -323,7 +326,7 @@ public class CategoryRailPanel {
     }
 
     private int getCategoryCount(Category category) {
-        return (int) ModuleManager.INSTANCE.getModules().stream().filter(module -> module.category == category).count();
+        return (int) ModuleManager.INSTANCE.getModules().stream().filter(module -> module.getCategory() == category).count();
     }
 
     private void applyTextScissor(PanelLayout.Rect rect, int guiHeight) {

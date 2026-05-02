@@ -1,5 +1,7 @@
 package com.github.epsilon.modules.impl.combat;
 
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.managers.RotationManager;
 import com.github.epsilon.managers.TargetManager;
 import com.github.epsilon.modules.Category;
@@ -10,24 +12,24 @@ import com.github.epsilon.settings.impl.EnumSetting;
 import com.github.epsilon.settings.impl.IntSetting;
 import com.github.epsilon.utils.player.FindItemResult;
 import com.github.epsilon.utils.player.InvUtils;
+import com.github.epsilon.utils.rotation.Priority;
 import com.github.epsilon.utils.rotation.RotationUtils;
 import com.github.epsilon.utils.timer.TimerUtils;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * Author Moli
- * 用于无反香草服，如lblt
+/**
+ * @author Moli
+ * 用于无反香草服，如LBLT
  */
 
 public class MaceAura extends Module {
@@ -93,16 +95,12 @@ public class MaceAura extends Module {
             return;
         }
 
-        final LivingEntity requestedTarget = target;
-        final int requestPriority = com.github.epsilon.utils.rotation.Priority.Medium.priority;
         RotationManager.INSTANCE.applyRotation(
-                RotationUtils.getRotationsToEntity(requestedTarget),
+                RotationUtils.getRotationsToEntity(target),
                 10,
-                requestPriority,
+                Priority.Medium.priority,
                 record -> {
                     if (!isEnabled() || nullCheck()) return;
-                    if (target != requestedTarget) return;
-                    if (record.selectedPriorityValue() != requestPriority) return;
                     rotationReady = true;
                 }
         );
@@ -160,7 +158,7 @@ public class MaceAura extends Module {
 
     private boolean isValidTarget(LivingEntity entity) {
         if (slimes.getValue()) {
-            return entity.getType().toString().toLowerCase().contains("slime");
+            return entity instanceof Slime;
         }
         return true;
     }

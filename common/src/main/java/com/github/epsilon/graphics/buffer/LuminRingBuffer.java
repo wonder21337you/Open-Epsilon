@@ -20,7 +20,6 @@ public class LuminRingBuffer {
     private boolean mapped;
 
     public LuminRingBuffer(long size, @GpuBuffer.Usage int usage) {
-
         ringBuffer = new MappableRingBuffer(() -> "lumin-ring-buffer",
                 GpuBuffer.USAGE_MAP_WRITE | GpuBuffer.USAGE_COPY_DST | usage,
                 (int) size);

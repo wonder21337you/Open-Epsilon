@@ -5,20 +5,12 @@ import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 
-import javax.annotation.Nonnull;
-
 public class LuminTexture extends AbstractTexture {
 
     private final boolean closeTexture;
     private final boolean closeSampler;
 
-    public LuminTexture(
-            @Nonnull GpuTexture texture,
-            @Nonnull GpuTextureView textureView,
-            @Nonnull GpuSampler sampler,
-            boolean closeTexture,
-            boolean closeSampler
-    ) {
+    public LuminTexture(GpuTexture texture, GpuTextureView textureView, GpuSampler sampler, boolean closeTexture, boolean closeSampler) {
         this.texture = texture;
         this.textureView = textureView;
         this.sampler = sampler;
@@ -26,7 +18,7 @@ public class LuminTexture extends AbstractTexture {
         this.closeSampler = closeSampler;
     }
 
-    public LuminTexture(@Nonnull GpuTexture texture, @Nonnull GpuTextureView textureView, @Nonnull GpuSampler sampler) {
+    public LuminTexture(GpuTexture texture, GpuTextureView textureView, GpuSampler sampler) {
         this(texture, textureView, sampler, true, true);
     }
 

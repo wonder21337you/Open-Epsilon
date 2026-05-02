@@ -1,7 +1,9 @@
 package com.github.epsilon.modules.impl.player;
 
-import com.github.epsilon.events.movement.MotionEvent;
-import com.github.epsilon.events.network.PacketEvent;
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.PacketEvent;
+import com.github.epsilon.events.impl.Render3DEvent;
+import com.github.epsilon.events.impl.SendPositionEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.BoolSetting;
@@ -15,19 +17,17 @@ import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ServerboundHelloPacket;
 import net.minecraft.world.entity.Entity;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.render.Render3DEvent;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Blink extends Module {
+
     public static final Blink INSTANCE = new Blink();
 
     public Blink() {
         super("Blink", Category.PLAYER);
-        setEnabled(false);
     }
 
     private final DoubleSetting tick = doubleSetting("Tick", 30, 5, 200, 1);
@@ -158,7 +158,7 @@ public class Blink extends Module {
 
 
     @EventHandler
-    public void onMotion(MotionEvent event) {
+    public void onMotion(SendPositionEvent event) {
         if (mc.screen instanceof RecoverWorldDataScreen && this.isEnabled()) {
             this.setEnabled(false);
         }
@@ -179,4 +179,5 @@ public class Blink extends Module {
             }
         }
     }
+
 }

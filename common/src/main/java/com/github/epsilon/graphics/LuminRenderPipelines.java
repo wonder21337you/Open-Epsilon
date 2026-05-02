@@ -9,9 +9,6 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderPipelines;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 
 public class LuminRenderPipelines {
 
@@ -65,14 +62,4 @@ public class LuminRenderPipelines {
             .withCull(false)
             .build();
 
-    public static final List<RenderPipeline> ALL_PIPELINES = List.of(
-            RECTANGLE, TTF_FONT, ROUND_RECT, SHADOW, TEXTURE
-    );
-
-    public static void registerAll(Consumer<RenderPipeline> registrar) {
-        ALL_PIPELINES.forEach(registrar);
-    }
-
 }
-
-

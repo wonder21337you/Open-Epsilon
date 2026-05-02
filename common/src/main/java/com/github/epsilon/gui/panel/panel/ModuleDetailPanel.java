@@ -13,18 +13,20 @@ import com.github.epsilon.gui.panel.PanelLayout;
 import com.github.epsilon.gui.panel.PanelState;
 import com.github.epsilon.gui.panel.adapter.SettingListController;
 import com.github.epsilon.gui.panel.component.PanelElements;
+import com.github.epsilon.gui.panel.component.setting.KeybindSettingRow;
 import com.github.epsilon.gui.panel.dsl.PanelUiCompiler;
 import com.github.epsilon.gui.panel.dsl.PanelUiTree;
 import com.github.epsilon.gui.panel.popup.PanelPopupHost;
-import com.github.epsilon.gui.panel.util.PanelContentBuffer;
-import com.github.epsilon.gui.panel.util.PanelContentInvalidationState;
-import com.github.epsilon.gui.panel.util.ScrollBarDragState;
-import com.github.epsilon.gui.panel.util.ScrollBarUtil;
+import com.github.epsilon.gui.panel.utils.PanelContentBuffer;
+import com.github.epsilon.gui.panel.utils.PanelContentInvalidationState;
+import com.github.epsilon.gui.panel.utils.ScrollBarDragState;
+import com.github.epsilon.gui.panel.utils.ScrollBarUtils;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.Setting;
+import com.github.epsilon.settings.impl.KeybindSetting;
+import com.github.epsilon.utils.client.KeybindUtils;
 import com.github.epsilon.utils.render.animation.Animation;
 import com.github.epsilon.utils.render.animation.Easing;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -111,7 +113,7 @@ public class ModuleDetailPanel {
         state.setMaxDetailScroll(contentHeight - viewport.height());
         float maxDetailScroll = Math.max(0, contentHeight - viewport.height());
         boolean hasScrollBar = maxDetailScroll > 0;
-        float rowWidth = hasScrollBar ? viewport.width() - ScrollBarUtil.TOTAL_WIDTH : viewport.width();
+        float rowWidth = hasScrollBar ? viewport.width() - ScrollBarUtils.TOTAL_WIDTH : viewport.width();
         long contentSignature = buildContentSignature(module, settings);
 
         if (shouldRebuildContent(bounds, mouseX, mouseY, module, settings, GuiGraphicsExtractor.guiHeight(), contentSignature)) {
@@ -119,6 +121,9 @@ public class ModuleDetailPanel {
             contentState.beginRebuild();
 
             settingListController.layoutRows(settings, viewport, state.getDetailScroll(), rowWidth, (setting, row, rowBounds) -> {
+                if (row instanceof KeybindSettingRow keybindRow) {
+                    keybindRow.setListening(state.getListeningKeybindSetting() == keybindRow.getSetting());
+                }
                 Animation hoverAnimation = hoverAnimations.computeIfAbsent(setting, ignored -> new Animation(Easing.EASE_OUT_CUBIC, 120L));
                 hoverAnimation.run(rowBounds.contains(effectiveMouseX, effectiveMouseY) ? 1.0f : 0.0f);
                 row.render(GuiGraphicsExtractor, contentBuffer.roundRectRenderer(), contentBuffer.rectRenderer(), contentBuffer.textRenderer(), rowBounds, hoverAnimation.getValue(), effectiveMouseX, effectiveMouseY, partialTick);
@@ -132,11 +137,33 @@ public class ModuleDetailPanel {
     }
 
     public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
-        if (bounds == null || event.button() != 0) {
+        if (bounds == null) {
             return false;
         }
         Module module = state.getSelectedModule();
         if (module == null || headerBounds == null) {
+            return false;
+        }
+
+        if (state.getListeningKeyBindModule() == module) {
+            PanelLayout.Rect keybindBounds = getKeybindBounds();
+            if (keybindBounds.contains(event.x(), event.y())) {
+                module.setKeyBind(KeybindUtils.encodeMouseButton(event.button()));
+                state.setListeningKeyBindModule(null);
+                markDirty();
+                return true;
+            }
+        }
+
+        KeybindSetting listeningKeybindSetting = state.getListeningKeybindSetting();
+        if (listeningKeybindSetting != null) {
+            listeningKeybindSetting.setValue(KeybindUtils.encodeMouseButton(event.button()));
+            state.setListeningKeybindSetting(null);
+            markDirty();
+            return true;
+        }
+
+        if (event.button() != 0) {
             return false;
         }
 
@@ -178,7 +205,13 @@ public class ModuleDetailPanel {
             return true;
         }
 
-        if (settingListController.mouseClicked(event, isDoubleClick, bounds)) {
+        if (settingListController.mouseClicked(event, isDoubleClick, bounds, (row, rowBounds, clickEvent, doubleClick) -> {
+            if (row instanceof KeybindSettingRow keybindRow && row.mouseClicked(rowBounds, clickEvent, doubleClick)) {
+                state.setListeningKeybindSetting(keybindRow.getSetting());
+                return true;
+            }
+            return false;
+        })) {
             markDirty();
             return true;
         }
@@ -225,6 +258,24 @@ public class ModuleDetailPanel {
     }
 
     public boolean keyPressed(KeyEvent event) {
+        KeybindSetting listeningSetting = state.getListeningKeybindSetting();
+        if (listeningSetting != null) {
+            if (event.key() == 256) {
+                state.setListeningKeybindSetting(null);
+                markDirty();
+                return true;
+            }
+            if (event.key() == 259 || event.key() == 261) {
+                listeningSetting.setValue(-1);
+                state.setListeningKeybindSetting(null);
+                markDirty();
+                return true;
+            }
+            listeningSetting.setValue(event.key());
+            state.setListeningKeybindSetting(null);
+            markDirty();
+            return true;
+        }
         Module module = state.getSelectedModule();
         if (module != null && state.getListeningKeyBindModule() == module) {
             if (event.key() == 256) {
@@ -379,8 +430,11 @@ public class ModuleDetailPanel {
     }
 
     private String formatCompactKeybind(int keyCode) {
-        if (keyCode < 0) {
+        if (keyCode == KeybindUtils.NONE) {
             return noneComponent.getTranslatedName();
+        }
+        if (KeybindUtils.isMouseButton(keyCode)) {
+            return "M" + (KeybindUtils.decodeMouseButton(keyCode) + 1);
         }
         String label = formatKeybind(keyCode).trim();
         if (label.isEmpty()) {
@@ -402,17 +456,15 @@ public class ModuleDetailPanel {
         }
 
         String compact = label.replaceAll("[^A-Za-z0-9]", "").toUpperCase(Locale.ROOT);
-        if (compact.isEmpty()) {
-            return "?";
+        if (!compact.isEmpty()) {
+            return compact.length() > 3 ? compact.substring(0, 3) : compact;
         }
-        return compact.length() > 3 ? compact.substring(0, 3) : compact;
+        // Symbol-only keys (e.g. ";", "[", "/"): fall back to the raw label so we never show "?".
+        return label.length() > 3 ? label.substring(0, 3) : label;
     }
 
     private String formatKeybind(int keyCode) {
-        if (keyCode < 0) {
-            return noneComponent.getTranslatedName();
-        }
-        return InputConstants.Type.KEYSYM.getOrCreate(keyCode).getDisplayName().getString();
+        return KeybindUtils.format(keyCode);
     }
 
     public void flushContent() {
@@ -466,6 +518,8 @@ public class ModuleDetailPanel {
         signature = signature * 31L + module.getKeyBind();
         signature = signature * 31L + (module.isHidden() ? 1 : 0);
         signature = signature * 31L + Float.floatToIntBits(state.getDetailScroll());
+        KeybindSetting listening = state.getListeningKeybindSetting();
+        signature = signature * 31L + (listening == null ? 0 : listening.getName().hashCode());
         for (Setting<?> setting : settings) {
             signature = signature * 31L + setting.getName().hashCode();
             signature = signature * 31L + (setting.isAvailable() ? 1 : 0);

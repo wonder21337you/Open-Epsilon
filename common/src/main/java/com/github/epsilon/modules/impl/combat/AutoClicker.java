@@ -1,6 +1,7 @@
 package com.github.epsilon.modules.impl.combat;
-import com.github.epsilon.Epsilon;
 
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.BoolSetting;
@@ -9,8 +10,6 @@ import com.github.epsilon.settings.impl.EnumSetting;
 import com.github.epsilon.settings.impl.IntSetting;
 import com.github.epsilon.utils.math.MathUtils;
 import net.minecraft.client.KeyMapping;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
 
 /*
  * Author Moli
@@ -144,7 +143,7 @@ public class AutoClicker extends Module {
 
     private void performClick(ClickButton clickButton) {
         KeyMapping key = clickButton == ClickButton.LEFT ? mc.options.keyAttack : mc.options.keyUse;
-        KeyMapping.click(Epsilon.platform.getKeyMappingKey(key));
+        KeyMapping.click(key.getDefaultKey());
     }
 
     private boolean shouldMiss() {
@@ -167,7 +166,7 @@ public class AutoClicker extends Module {
         if (currentTime < state.doubleClickTime) return;
 
         KeyMapping key = clickButton == ClickButton.LEFT ? mc.options.keyAttack : mc.options.keyUse;
-        KeyMapping.click(Epsilon.platform.getKeyMappingKey(key));
+        KeyMapping.click(key.getDefaultKey());
 
         state.pendingDoubleClick = false;
     }
@@ -257,4 +256,5 @@ public class AutoClicker extends Module {
             doubleClickTime = 0;
         }
     }
+
 }

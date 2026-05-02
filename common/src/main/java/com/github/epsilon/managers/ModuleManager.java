@@ -2,23 +2,33 @@ package com.github.epsilon.managers;
 
 import com.github.epsilon.assets.i18n.EpsilonTranslateComponent;
 import com.github.epsilon.assets.i18n.TranslateComponent;
-import com.github.epsilon.events.bus.EpsilonEventBus;
+import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.render.RenderFrameEvent;
+import com.github.epsilon.events.impl.KeyPressEvent;
+import com.github.epsilon.events.impl.MousePressEvent;
+import com.github.epsilon.gui.hudeditor.HudEditorScreen;
 import com.github.epsilon.gui.panel.PanelScreen;
+import com.github.epsilon.managers.sound.SoundKey;
+import com.github.epsilon.managers.sound.SoundManager;
 import com.github.epsilon.modules.HudModule;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.modules.impl.ClientSetting;
 import com.github.epsilon.modules.impl.combat.*;
+import com.github.epsilon.modules.impl.hud.InventoryHud;
+import com.github.epsilon.modules.impl.hud.ModuleListHud;
+import com.github.epsilon.modules.impl.hud.PotionHud;
+import com.github.epsilon.modules.impl.hud.WatermarkHud;
+import com.github.epsilon.modules.impl.hud.notification.NotificationsHud;
 import com.github.epsilon.modules.impl.player.*;
 import com.github.epsilon.modules.impl.render.*;
-import com.github.epsilon.modules.impl.render.notification.Notifications;
-import com.github.epsilon.modules.impl.world.AutoAccount;
-import com.github.epsilon.modules.impl.world.AutoFarm;
-import com.github.epsilon.modules.impl.world.FakePlayer;
-import com.github.epsilon.modules.impl.world.Stealer;
+import com.github.epsilon.utils.client.ClientUtils;
+import com.github.epsilon.utils.client.KeybindUtils;
+import com.github.epsilon.utils.player.ChatUtils;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +40,7 @@ public class ModuleManager {
     private List<Module> modules;
 
     private ModuleManager() {
-        EpsilonEventBus.INSTANCE.subscribe(this);
+        EventBus.INSTANCE.subscribe(this);
     }
 
     public void initModules() {
@@ -39,31 +49,42 @@ public class ModuleManager {
                 ClientSetting.INSTANCE,
 
                 // Combat
-                AimAssist.INSTANCE,
                 AntiBot.INSTANCE,
                 AutoClicker.INSTANCE,
+                AutoDtap.INSTANCE,
+                AutoHitCrystal.INSTANCE,
                 AutoMend.INSTANCE,
                 AutoTotem.INSTANCE,
                 CrystalAura.INSTANCE,
+                CrystalBlocker.INSTANCE,
+                HoverTotem.INSTANCE,
                 KillAura.INSTANCE,
+                KeyPearl.INSTANCE,
                 MaceAura.INSTANCE,
                 PacketMine.INSTANCE,
+                SafeAnchor.INSTANCE,
+                SafeCrystal.INSTANCE,
+                SilentAim.INSTANCE,
                 SpearKill.INSTANCE,
                 Surround.INSTANCE,
                 TriggerBot.INSTANCE,
                 Velocity.INSTANCE,
 
                 // Player
+                AutoFirework.INSTANCE,
                 AutoKouZi.INSTANCE,
                 AutoSprint.INSTANCE,
                 AutoTool.INSTANCE,
                 BreakCooldown.INSTANCE,
                 Disabler.INSTANCE,
                 ElytraFly.INSTANCE,
+                ElytraSwap.INSTANCE,
+                FakePlayer.INSTANCE,
+                FastWeb.INSTANCE,
                 InvManager.INSTANCE,
-                IQBoost.INSTANCE,
                 JumpCooldown.INSTANCE,
                 MovementFix.INSTANCE,
+                MultiTask.INSTANCE,
                 NoFall.INSTANCE,
                 NoRotate.INSTANCE,
                 NoSlow.INSTANCE,
@@ -71,28 +92,29 @@ public class ModuleManager {
                 PacketEat.INSTANCE,
                 SafeWalk.INSTANCE,
                 Scaffold.INSTANCE,
+                Stealer.INSTANCE,
                 Stuck.INSTANCE,
                 UseCooldown.INSTANCE,
                 VClip.INSTANCE,
                 Blink.INSTANCE,
 
                 // Render
+                AspectRatio.INSTANCE,
                 CameraClip.INSTANCE,
                 ESP.INSTANCE,
                 Fullbright.INSTANCE,
+                HandsView.INSTANCE,
+                Hat.INSTANCE,
                 NameTags.INSTANCE,
                 NoRender.INSTANCE,
                 PopChams.INSTANCE,
 
-                // World
-                AutoFarm.INSTANCE,
-                Stealer.INSTANCE,
-                FakePlayer.INSTANCE,
-                AutoAccount.INSTANCE,
-
                 // Hud
-                Notifications.INSTANCE,
-                ModuleList.INSTANCE
+                NotificationsHud.INSTANCE,
+                InventoryHud.INSTANCE,
+                ModuleListHud.INSTANCE,
+                PotionHud.INSTANCE,
+                WatermarkHud.INSTANCE
 
         ));
 
@@ -103,12 +125,6 @@ public class ModuleManager {
         }
     }
 
-    /**
-     * Registers a module from an addon and initializes its i18n.
-     *
-     * @param module          the module to register
-     * @param moduleComponent the TranslateComponent for this module (e.g. "myaddon.modules.fly")
-     */
     public void registerAddonModule(String addonId, Module module, TranslateComponent moduleComponent) {
         module.setAddonId(addonId);
         module.initI18n(moduleComponent);
@@ -119,45 +135,88 @@ public class ModuleManager {
         return modules;
     }
 
-    public void onKeyEvent(int keyCode, int action) {
-        if (keyCode == ClientSetting.INSTANCE.guiKeybind.getValue()
-                && action == InputConstants.PRESS
-                && Minecraft.getInstance().screen == null
-        ) {
-            Minecraft.getInstance().setScreen(PanelScreen.INSTANCE);
-        }
+    public void flushHuds(GuiGraphicsExtractor graphics) {
+        Minecraft mc = Minecraft.getInstance();
+        if (ClientUtils.isLoading() || mc.level == null || mc.screen instanceof HudEditorScreen) return;
 
-        for (final var module : modules) {
-            if (module.getKeyBind() == keyCode) {
-                if (module.getBindMode() == Module.BindMode.Hold) {
-                    if (action == InputConstants.PRESS || action == InputConstants.REPEAT) {
-                        module.setEnabled(true);
-                    } else if (action == InputConstants.RELEASE) {
-                        module.setEnabled(false);
-                    }
-                } else {
-                    if (action == InputConstants.PRESS) {
-                        module.toggle();
-                    }
-                }
+        for (Module m : modules) {
+            if (m instanceof HudModule module && module.isEnabled()) {
+                DeltaTracker delta = mc.getDeltaTracker();
+                module.updateLayout();
+                module.render(graphics, delta);
             }
         }
     }
 
     @EventHandler
-    public void onRenderGui(RenderFrameEvent.Pre event) {
+    private void onKeyPress(KeyPressEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null || mc.screen != null || event.getKey() == GLFW.GLFW_KEY_UNKNOWN) return;
 
-        if (Minecraft.getInstance().level == null) return;
+        int keyCode = event.getKey();
+        int action = event.getAction();
 
-        modules.forEach(module -> {
-            if (module.isEnabled() && module instanceof HudModule hudModule) {
-                RenderManager.INSTANCE.applyRenderHud(delta -> {
-                    hudModule.updateLayout(delta);
-                    hudModule.render(delta);
-                });
+        if (keyCode == ClientSetting.INSTANCE.guiKeybind.getValue() && action == InputConstants.PRESS) {
+            mc.setScreen(PanelScreen.INSTANCE);
+        }
+
+        dispatchKeyBind(keyCode, action);
+    }
+
+    @EventHandler
+    private void onMousePress(MousePressEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null || mc.screen != null) return;
+        dispatchKeyBind(KeybindUtils.encodeMouseButton(event.getButton()), event.getAction());
+    }
+
+    private void dispatchKeyBind(int keyCode, int action) {
+        boolean isPress = action == InputConstants.PRESS;
+        boolean isRelease = action == InputConstants.RELEASE;
+
+        List<Module> affectedModules = new ArrayList<>();
+        boolean hasEnabling = false;
+
+        for (Module module : modules) {
+            if (module.getKeyBind() != keyCode) continue;
+
+            if (module.getBindMode() == Module.BindMode.Toggle && isPress) {
+                if (!module.isEnabled()) {
+                    hasEnabling = true;
+                }
+                affectedModules.add(module);
+            } else if (module.getBindMode() == Module.BindMode.Hold) {
+                if (isPress && !module.isEnabled()) {
+                    hasEnabling = true;
+                    affectedModules.add(module);
+                } else if (isRelease && module.isEnabled()) {
+                    affectedModules.add(module);
+                }
             }
-        });
+        }
 
+        for (Module module : affectedModules) {
+            if (module.getBindMode() == Module.BindMode.Toggle) {
+                module.toggle();
+            } else if (module.getBindMode() == Module.BindMode.Hold) {
+                if (isPress && !module.isEnabled()) {
+                    module.setEnabled(true);
+                } else if (isRelease && module.isEnabled()) {
+                    module.setEnabled(false);
+                }
+            }
+            if (ClientSetting.INSTANCE.chatNotify.getValue()) {
+                ChatUtils.addChatMessage(module.getTranslatedName() + " is now " + (module.isEnabled() ? "enabled" : "disabled"));
+            }
+        }
+
+        if (!affectedModules.isEmpty() && ClientSetting.INSTANCE.soundNotify.getValue()) {
+            if (hasEnabling) {
+                SoundManager.INSTANCE.playInUi(SoundKey.ENABLE);
+            } else {
+                SoundManager.INSTANCE.playInUi(SoundKey.DISABLE);
+            }
+        }
     }
 
 }

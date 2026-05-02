@@ -15,10 +15,10 @@ import com.github.epsilon.gui.panel.dsl.PanelUiTree;
 import com.github.epsilon.gui.panel.popup.ConfirmActionPopup;
 import com.github.epsilon.gui.panel.popup.MessagePopup;
 import com.github.epsilon.gui.panel.popup.PanelPopupHost;
-import com.github.epsilon.gui.panel.util.PanelContentBuffer;
-import com.github.epsilon.gui.panel.util.PanelContentInvalidationState;
-import com.github.epsilon.gui.panel.util.ScrollBarDragState;
-import com.github.epsilon.gui.panel.util.ScrollBarUtil;
+import com.github.epsilon.gui.panel.utils.PanelContentBuffer;
+import com.github.epsilon.gui.panel.utils.PanelContentInvalidationState;
+import com.github.epsilon.gui.panel.utils.ScrollBarDragState;
+import com.github.epsilon.gui.panel.utils.ScrollBarUtils;
 import com.github.epsilon.managers.ConfigManager;
 import com.github.epsilon.utils.render.animation.Animation;
 import com.github.epsilon.utils.render.animation.Easing;
@@ -30,14 +30,11 @@ import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
-public final class ConfigClientSettingTab implements ClientSettingTabView {
+public class ConfigClientSettingTab implements ClientSettingTabView {
 
     private static final TranslateComponent inputPlaceholderComponent = EpsilonTranslateComponent.create("gui", "config.input.placeholder");
     private static final TranslateComponent currentComponent = EpsilonTranslateComponent.create("gui", "config.current");
@@ -109,7 +106,7 @@ public final class ConfigClientSettingTab implements ClientSettingTabView {
         state.setMaxConfigScroll(contentHeight - listViewport.height());
         float maxScroll = Math.max(0.0f, contentHeight - listViewport.height());
         boolean hasScrollBar = maxScroll > 0.0f;
-        float rowWidth = hasScrollBar ? listViewport.width() - ScrollBarUtil.TOTAL_WIDTH : listViewport.width();
+        float rowWidth = hasScrollBar ? listViewport.width() - ScrollBarUtils.TOTAL_WIDTH : listViewport.width();
         long contentSignature = buildContentSignature(configs, activeConfig);
         boolean rebuildContent = shouldRebuild(listViewport, mouseX, mouseY, configs, activeConfig, guiGraphics.guiHeight(), contentSignature);
 
@@ -653,5 +650,5 @@ public final class ConfigClientSettingTab implements ClientSettingTabView {
         EXPORT,
         IMPORT
     }
-}
 
+}

@@ -1,27 +1,21 @@
 package com.github.epsilon.graphics;
-import com.github.epsilon.Epsilon;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 
 public class LuminVertexFormats {
 
-    public static final VertexFormatElement ROUND_INNER_RECT =
-            Epsilon.platform.registerVertexFormatElement(Epsilon.platform.findNextVertexFormatElementId(), 2, VertexFormatElement.Type.FLOAT, false, 4);
+    private static final int ROUND_INNER_RECT_ID = findNextId();
+    private static final int ROUND_RADIUS_ID = findNextId(ROUND_INNER_RECT_ID + 1);
 
-    public static final VertexFormatElement ROUND_RADIUS =
-            Epsilon.platform.registerVertexFormatElement(Epsilon.platform.findNextVertexFormatElementId(), 4, VertexFormatElement.Type.FLOAT, false, 4);
+    public static final VertexFormatElement ROUND_INNER_RECT = VertexFormatElement.register(ROUND_INNER_RECT_ID, 2, VertexFormatElement.Type.FLOAT, false, 4);
+    public static final VertexFormatElement ROUND_RADIUS = VertexFormatElement.register(ROUND_RADIUS_ID, 4, VertexFormatElement.Type.FLOAT, false, 4);
 
     public static final VertexFormat ROUND_RECT = VertexFormat.builder()
             .add("Position", VertexFormatElement.POSITION)
             .add("Color", VertexFormatElement.COLOR)
             .add("InnerRect", ROUND_INNER_RECT)
             .add("Radius", ROUND_RADIUS)
-            .build();
-
-    public static final VertexFormat LINE = VertexFormat.builder()
-            .add("Position", VertexFormatElement.POSITION)
-            .add("Color", VertexFormatElement.COLOR)
             .build();
 
     public static final VertexFormat TEXTURE = VertexFormat.builder()
@@ -31,5 +25,18 @@ public class LuminVertexFormats {
             .add("InnerRect", ROUND_INNER_RECT)
             .add("Radius", ROUND_RADIUS)
             .build();
+
+    private static int findNextId() {
+        return findNextId(0);
+    }
+
+    private static int findNextId(int start) {
+        for (int i = Math.max(0, start); i < VertexFormatElement.MAX_COUNT; i++) {
+            if (VertexFormatElement.byId(i) == null) {
+                return i;
+            }
+        }
+        throw new IllegalStateException("VertexFormatElement count limit exceeded");
+    }
 
 }

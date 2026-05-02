@@ -1,7 +1,9 @@
 package com.github.epsilon.modules;
 
+import com.github.epsilon.gui.hudeditor.HudLayoutHelper;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.Mth;
 
 public abstract class HudModule extends Module {
@@ -19,15 +21,10 @@ public abstract class HudModule extends Module {
     }
 
     public float x, y, width, height;
+    private float anchorX, anchorY;
 
     private HorizontalAnchor horizontalAnchor = HorizontalAnchor.Left;
     private VerticalAnchor verticalAnchor = VerticalAnchor.Top;
-    private float anchorX;
-    private float anchorY;
-
-    public HudModule(String name, Category category) {
-        this(name, category, 0f, 0f, 20f, 20f);
-    }
 
     public HudModule(String name, Category category, float width, float height) {
         this(name, category, 0f, 0f, width, height);
@@ -44,17 +41,13 @@ public abstract class HudModule extends Module {
         this.anchorY = y;
     }
 
-    protected void updateBounds(DeltaTracker deltaTracker) {
-    }
-
-    public final void updateLayout(DeltaTracker deltaTracker) {
-        updateBounds(deltaTracker);
+    public final void updateLayout() {
         applyRenderPosition(getAnchoredRenderX(), getAnchoredRenderY(), false);
     }
 
     protected final void setBounds(float width, float height) {
-        this.width = Math.max(0.0f, width);
-        this.height = Math.max(0.0f, height);
+        this.width = width;
+        this.height = height;
     }
 
     public final boolean contains(double mouseX, double mouseY) {
@@ -73,7 +66,7 @@ public abstract class HudModule extends Module {
         horizontalAnchor = HorizontalAnchor.Left;
         verticalAnchor = VerticalAnchor.Top;
         applyRenderPosition(renderX, renderY, false);
-        // Legacy positions are raw top-left render coordinates.
+
         this.anchorX = this.x;
         this.anchorY = this.y;
     }
@@ -127,24 +120,17 @@ public abstract class HudModule extends Module {
     }
 
     private float getAnchoredRenderY() {
-        int screenHeight = getScreenHeight();
-        return HudLayoutHelper.getRenderY(verticalAnchor, anchorY, height, screenHeight);
+        return HudLayoutHelper.getRenderY(verticalAnchor, anchorY, height, getScreenHeight());
     }
 
     private static int getScreenWidth() {
-        if (Minecraft.getInstance().getWindow() == null) {
-            return 0;
-        }
         return Minecraft.getInstance().getWindow().getGuiScaledWidth();
     }
 
     private static int getScreenHeight() {
-        if (Minecraft.getInstance().getWindow() == null) {
-            return 0;
-        }
         return Minecraft.getInstance().getWindow().getGuiScaledHeight();
     }
 
-    public abstract void render(DeltaTracker deltaTracker);
+    public abstract void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker);
 
 }

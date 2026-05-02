@@ -8,9 +8,9 @@ import com.github.epsilon.gui.panel.PanelLayout;
 import com.github.epsilon.gui.panel.component.SettingRow;
 import com.github.epsilon.gui.panel.dsl.PanelUiTree;
 import com.github.epsilon.settings.impl.KeybindSetting;
+import com.github.epsilon.utils.client.KeybindUtils;
 import com.github.epsilon.utils.render.animation.Animation;
 import com.github.epsilon.utils.render.animation.Easing;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 
@@ -101,10 +101,10 @@ public class KeybindSettingRow extends SettingRow<KeybindSetting> {
     }
 
     private String formatKeybind(int keyCode) {
-        if (keyCode < 0) {
+        if (keyCode == KeybindUtils.NONE) {
             return noneComponent.getTranslatedName();
         }
-        return InputConstants.Type.KEYSYM.getOrCreate(keyCode).getDisplayName().getString();
+        return KeybindUtils.format(keyCode);
     }
-}
 
+}

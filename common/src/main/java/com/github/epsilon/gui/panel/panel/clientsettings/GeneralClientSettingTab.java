@@ -12,10 +12,10 @@ import com.github.epsilon.gui.panel.component.setting.KeybindSettingRow;
 import com.github.epsilon.gui.panel.dsl.PanelUiCompiler;
 import com.github.epsilon.gui.panel.dsl.PanelUiTree;
 import com.github.epsilon.gui.panel.popup.PanelPopupHost;
-import com.github.epsilon.gui.panel.util.PanelContentBuffer;
-import com.github.epsilon.gui.panel.util.PanelContentInvalidationState;
-import com.github.epsilon.gui.panel.util.ScrollBarDragState;
-import com.github.epsilon.gui.panel.util.ScrollBarUtil;
+import com.github.epsilon.gui.panel.utils.PanelContentBuffer;
+import com.github.epsilon.gui.panel.utils.PanelContentInvalidationState;
+import com.github.epsilon.gui.panel.utils.ScrollBarDragState;
+import com.github.epsilon.gui.panel.utils.ScrollBarUtils;
 import com.github.epsilon.modules.impl.ClientSetting;
 import com.github.epsilon.settings.Setting;
 import com.github.epsilon.settings.impl.KeybindSetting;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public final class GeneralClientSettingTab implements ClientSettingTabView {
+public class GeneralClientSettingTab implements ClientSettingTabView {
 
     private final PanelState state;
     private final RoundRectRenderer roundRectRenderer;
@@ -68,7 +68,7 @@ public final class GeneralClientSettingTab implements ClientSettingTabView {
         state.setMaxClientSettingScroll(contentHeight - bounds.height());
         float maxScroll = Math.max(0.0f, contentHeight - bounds.height());
         boolean hasScrollBar = maxScroll > 0.0f;
-        float rowWidth = hasScrollBar ? bounds.width() - ScrollBarUtil.TOTAL_WIDTH : bounds.width();
+        float rowWidth = hasScrollBar ? bounds.width() - ScrollBarUtils.TOTAL_WIDTH : bounds.width();
         long contentSignature = buildContentSignature(settings);
         boolean popupConsumesHover = settingListController.isPopupHovered(mouseX, mouseY);
         int effectiveMouseX = popupConsumesHover ? Integer.MIN_VALUE : mouseX;
@@ -284,5 +284,6 @@ public final class GeneralClientSettingTab implements ClientSettingTabView {
         }
         return signature;
     }
+
 }
 

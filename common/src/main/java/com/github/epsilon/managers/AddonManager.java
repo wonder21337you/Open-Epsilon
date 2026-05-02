@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public final class AddonManager {
+public class AddonManager {
 
     public static final AddonManager INSTANCE = new AddonManager();
 
@@ -68,5 +68,5 @@ public final class AddonManager {
     public synchronized List<EpsilonAddon> getAddons() {
         return List.copyOf(addons);
     }
-}
 
+}

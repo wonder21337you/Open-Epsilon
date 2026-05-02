@@ -1,6 +1,5 @@
 package com.github.epsilon.settings.impl;
 
-import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.Setting;
 import net.minecraft.util.Mth;
 
@@ -11,16 +10,8 @@ public class IntSetting extends Setting<Integer> {
     private final int step;
     private final boolean percentageMode;
 
-    public IntSetting(String name, Module module, int defaultValue, int min, int max, int step) {
-        this(name, module, defaultValue, min, max, step, () -> true, false);
-    }
-
-    public IntSetting(String name, Module module, int defaultValue, int min, int max, int step, boolean percentageMode) {
-        this(name, module, defaultValue, min, max, step, () -> true, percentageMode);
-    }
-
-    public IntSetting(String name, Module module, int defaultValue, int min, int max, int step, Dependency dependency, boolean percentageMode) {
-        super(name, module, dependency);
+    public IntSetting(String name, int defaultValue, int min, int max, int step, Dependency dependency, boolean percentageMode) {
+        super(name, dependency, null);
         this.value = defaultValue;
         this.defaultValue = defaultValue;
         this.min = min;

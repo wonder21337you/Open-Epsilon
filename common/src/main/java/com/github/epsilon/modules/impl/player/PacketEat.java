@@ -1,13 +1,13 @@
 package com.github.epsilon.modules.impl.player;
 
-import com.github.epsilon.events.network.PacketEvent;
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.PacketEvent;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.item.ItemStack;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
 
 public class PacketEat extends Module {
 

@@ -12,35 +12,45 @@ public class MoveUtils {
         return moveVector.x != 0 || moveVector.y != 0;
     }
 
-    public static double[] forwardWithoutStrafe(double d) {
-        float f3 = mc.player.getYRot();
-        final double d4 = d * Math.cos(Math.toRadians(f3 + 90.0f));
-        final double d5 = d * Math.sin(Math.toRadians(f3 + 90.0f));
+    public static double[] forwardWithoutStrafe(double speed) {
+        float yaw = mc.player.getYRot();
+
+        double rad = Math.toRadians(yaw + 90.0f);
+
+        double d4 = speed * Math.cos(rad);
+        double d5 = speed * Math.sin(rad);
+
         return new double[]{d4, d5};
     }
 
-    public static double[] forward(double d) {
+    public static double[] forward(double speed) {
+        float yaw = mc.player.getYRot();
         Vec2 moveVector = mc.player.input.getMoveVector();
-        float f = moveVector.y;
-        float f2 = moveVector.x;
-        float f3 = mc.player.getYRot();
-        if (f != 0.0f) {
-            if (f2 > 0.0f) {
-                f3 += ((f > 0.0f) ? -45 : 45);
-            } else if (f2 < 0.0f) {
-                f3 += ((f > 0.0f) ? 45 : -45);
+        float forward = moveVector.y;
+        float left = moveVector.x;
+
+        if (forward != 0.0f) {
+            if (left > 0.0f) {
+                yaw += ((forward > 0.0f) ? -45 : 45);
+            } else if (left < 0.0f) {
+                yaw += ((forward > 0.0f) ? 45 : -45);
             }
-            f2 = 0.0f;
-            if (f > 0.0f) {
-                f = 1.0f;
-            } else if (f < 0.0f) {
-                f = -1.0f;
+            left = 0.0f;
+            if (forward > 0.0f) {
+                forward = 1.0f;
+            } else if (forward < 0.0f) {
+                forward = -1.0f;
             }
         }
-        final double d2 = Math.sin(Math.toRadians(f3 + 90.0f));
-        final double d3 = Math.cos(Math.toRadians(f3 + 90.0f));
-        final double d4 = f * d * d3 + f2 * d * d2;
-        final double d5 = f * d * d2 - f2 * d * d3;
+
+        double rad = Math.toRadians(yaw + 90.0f);
+
+        double sin = Math.sin(rad);
+        double cos = Math.cos(rad);
+
+        double d4 = forward * speed * cos + left * speed * sin;
+        double d5 = forward * speed * sin - left * speed * cos;
+
         return new double[]{d4, d5};
     }
 

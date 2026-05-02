@@ -4,14 +4,7 @@ import com.github.epsilon.assets.i18n.DefaultTranslateComponent;
 import com.github.epsilon.managers.ModuleManager;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.Setting;
-import com.github.epsilon.settings.impl.BoolSetting;
-import com.github.epsilon.settings.impl.ButtonSetting;
-import com.github.epsilon.settings.impl.ColorSetting;
-import com.github.epsilon.settings.impl.DoubleSetting;
-import com.github.epsilon.settings.impl.EnumSetting;
-import com.github.epsilon.settings.impl.IntSetting;
-import com.github.epsilon.settings.impl.KeybindSetting;
-import com.github.epsilon.settings.impl.StringSetting;
+import com.github.epsilon.settings.impl.*;
 
 import java.awt.*;
 import java.util.ArrayList;

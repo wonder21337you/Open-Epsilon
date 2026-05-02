@@ -1,6 +1,6 @@
 package com.github.epsilon.gui.panel;
 
-public final class PanelLayout {
+public class PanelLayout {
 
     private PanelLayout() {
     }

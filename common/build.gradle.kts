@@ -1,6 +1,14 @@
 plugins {
     id("multiloader-common")
     id("net.neoforged.moddev")
+    id("com.github.gmazzo.buildconfig") version "6.0.9"
+}
+
+buildConfig {
+    packageName("com.github.epsilon")
+    useJavaOutput()
+    buildConfigField("String", "MOD_ID", "\"${project.property("mod_id")}\"")
+    buildConfigField("String", "VERSION", "\"${project.version}\"")
 }
 
 neoForge {
@@ -17,6 +25,8 @@ dependencies {
     annotationProcessor(group = "io.github.llamalad7", name = "mixinextras-common", version = "0.5.3")
     compileOnly(group = "org.ow2.asm", name = "asm", version = "9.8")
     compileOnly(group = "com.google.code.findbugs", name = "jsr305", version = "3.0.2")
+
+    compileOnly("org.bytedeco:javacv-platform:1.5.11")
 }
 
 configurations {
@@ -31,11 +41,12 @@ configurations {
 }
 
 artifacts {
-    add("commonJava", sourceSets.main.get().java.sourceDirectories.singleFile)
-    add("commonResources", sourceSets.main.get().resources.sourceDirectories.singleFile)
+    add("commonJava", file("src/main/java"))
+    add("commonResources", file("src/main/resources"))
 }
 
 val loaderAttribute = Attribute.of("io.github.mcgradleconventions.loader", String::class.java)
+
 listOf("apiElements", "runtimeElements", "sourcesElements").forEach { variant ->
     configurations.named(variant) {
         attributes {
@@ -43,6 +54,7 @@ listOf("apiElements", "runtimeElements", "sourcesElements").forEach { variant ->
         }
     }
 }
+
 sourceSets.configureEach {
     listOf(compileClasspathConfigurationName, runtimeClasspathConfigurationName).forEach { variant ->
         configurations.named(variant) {

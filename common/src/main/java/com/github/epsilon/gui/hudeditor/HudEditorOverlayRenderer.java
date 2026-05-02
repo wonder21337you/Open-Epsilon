@@ -2,7 +2,6 @@ package com.github.epsilon.gui.hudeditor;
 
 import com.github.epsilon.graphics.renderers.RectRenderer;
 import com.github.epsilon.graphics.renderers.TextRenderer;
-import com.github.epsilon.modules.HudLayoutHelper;
 import com.github.epsilon.modules.HudModule;
 import net.minecraft.util.Mth;
 

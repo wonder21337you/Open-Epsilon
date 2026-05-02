@@ -3,8 +3,8 @@ package com.github.epsilon.assets.holders;
 import com.github.epsilon.assets.i18n.TranslateComponent;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class TranslateHolder {
 

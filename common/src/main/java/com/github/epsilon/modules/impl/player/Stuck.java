@@ -1,8 +1,10 @@
 package com.github.epsilon.modules.impl.player;
 
-import com.github.epsilon.events.input.KeyboardInputEvent;
-import com.github.epsilon.events.network.PacketEvent;
-import com.github.epsilon.events.movement.TravelEvent;
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.ClickEvent;
+import com.github.epsilon.events.impl.KeyboardInputEvent;
+import com.github.epsilon.events.impl.PacketEvent;
+import com.github.epsilon.events.impl.TravelEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.EnumSetting;
@@ -10,8 +12,6 @@ import com.github.epsilon.utils.network.PacketUtils;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.player.PlayerInteractEvent;
 
 public class Stuck extends Module {
 
@@ -59,7 +59,7 @@ public class Stuck extends Module {
     }
 
     @EventHandler
-    private void onMoveMath(TravelEvent event) {
+    private void onTravel(TravelEvent event) {
         if (mode.is(Mode.CancelMove)) {
             if (mc.player.positionReminder < 19) {
                 event.setCancelled(true);
@@ -68,7 +68,7 @@ public class Stuck extends Module {
     }
 
     @EventHandler
-    private void onInteract(PlayerInteractEvent.RightClickItem event) {
+    private void onInteract(ClickEvent event) {
         if (mode.is(Mode.NoPacket)) {
             if (mc.player.getYRot() != lastYaw || mc.player.getXRot() != lastPitch) {
                 PacketUtils.sendSilently(new ServerboundMovePlayerPacket.Rot(mc.player.getYRot(), mc.player.getXRot(), mc.player.onGround(), mc.player.horizontalCollision));

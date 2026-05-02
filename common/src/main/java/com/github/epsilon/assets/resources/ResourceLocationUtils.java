@@ -12,7 +12,7 @@ import java.util.Optional;
 public class ResourceLocationUtils {
 
     public static Identifier getIdentifier(String path) {
-        return Identifier.fromNamespaceAndPath("open_epsilon", path);
+        return Identifier.fromNamespaceAndPath("epsilon", path);
     }
 
     public static ByteBuffer loadResource(Identifier identifier) {

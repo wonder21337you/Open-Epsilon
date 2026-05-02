@@ -12,11 +12,7 @@ import com.github.epsilon.gui.panel.PanelLayout;
 import com.github.epsilon.gui.panel.PanelState;
 import com.github.epsilon.gui.panel.dsl.PanelUiCompiler;
 import com.github.epsilon.gui.panel.dsl.PanelUiTree;
-import com.github.epsilon.gui.panel.panel.clientsettings.AddonClientSettingTab;
-import com.github.epsilon.gui.panel.panel.clientsettings.ClientSettingTabView;
-import com.github.epsilon.gui.panel.panel.clientsettings.ConfigClientSettingTab;
-import com.github.epsilon.gui.panel.panel.clientsettings.FriendClientSettingTab;
-import com.github.epsilon.gui.panel.panel.clientsettings.GeneralClientSettingTab;
+import com.github.epsilon.gui.panel.panel.clientsettings.*;
 import com.github.epsilon.gui.panel.popup.PanelPopupHost;
 import com.github.epsilon.utils.render.animation.Animation;
 import com.github.epsilon.utils.render.animation.Easing;
@@ -35,6 +31,7 @@ public class ClientSettingPanel {
     private static final TranslateComponent friendTabComponent = EpsilonTranslateComponent.create("gui", "tab.friend");
     private static final TranslateComponent configTabComponent = EpsilonTranslateComponent.create("gui", "tab.config");
     private static final TranslateComponent addonTabComponent = EpsilonTranslateComponent.create("gui", "tab.addon");
+
     private static final List<TabDefinition> TABS = List.of(
             new TabDefinition(PanelState.ClientSettingTab.GENERAL, generalTabComponent),
             new TabDefinition(PanelState.ClientSettingTab.FRIEND, friendTabComponent),

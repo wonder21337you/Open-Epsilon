@@ -52,7 +52,7 @@ public class PanelPopupHost {
     /**
      * 根据宿主覆盖区域计算一个居中的弹窗矩形。
      *
-     * @param width 期望宽度
+     * @param width  期望宽度
      * @param height 期望高度
      * @return 限制在宿主覆盖区域内的居中弹窗区域
      */
@@ -190,10 +190,10 @@ public class PanelPopupHost {
          * 将当前弹窗的 UI 内容提取到给定批次中。
          *
          * @param GuiGraphicsExtractor 当前 GUI 提取器
-         * @param renderBatch 目标渲染批次
-         * @param mouseX 鼠标 X 坐标
-         * @param mouseY 鼠标 Y 坐标
-         * @param partialTick 局部时间
+         * @param renderBatch          目标渲染批次
+         * @param mouseX               鼠标 X 坐标
+         * @param mouseY               鼠标 Y 坐标
+         * @param partialTick          局部时间
          */
         void extractGui(GuiGraphicsExtractor GuiGraphicsExtractor, PanelRenderBatch renderBatch, int mouseX, int mouseY, float partialTick);
 
@@ -240,4 +240,5 @@ public class PanelPopupHost {
             return false;
         }
     }
+
 }

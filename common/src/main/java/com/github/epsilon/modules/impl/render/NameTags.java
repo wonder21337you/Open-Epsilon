@@ -1,5 +1,7 @@
 package com.github.epsilon.modules.impl.render;
 
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.Render3DEvent;
 import com.github.epsilon.graphics.renderers.RectRenderer;
 import com.github.epsilon.graphics.renderers.TextRenderer;
 import com.github.epsilon.managers.FriendManager;
@@ -14,8 +16,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.render.Render3DEvent;
 import org.joml.Vector4d;
 
 import java.awt.*;

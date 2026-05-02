@@ -1,13 +1,13 @@
 package com.github.epsilon.modules.impl.player;
 
-import com.github.epsilon.events.input.KeyboardInputEvent;
-import com.github.epsilon.events.movement.MotionEvent;
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.KeyboardInputEvent;
+import com.github.epsilon.events.impl.SendPositionEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.DoubleSetting;
 import com.github.epsilon.settings.impl.EnumSetting;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
-import com.github.epsilon.events.bus.EventHandler;
 
 public class NoFall extends Module {
 
@@ -30,7 +30,7 @@ public class NoFall extends Module {
     private boolean jump;
 
     @EventHandler
-    private void onMotion(MotionEvent event) {
+    private void onMotion(SendPositionEvent event) {
         if (nullCheck()) return;
 
         if (mc.player.fallDistance > fallDistance.getValue()) {

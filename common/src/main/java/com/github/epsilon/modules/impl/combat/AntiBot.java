@@ -1,6 +1,9 @@
 package com.github.epsilon.modules.impl.combat;
 
-import com.github.epsilon.events.network.PacketEvent;
+import com.github.epsilon.events.bus.EventHandler;
+import com.github.epsilon.events.impl.PacketEvent;
+import com.github.epsilon.events.impl.PlayerTickEvent;
+import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -9,8 +12,6 @@ import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.GameType;
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.tick.TickEvent;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class AntiBot extends Module {
     }
 
     @EventHandler
-    public void onRespawn(TickEvent.Pre event) {
+    public void onRespawn(PlayerTickEvent.Pre event) {
         if (mc.player == null) return;
         if (mc.player.tickCount <= 1) {
             ids.clear();

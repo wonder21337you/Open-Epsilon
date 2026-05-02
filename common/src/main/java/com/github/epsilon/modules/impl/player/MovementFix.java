@@ -1,6 +1,6 @@
 package com.github.epsilon.modules.impl.player;
 
-import com.github.epsilon.events.input.KeyboardInputEvent;
+import com.github.epsilon.events.impl.KeyboardInputEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import net.minecraft.util.Mth;
@@ -18,7 +18,7 @@ public class MovementFix extends Module {
         float strafe = event.getStrafe();
 
         int angleUnit = 45;
-        float angleTolerance = 22.5F;
+        float angleTolerance = 22.5f;
         float directionFactor = Math.max(Math.abs(forward), Math.abs(strafe));
         double angleDifference = Mth.wrapDegrees(getDirection(forward, strafe) - yaw);
         double angleDistance = Math.abs(angleDifference);
@@ -57,25 +57,25 @@ public class MovementFix extends Module {
 
         if (forward != 0.0F || strafe != 0.0F) {
             if (isMovingBack && !isMovingSideways) {
-                return yaw + 180.0F;
+                return yaw + 180.0f;
             }
             if (isMovingForward && isMovingLeft) {
-                return yaw + 45.0F;
+                return yaw + 45.0f;
             }
             if (isMovingForward && isMovingRight) {
-                return yaw - 45.0F;
+                return yaw - 45.0f;
             }
             if (!isMovingStraight && isMovingLeft) {
-                return yaw + 90.0F;
+                return yaw + 90.0f;
             }
             if (!isMovingStraight) {
-                return yaw - 90.0F;
+                return yaw - 90.0f;
             }
             if (isMovingBack && isMovingLeft) {
-                return yaw + 135.0F;
+                return yaw + 135.0f;
             }
             if (isMovingBack) {
-                return yaw - 135.0F;
+                return yaw - 135.0f;
             }
         }
 

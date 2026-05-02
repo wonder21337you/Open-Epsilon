@@ -45,4 +45,5 @@ public class ButtonSettingRow extends SettingRow<ButtonSetting> {
     public boolean hasActiveAnimation() {
         return !hoverAnimation.isFinished();
     }
+
 }

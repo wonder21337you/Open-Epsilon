@@ -4,7 +4,6 @@ import com.github.epsilon.assets.holders.TextureCacheHolder;
 import com.github.epsilon.assets.holders.TranslateHolder;
 import com.github.epsilon.gui.panel.dsl.PanelUiTree;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
-import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -12,12 +11,7 @@ import java.util.concurrent.Executor;
 public class LanguageReloadListener implements PreparableReloadListener {
 
     @Override
-    public @NonNull CompletableFuture<Void> reload(
-            @NonNull SharedState sharedState,
-            @NonNull Executor exectutor,
-            PreparationBarrier barrier,
-            @NonNull Executor applyExectutor
-    ) {
+    public CompletableFuture<Void> reload(SharedState sharedState, Executor exectutor, PreparationBarrier barrier, Executor applyExectutor) {
         return CompletableFuture.completedFuture(null)
                 .thenCompose(barrier::wait)
                 .thenRunAsync(() -> {

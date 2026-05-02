@@ -5,6 +5,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
 public class FallingPlayer {
+
     public double x;
     public double y;
     public double z;
@@ -15,7 +16,6 @@ public class FallingPlayer {
     private final float strafe;
     private final float forward;
     private float jumpMovementFactor;
-    private Minecraft mc = Minecraft.getInstance();
 
     public FallingPlayer(double x, double y, double z, double motionX, double motionY, double motionZ, float yaw, float strafe, float forward) {
         this.x = x;
@@ -30,17 +30,7 @@ public class FallingPlayer {
     }
 
     public FallingPlayer(Player player) {
-        this(
-                player.getX(),
-                player.getY(),
-                player.getZ(),
-                player.getDeltaMovement().x,
-                player.getDeltaMovement().y,
-                player.getDeltaMovement().z,
-                player.getYRot(),
-                player.xxa,
-                player.zza
-        );
+        this(player.getX(), player.getY(), player.getZ(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z, player.getYRot(), player.xxa, player.zza);
         float f = player.level().getBlockState(player.blockPosition()).getBlock().getJumpFactor();
         float f1 = player.level().getBlockState(player.getOnPos()).getBlock().getJumpFactor();
         float jumpingVelocity = 0.42F * ((double) f == 1.0 ? f1 : f) + player.getJumpBoostPower();
@@ -58,7 +48,7 @@ public class FallingPlayer {
             }
 
             float fixedJumpFactor = this.jumpMovementFactor;
-            if (this.mc.player.isSprinting()) {
+            if (Minecraft.getInstance().player.isSprinting()) {
                 fixedJumpFactor *= 1.3F;
             }
 
@@ -89,7 +79,7 @@ public class FallingPlayer {
             }
 
             float fixedJumpFactor = this.jumpMovementFactor;
-            if (this.mc.player.isSprinting()) {
+            if (Minecraft.getInstance().player.isSprinting()) {
                 fixedJumpFactor *= 1.3F;
             }
 
@@ -111,12 +101,18 @@ public class FallingPlayer {
         this.motionZ *= 0.91;
     }
 
+    /**
+     * 这个是用来算 NoFall 落地水的
+     */
     public void calculateMLG(int ticks) {
         for (int i = 0; i < ticks; i++) {
             this.calculateForTick2();
         }
     }
 
+    /**
+     * 一般的就用这个算
+     */
     public void calculate(int ticks) {
         for (int i = 0; i < ticks; i++) {
             this.calculateForTick();

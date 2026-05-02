@@ -13,8 +13,7 @@ import com.github.epsilon.gui.panel.panel.ClientSettingPanel;
 import com.github.epsilon.gui.panel.panel.ModuleDetailPanel;
 import com.github.epsilon.gui.panel.panel.ModuleListPanel;
 import com.github.epsilon.gui.panel.popup.PanelPopupHost;
-import com.github.epsilon.gui.panel.util.IMEFocusHelper;
-import com.github.epsilon.managers.RenderManager;
+import com.github.epsilon.gui.panel.utils.IMEFocusHelper;
 import com.github.epsilon.modules.impl.ClientSetting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.IMEPreeditOverlay;
@@ -24,9 +23,6 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.PreeditEvent;
 import net.minecraft.network.chat.Component;
-import org.jspecify.annotations.NonNull;
-
-import javax.annotation.Nullable;
 
 /**
  * 面板 UI 的主屏幕宿主。
@@ -60,9 +56,9 @@ public class PanelScreen extends Screen {
     private boolean lastClientSettingMode;
     private long lastI18nRevision = Long.MIN_VALUE;
 
-    private @Nullable IMEPreeditOverlay preeditOverlay;
+    private IMEPreeditOverlay preeditOverlay;
 
-    private @Nullable LuminRenderSystem.LuminRenderTarget renderTarget;
+    private LuminRenderSystem.LuminRenderTarget renderTarget;
 
     private PanelScreen() {
         super(Component.literal("PanelGui"));
@@ -80,7 +76,7 @@ public class PanelScreen extends Screen {
      * 最后在统一的 render 提交阶段执行 flush。
      */
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
 
         final var window = minecraft.getWindow();
         if (renderTarget == null) {
@@ -156,7 +152,7 @@ public class PanelScreen extends Screen {
 
         popupHost.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        RenderManager.INSTANCE.applyRender(this::flushQueuedRenderers);
+        flushQueuedRenderers();
 
         LuminRenderSystem.setActiveTarget(null);
 
@@ -202,6 +198,17 @@ public class PanelScreen extends Screen {
         double mouseX = event.x();
         double mouseY = event.y();
         if (event.button() != 0) {
+            if (state.getListeningKeyBindModule() != null && moduleDetailPanel.mouseClicked(event, isDoubleClick)) {
+                dirtyState.markAllDirty();
+                return true;
+            }
+            if (state.getListeningKeybindSetting() != null) {
+                boolean handledListening = state.isClientSettingMode() ? clientSettingPanel.mouseClicked(event, isDoubleClick) : moduleDetailPanel.mouseClicked(event, isDoubleClick);
+                if (handledListening) {
+                    dirtyState.markAllDirty();
+                    return true;
+                }
+            }
             return super.mouseClicked(event, isDoubleClick);
         }
 
@@ -250,7 +257,7 @@ public class PanelScreen extends Screen {
     }
 
     @Override
-    public boolean mouseReleased(@NonNull MouseButtonEvent event) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         if (inputRouter.routeMouseReleased(event, popupHost, moduleDetailPanel, moduleListPanel, clientSettingPanel, state.isClientSettingMode())) {
             dirtyState.markAllDirty();
             return true;
@@ -259,7 +266,7 @@ public class PanelScreen extends Screen {
     }
 
     @Override
-    public boolean mouseDragged(@NonNull MouseButtonEvent event, double mouseX, double mouseY) {
+    public boolean mouseDragged(MouseButtonEvent event, double mouseX, double mouseY) {
         if (inputRouter.routeMouseDragged(event, mouseX, mouseY, popupHost, moduleDetailPanel, moduleListPanel, clientSettingPanel, state.isClientSettingMode())) {
             dirtyState.markAllDirty();
             return true;
@@ -268,7 +275,7 @@ public class PanelScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(@NonNull KeyEvent event) {
+    public boolean keyPressed(KeyEvent event) {
         if (inputRouter.routeKeyPressed(event, popupHost, moduleDetailPanel, moduleListPanel, clientSettingPanel, state.isClientSettingMode())) {
             dirtyState.markAllDirty();
             return true;
@@ -281,7 +288,7 @@ public class PanelScreen extends Screen {
     }
 
     @Override
-    public boolean charTyped(@NonNull CharacterEvent event) {
+    public boolean charTyped(CharacterEvent event) {
         if (inputRouter.routeCharTyped(event, popupHost, moduleDetailPanel, moduleListPanel, clientSettingPanel, state.isClientSettingMode())) {
             dirtyState.markAllDirty();
             return true;
@@ -290,7 +297,7 @@ public class PanelScreen extends Screen {
     }
 
     @Override
-    public boolean preeditUpdated(@Nullable PreeditEvent event) {
+    public boolean preeditUpdated(PreeditEvent event) {
         this.preeditOverlay = event != null ? new IMEPreeditOverlay(event, this.font, 10) : null;
         return true;
     }
@@ -306,7 +313,7 @@ public class PanelScreen extends Screen {
      *
      * @return 当前渲染目标；首次渲染前可能为 {@code null}
      */
-    public @Nullable LuminRenderSystem.LuminRenderTarget getRenderTarget() {
+    public LuminRenderSystem.LuminRenderTarget getRenderTarget() {
         return renderTarget;
     }
 }

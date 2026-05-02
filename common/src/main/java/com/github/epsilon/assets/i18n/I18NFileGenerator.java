@@ -30,9 +30,44 @@ public class I18NFileGenerator {
         root.addProperty(PREFIX + "keybind.toggle", "");
         root.addProperty(PREFIX + "keybind.hold", "");
 
+        root.addProperty(PREFIX + "module.visible", "");
+        root.addProperty(PREFIX + "module.hidden", "");
+
         root.addProperty(PREFIX + "gui.search", "");
         root.addProperty(PREFIX + "gui.gameaccount", "");
         root.addProperty(PREFIX + "gui.clientsettings", "");
+        root.addProperty(PREFIX + "gui.no_module", "");
+
+        root.addProperty(PREFIX + "gui.tab.general", "");
+        root.addProperty(PREFIX + "gui.tab.friend", "");
+        root.addProperty(PREFIX + "gui.tab.config", "");
+
+        root.addProperty(PREFIX + "gui.friend.empty", "");
+        root.addProperty(PREFIX + "gui.friend.input.placeholder", "");
+
+        root.addProperty(PREFIX + "gui.config.input.placeholder", "");
+        root.addProperty(PREFIX + "gui.config.current", "");
+        root.addProperty(PREFIX + "gui.config.switch_hint", "");
+        root.addProperty(PREFIX + "gui.config.empty", "");
+        root.addProperty(PREFIX + "gui.config.action.saveas", "");
+        root.addProperty(PREFIX + "gui.config.action.reload", "");
+        root.addProperty(PREFIX + "gui.config.action.export", "");
+        root.addProperty(PREFIX + "gui.config.action.import", "");
+        root.addProperty(PREFIX + "gui.config.delete.confirm.title", "");
+        root.addProperty(PREFIX + "gui.config.delete.confirm.message", "");
+        root.addProperty(PREFIX + "gui.config.delete.confirm.confirm", "");
+        root.addProperty(PREFIX + "gui.config.delete.confirm.cancel", "");
+        root.addProperty(PREFIX + "gui.config.error.title", "");
+        root.addProperty(PREFIX + "gui.config.error.ok", "");
+        root.addProperty(PREFIX + "gui.config.error.save", "");
+        root.addProperty(PREFIX + "gui.config.error.reload", "");
+        root.addProperty(PREFIX + "gui.config.error.export", "");
+        root.addProperty(PREFIX + "gui.config.error.import", "");
+        root.addProperty(PREFIX + "gui.config.error.switch", "");
+        root.addProperty(PREFIX + "gui.config.error.delete", "");
+        root.addProperty(PREFIX + "gui.config.error.delete_last", "");
+        root.addProperty(PREFIX + "gui.config.export.success.title", "");
+        root.addProperty(PREFIX + "gui.config.export.success.message", "");
 
         for (Module module : ModuleManager.INSTANCE.getModules()) {
             if (module.translateComponent == null) continue;
@@ -52,6 +87,10 @@ public class I18NFileGenerator {
                 }
             }
         }
+
+        // NotificationManager 手动创建的 enabled/disabled 键
+        root.addProperty(PREFIX + "modules.notifications hud.enabled", "");
+        root.addProperty(PREFIX + "modules.notifications hud.disabled", "");
 
         final var file = new File(filePath);
         if (!file.exists()) {

@@ -12,14 +12,8 @@ import com.google.gson.*;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.FileVisitResult;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -42,23 +36,16 @@ public class ConfigManager {
     private static final String EXPORT_METADATA_FILE_NAME = "config-info.json";
     private static final Pattern INVALID_CONFIG_NAME_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\p{Cntrl}]");
 
-    /**
-     * Root directory: epsilon-config/
-     */
-    private static final Path configDir = Paths.get("epsilon-config");
+    private static final Path configDir = Paths.get(System.getProperty("user.home"), ".epsilon");
     private static final Path configsDir = configDir.resolve(CONFIGS_FOLDER);
     private static final Path importsDir = configDir.resolve(IMPORTS_FOLDER);
     private static final Path exportsDir = configDir.resolve(EXPORTS_FOLDER);
     private static final Path activeConfigFile = configDir.resolve(ACTIVE_CONFIG_FILE_NAME);
     private static final Path legacyFriendFile = configDir.resolve(FRIENDS_FILE_NAME);
 
-    // INSTANCE must be declared AFTER all static fields it depends on
     public static final ConfigManager INSTANCE = new ConfigManager();
 
-    private final Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .disableHtmlEscaping()
-            .create();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     private String activeConfigName = DEFAULT_CONFIG_NAME;
 
@@ -77,9 +64,6 @@ public class ConfigManager {
         }
     }
 
-    /**
-     * Returns the root config directory (replaces the old single-file getter).
-     */
     public synchronized Path getConfigDir() {
         return configDir;
     }
@@ -269,10 +253,6 @@ public class ConfigManager {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Per-module file helpers
-    // -------------------------------------------------------------------------
-
     private Path getModuleFile(Path configStorageDir, Module module) {
         String addonId = module.getAddonId() != null ? module.getAddonId() : "unknown";
         return configStorageDir.resolve(addonId).resolve(module.getName() + ".json");
@@ -348,10 +328,7 @@ public class ConfigManager {
         try {
             Files.createDirectories(file.getParent());
             String json = gson.toJson(buildModuleObject(module));
-            Files.writeString(file, json, StandardCharsets.UTF_8,
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.TRUNCATE_EXISTING,
-                    StandardOpenOption.WRITE);
+            Files.writeString(file, json, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
         } catch (IOException e) {
             Epsilon.LOGGER.error("写入模块配置失败: {}", file, e);
             throw e;
@@ -367,7 +344,7 @@ public class ConfigManager {
         obj.addProperty("hidden", module.isHidden());
 
         if (module instanceof HudModule hud) {
-            hud.updateLayout(null);
+            hud.updateLayout();
             obj.addProperty("hudX", hud.x);
             obj.addProperty("hudY", hud.y);
             obj.addProperty("hudAnchorX", hud.getAnchorX());
@@ -455,11 +432,6 @@ public class ConfigManager {
         return obj;
     }
 
-
-    // -------------------------------------------------------------------------
-    // Friends
-    // -------------------------------------------------------------------------
-
     private synchronized void saveFriends(Path configStorageDir) throws IOException {
         Path friendFile = configStorageDir.resolve(FRIENDS_FILE_NAME);
         JsonArray array = new JsonArray();
@@ -496,10 +468,6 @@ public class ConfigManager {
             Epsilon.LOGGER.error("读取好友文件失败: {}", friendFile, e);
         }
     }
-
-    // -------------------------------------------------------------------------
-    // Setting serialization / deserialization
-    // -------------------------------------------------------------------------
 
     private static JsonElement serializeSetting(Setting<?> setting) {
         if (setting instanceof KeybindSetting s) return new JsonPrimitive(s.getValue());
@@ -902,4 +870,5 @@ public class ConfigManager {
 
         return candidate;
     }
+
 }

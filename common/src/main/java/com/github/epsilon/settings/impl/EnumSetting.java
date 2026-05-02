@@ -1,26 +1,25 @@
 package com.github.epsilon.settings.impl;
 
 import com.github.epsilon.assets.i18n.TranslateComponent;
-import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.Setting;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class EnumSetting<E extends Enum<E>> extends Setting<E> {
 
     private final Map<E, TranslateComponent> modeTranslations = new HashMap<>();
     private final E[] constants;
 
-    public EnumSetting(String name, Module module, E defaultValue, Dependency dependency) {
-        super(name, module, dependency);
+    public EnumSetting(String name, E defaultValue, Dependency dependency, Consumer<E> onChanged) {
+        super(name, dependency, onChanged);
         this.value = defaultValue;
         this.defaultValue = defaultValue;
 
         Class<E> enumClass = defaultValue.getDeclaringClass();
         constants = enumClass.getEnumConstants();
-        // Mode translations deferred to initTranslateComponent()
     }
 
     @Override
