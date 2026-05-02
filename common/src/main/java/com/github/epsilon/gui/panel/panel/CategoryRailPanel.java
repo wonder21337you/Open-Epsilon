@@ -104,11 +104,9 @@ public class CategoryRailPanel {
                 float subtitleY = titleY + titleHeight + pad;
                 float titleOffset = (1.0f - titleProgress) * 8.0f;
                 float subtitleOffset = (1.0f - subtitleProgress) * 10.0f;
-                scope.text("Open Epsilon " + Epsilon.VERSION, bounds.x() + 38.0f + titleOffset, titleY, titleScale,
-                        MD3Theme.withAlpha(MD3Theme.TEXT_PRIMARY, (int) (255 * titleProgress)), StaticFontLoader.DUCKSANS);
+                scope.text("Open Epsilon", bounds.x() + 38.0f + titleOffset, titleY, titleScale, MD3Theme.withAlpha(MD3Theme.TEXT_PRIMARY, (int) (255 * titleProgress)), StaticFontLoader.DUCKSANS);
                 if (subtitleProgress > 0.02f) {
-                    scope.text("Next-Generation", bounds.x() + 38.0f + subtitleOffset, subtitleY, subtitleScale,
-                            MD3Theme.withAlpha(MD3Theme.TEXT_SECONDARY, (int) (210 * subtitleProgress)));
+                    scope.text(Epsilon.VERSION, bounds.x() + 38.0f + subtitleOffset, subtitleY, subtitleScale, MD3Theme.withAlpha(MD3Theme.TEXT_SECONDARY, (int) (210 * subtitleProgress)));
                 }
                 if (dividerProgress > 0.02f) {
                     float dividerY = subtitleY + clippedTextRenderer.getHeight(subtitleScale) + 4.0f;
