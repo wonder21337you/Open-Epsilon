@@ -1,17 +1,17 @@
 package com.github.epsilon.events.impl;
 
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+
 public class Render2DEvent {
 
-    public static class BeforeInGameGui extends Render2DEvent {
+    private final GuiGraphicsExtractor guiGraphics;
+
+    public Render2DEvent(GuiGraphicsExtractor guiGraphics) {
+        this.guiGraphics = guiGraphics;
     }
 
-    public static class AfterInGameGui extends Render2DEvent {
-    }
-
-    public static class BeforeGui extends Render2DEvent {
-    }
-
-    public static class AfterGui extends Render2DEvent {
+    public GuiGraphicsExtractor getGuiGraphics() {
+        return guiGraphics;
     }
 
 }

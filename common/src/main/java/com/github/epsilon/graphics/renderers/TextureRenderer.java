@@ -38,6 +38,10 @@ public class TextureRenderer implements IRenderer {
 
     private final Map<Object, Batch> batches = new LinkedHashMap<>();
 
+    public void addQuadTexture(LuminTexture texture, float x, float y, float width, float height, float u0, float v0, float u1, float v1, Color color) {
+        addRoundedTexture(texture, x, y, width, height, 0f, u0, v0, u1, v1, color);
+    }
+
     public void addQuadTexture(Identifier texture, float x, float y, float width, float height, float u0, float v0, float u1, float v1, Color color) {
         addRoundedTexture(texture, x, y, width, height, 0f, u0, v0, u1, v1, color, false);
     }

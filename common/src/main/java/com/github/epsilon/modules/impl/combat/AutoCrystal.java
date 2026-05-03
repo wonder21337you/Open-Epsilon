@@ -1,5 +1,6 @@
 package com.github.epsilon.modules.impl.combat;
 
+import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.Render3DEvent;
 import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.graphics.renderers.TextRenderer;
@@ -37,7 +38,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import com.github.epsilon.events.bus.EventHandler;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 

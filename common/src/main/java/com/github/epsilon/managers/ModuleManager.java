@@ -6,6 +6,7 @@ import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.KeyPressEvent;
 import com.github.epsilon.events.impl.MousePressEvent;
+import com.github.epsilon.events.impl.Render2DEvent;
 import com.github.epsilon.gui.hudeditor.HudEditorScreen;
 import com.github.epsilon.gui.panel.PanelScreen;
 import com.github.epsilon.managers.sound.SoundKey;
@@ -27,7 +28,6 @@ import com.github.epsilon.utils.player.ChatUtils;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -136,7 +136,8 @@ public class ModuleManager {
         return modules;
     }
 
-    public void flushHuds(GuiGraphicsExtractor graphics) {
+    @EventHandler
+    private void onRender2D(Render2DEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (ClientUtils.isLoading() || mc.level == null || mc.screen instanceof HudEditorScreen) return;
 
@@ -144,7 +145,7 @@ public class ModuleManager {
             if (m instanceof HudModule module && module.isEnabled()) {
                 DeltaTracker delta = mc.getDeltaTracker();
                 module.updateLayout();
-                module.render(graphics, delta);
+                module.render(event.getGuiGraphics(), delta);
             }
         }
     }
@@ -167,8 +168,9 @@ public class ModuleManager {
     @EventHandler
     private void onMousePress(MousePressEvent event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.screen != null) return;
-        dispatchKeyBind(KeybindUtils.encodeMouseButton(event.getButton()), event.getAction());
+        if (mc.level != null && mc.screen == null) {
+            dispatchKeyBind(KeybindUtils.encodeMouseButton(event.getButton()), event.getAction());
+        }
     }
 
     private void dispatchKeyBind(int keyCode, int action) {

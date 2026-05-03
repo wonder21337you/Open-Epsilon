@@ -17,18 +17,6 @@ import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.OptionalDouble;
-import java.util.OptionalInt;
-import java.util.Set;
-import java.util.Map.Entry;
-import java.util.function.Supplier;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -38,21 +26,11 @@ import net.minecraft.client.gui.render.GuiItemAtlas;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.OversizedItemRenderer;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.CubeMap;
-import net.minecraft.client.renderer.MappableRingBuffer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.Projection;
-import net.minecraft.client.renderer.ProjectionMatrixBuffer;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.item.TrackingItemStackRenderState;
 import net.minecraft.client.renderer.state.WindowRenderState;
-import net.minecraft.client.renderer.state.gui.BlitRenderState;
-import net.minecraft.client.renderer.state.gui.GlyphRenderState;
-import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
-import net.minecraft.client.renderer.state.gui.GuiItemRenderState;
-import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.client.renderer.state.gui.*;
 import net.minecraft.client.renderer.state.gui.pip.OversizedItemRenderState;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.Identifier;
@@ -66,6 +44,11 @@ import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.system.MemoryUtil;
 import org.slf4j.Logger;
+
+import java.nio.ByteBuffer;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Supplier;
 
 public class EpsilonGuiRenderer implements AutoCloseable {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -100,13 +83,13 @@ public class EpsilonGuiRenderer implements AutoCloseable {
     private final MultiBufferSource.BufferSource bufferSource;
     private final SubmitNodeCollector submitNodeCollector;
     private final FeatureRenderDispatcher featureRenderDispatcher;
-    private @Nullable GuiItemAtlas itemAtlas;
+    private GuiItemAtlas itemAtlas;
     private int cachedGuiScale;
     private final CubeMap cubeMap = new CubeMap(Identifier.withDefaultNamespace("textures/gui/title/background/panorama"));
-    private @Nullable ScreenRectangle previousScissorArea = null;
-    private @Nullable RenderPipeline previousPipeline = null;
-    private @Nullable TextureSetup previousTextureSetup = null;
-    private @Nullable BufferBuilder bufferBuilder = null;
+    private ScreenRectangle previousScissorArea = null;
+    private RenderPipeline previousPipeline = null;
+    private TextureSetup previousTextureSetup = null;
+    private BufferBuilder bufferBuilder = null;
 
     public EpsilonGuiRenderer(
             GuiRenderState renderState,
@@ -196,7 +179,7 @@ public class EpsilonGuiRenderer implements AutoCloseable {
             Minecraft minecraft = Minecraft.getInstance();
             WindowRenderState windowState = minecraft.gameRenderer.getGameRenderState().windowRenderState;
             this.guiProjection
-                    .setupOrtho(1000.0F, 11000.0F, (float)windowState.width / windowState.guiScale, (float)windowState.height / windowState.guiScale, true);
+                    .setupOrtho(1000.0F, 11000.0F, (float) windowState.width / windowState.guiScale, (float) windowState.height / windowState.guiScale, true);
             RenderSystem.setProjectionMatrix(this.guiProjectionMatrixBuffer.getBuffer(this.guiProjection), ProjectionType.ORTHOGRAPHIC);
             RenderTarget mainRenderTarget = minecraft.getMainRenderTarget();
             int maxIndexCount = 0;
@@ -546,7 +529,7 @@ public class EpsilonGuiRenderer implements AutoCloseable {
         double bottom = windowHeight - rectangle.bottom() * guiScale;
         double width = rectangle.width() * guiScale;
         double height = rectangle.height() * guiScale;
-        renderPass.enableScissor((int)left, (int)bottom, Math.max(0, (int)width), Math.max(0, (int)height));
+        renderPass.enableScissor((int) left, (int) bottom, Math.max(0, (int) width), Math.max(0, (int) height));
     }
 
     public void registerPanoramaTextures(TextureManager textureManager) {
@@ -578,15 +561,16 @@ public class EpsilonGuiRenderer implements AutoCloseable {
             int indexCount,
             RenderPipeline pipeline,
             TextureSetup textureSetup,
-            @Nullable ScreenRectangle scissorArea
+            ScreenRectangle scissorArea
     ) {
     }
 
-    private record MeshToDraw(MeshData mesh, RenderPipeline pipeline, TextureSetup textureSetup, @Nullable ScreenRectangle scissorArea)
-            implements AutoCloseable {
+    private record MeshToDraw(MeshData mesh, RenderPipeline pipeline, TextureSetup textureSetup,
+                              ScreenRectangle scissorArea) implements AutoCloseable {
         @Override
         public void close() {
             this.mesh.close();
         }
     }
+
 }
