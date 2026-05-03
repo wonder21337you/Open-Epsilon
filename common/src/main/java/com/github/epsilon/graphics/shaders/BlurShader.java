@@ -100,10 +100,8 @@ public class BlurShader {
 
         if (this.input == null) {
             this.input = createRenderTarget();
-            return;
-        }
-
-        if (this.input.width != width || this.input.height != height) {
+            this.input.resize(fbWidth, fbHeight);
+        } else if (this.input.width != fbWidth || this.input.height != fbHeight) {
             this.input.resize(fbWidth, fbHeight);
         }
 
