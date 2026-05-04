@@ -4,8 +4,8 @@ import com.github.epsilon.Epsilon;
 import com.github.epsilon.graphics.LuminRenderSystem;
 import com.github.epsilon.graphics.renderers.RectRenderer;
 import com.github.epsilon.graphics.renderers.ShadowRenderer;
-import com.github.epsilon.graphics.shaders.GlslSandBox;
 import com.github.epsilon.graphics.renderers.TextRenderer;
+import com.github.epsilon.graphics.shaders.GlslSandBox;
 import com.github.epsilon.graphics.text.StaticFontLoader;
 import com.github.epsilon.gui.panel.MD3Theme;
 import com.github.epsilon.modules.impl.ClientSetting;
@@ -288,7 +288,8 @@ public class MainMenuScreen extends Screen {
     private record Layout(float scale, float titleX, float titleY, float titleScale, float subtitleScale,
                           float titleSubtitleGap, float titleAccentGap, float titleAccentWidth, float titleAccentHeight,
                           float buttonsStartX, float buttonsY, float buttonWidth, float buttonGap, float buttonRadius,
-                          float buttonLineHeight, float buttonHitPaddingX, float buttonHitPaddingTop, float buttonHitHeight,
+                          float buttonLineHeight, float buttonHitPaddingX, float buttonHitPaddingTop,
+                          float buttonHitHeight,
                           float buttonRevealDistance, float buttonTextScale, float buttonTextOffsetY) {
         private static Layout resolve(int width, int height, int entryCount) {
             float scale = Mth.clamp((width * 2.0f + height) / 900.0f + 0.08f, 0.72f, 1.24f);

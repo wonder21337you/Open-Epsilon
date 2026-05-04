@@ -48,7 +48,8 @@ public class GlslSandBox implements AutoCloseable {
                 .withFragmentShader(shader)
                 .withUniform("GlslSandboxInfo", UniformType.UNIFORM_BUFFER)
                 .withCull(false)
-                .build());
+                .build()
+        );
     }
 
     private void ensureUniformBuffer() {
@@ -117,5 +118,5 @@ public class GlslSandBox implements AutoCloseable {
             sandboxInfoUniformBuf = null;
         }
     }
-}
 
+}

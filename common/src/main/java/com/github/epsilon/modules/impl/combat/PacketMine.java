@@ -8,11 +8,7 @@ import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.graphics.renderers.TextRenderer;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
-import com.github.epsilon.settings.impl.BoolSetting;
-import com.github.epsilon.settings.impl.ColorSetting;
-import com.github.epsilon.settings.impl.DoubleSetting;
-import com.github.epsilon.settings.impl.EnumSetting;
-import com.github.epsilon.settings.impl.IntSetting;
+import com.github.epsilon.settings.impl.*;
 import com.github.epsilon.utils.network.PacketUtils;
 import com.github.epsilon.utils.player.EnchantmentUtils;
 import com.github.epsilon.utils.render.Render3DUtils;
@@ -134,7 +130,7 @@ public class PacketMine extends Module {
         }
 
         var player = mc.player;
-        if (player == null || player.getAbilities().instabuild) {
+        if (player.getAbilities().instabuild) {
             resetState(false);
             return;
         }
@@ -244,7 +240,6 @@ public class PacketMine extends Module {
     private boolean updateAction(MineAction action, long now) {
         var player = mc.player;
         var level = mc.level;
-        if (player == null || level == null) return true;
 
         if (action.removed) return true;
         if (farCancel.getValue() && !withinRange(action.pos)) {
@@ -376,7 +371,7 @@ public class PacketMine extends Module {
     }
 
     private void performBreak(MineAction action) {
-        if (action.removed || nullCheck() || mc.player == null || mc.gameMode == null) return;
+        if (action.removed) return;
 
         var player = mc.player;
         var gameMode = mc.gameMode;
@@ -431,7 +426,8 @@ public class PacketMine extends Module {
     }
 
     private void switchTo(int slot) {
-        if (autoSwitch.getValue() == SwitchMode.None || mc.player == null || mc.gameMode == null || mc.getConnection() == null) return;
+        if (autoSwitch.getValue() == SwitchMode.None || mc.player == null || mc.gameMode == null || mc.getConnection() == null)
+            return;
 
         var player = mc.player;
         var gameMode = mc.gameMode;
@@ -476,7 +472,8 @@ public class PacketMine extends Module {
     }
 
     private void restoreSwap() {
-        if (swapState == null || nullCheck() || mc.player == null || mc.gameMode == null || mc.getConnection() == null) return;
+        if (swapState == null || nullCheck() || mc.player == null || mc.gameMode == null || mc.getConnection() == null)
+            return;
 
         var player = mc.player;
         var gameMode = mc.gameMode;
@@ -715,4 +712,5 @@ public class PacketMine extends Module {
             return this.mode == mode && this.targetSlot == slot;
         }
     }
+
 }
