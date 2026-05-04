@@ -146,6 +146,7 @@ public class BlurShader {
                 OptionalDouble.empty())
         ) {
             renderPass.setPipeline(pipeline);
+            renderPass.enableScissor((int) pxX, (int) pxY, Math.max(0, (int) pxW), Math.max(0, (int) pxH));
             RenderSystem.bindDefaultUniforms(renderPass);
             renderPass.setUniform("BlurUniforms", uniforms.currentBuffer());
             renderPass.bindTexture("InputSampler", input.getColorTextureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
