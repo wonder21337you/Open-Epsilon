@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.player;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.bus.EventHandler;
@@ -9,7 +9,6 @@ import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.managers.RotationManager;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
-import com.github.epsilon.modules.impl.movement.SafeWalk;
 import com.github.epsilon.settings.impl.BoolSetting;
 import com.github.epsilon.settings.impl.ColorSetting;
 import com.github.epsilon.settings.impl.EnumSetting;
@@ -47,7 +46,7 @@ public class Scaffold extends Module {
     public static final Scaffold INSTANCE = new Scaffold();
 
     private Scaffold() {
-        super("Scaffold", Category.PLAYER);
+        super("Scaffold", Category.MOVEMENT);
         EventBus.INSTANCE.subscribe(new ConsumerListener<>(Render3DEvent.class,
                 event -> {
                     if (!render.getValue() || renderBoxes.isEmpty()) return;

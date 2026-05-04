@@ -85,7 +85,6 @@ public class ModuleManager {
                 NoRotate.INSTANCE,
                 Phase.INSTANCE,
                 PacketEat.INSTANCE,
-                Scaffold.INSTANCE,
                 Stealer.INSTANCE,
                 UseCooldown.INSTANCE,
 
@@ -98,6 +97,7 @@ public class ModuleManager {
                 NoFall.INSTANCE,
                 NoSlow.INSTANCE,
                 SafeWalk.INSTANCE,
+                Scaffold.INSTANCE,
                 Stuck.INSTANCE,
                 VClip.INSTANCE,
                 Velocity.INSTANCE,
