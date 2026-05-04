@@ -3,17 +3,11 @@ package com.github.epsilon.modules.impl.player;
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.KeyboardInputEvent;
 import com.github.epsilon.events.impl.SlowdownEvent;
-import com.github.epsilon.events.impl.TickEvent;
-import com.github.epsilon.managers.network.ClientboundPacketManager;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.BoolSetting;
 import com.github.epsilon.settings.impl.EnumSetting;
-import com.github.epsilon.utils.network.PacketUtils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.item.Items;
 
 public class NoSlow extends Module {
@@ -27,14 +21,8 @@ public class NoSlow extends Module {
     private enum Mode {
         Vanilla,
         Jump,
-        GrimFull,
         Grim1_2,
         Grim1_3
-    }
-
-    private enum State {
-        Idle,
-        Pending
     }
 
     private final EnumSetting<Mode> mode = enumSetting("Mode", Mode.Vanilla);
@@ -43,23 +31,10 @@ public class NoSlow extends Module {
     private final BoolSetting crossbow = boolSetting("Crossbow", true);
 
     private int onGroundTick = 0;
-    private State state = State.Idle;
 
     @Override
     protected void onEnable() {
         onGroundTick = 0;
-        state = State.Idle;
-    }
-
-    @EventHandler
-    private void onTick(TickEvent.Pre event) {
-        if (nullCheck()) return;
-
-        if (!mc.player.isUsingItem() && state != State.Idle) {
-            state = State.Idle;
-            ClientboundPacketManager.INSTANCE.flush();
-            ClientboundPacketManager.INSTANCE.stopTracking();
-        }
     }
 
     @EventHandler
@@ -79,7 +54,6 @@ public class NoSlow extends Module {
         switch (mode.getValue()) {
             case Vanilla -> cancel(event);
             case Jump -> jump(event);
-            case GrimFull -> grim(event);
             case Grim1_2 -> grim50(event);
             case Grim1_3 -> grim33(event);
         }
@@ -111,16 +85,6 @@ public class NoSlow extends Module {
     private void grim33(SlowdownEvent event) {
         if (mc.player.getUseItemRemainingTicks() % 3 == 0 && mc.player.getUseItemRemainingTicks() <= 30) {
             event.setSlowdown(false);
-        }
-    }
-
-    private void grim(SlowdownEvent event) {
-        event.setSlowdown(false);
-
-        if (state == State.Idle) {
-            state = State.Pending;
-            ClientboundPacketManager.INSTANCE.startTracking();
-            PacketUtils.sendSilently(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.RELEASE_USE_ITEM, BlockPos.ZERO, Direction.DOWN));
         }
     }
 
