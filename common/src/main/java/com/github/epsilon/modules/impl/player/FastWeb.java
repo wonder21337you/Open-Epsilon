@@ -7,10 +7,7 @@ import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.BoolSetting;
 import com.github.epsilon.settings.impl.EnumSetting;
 import com.github.epsilon.utils.player.MoveUtils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.WebBlock;
-import net.minecraft.world.phys.AABB;
+import com.github.epsilon.utils.player.PlayerUtils;
 
 public class FastWeb extends Module {
 
@@ -34,7 +31,7 @@ public class FastWeb extends Module {
     private void onSendPosition(SendPositionEvent event) {
         if (nullCheck() || mode.is(Mode.Vanilla)) return;
 
-        if (!isInWeb()) {
+        if (!PlayerUtils.isInWeb()) {
             return;
         }
 
@@ -50,31 +47,6 @@ public class FastWeb extends Module {
         if (motionY.getValue()) {
             mc.player.setDeltaMovement(mc.player.getDeltaMovement().x, 0.1, mc.player.getDeltaMovement().z);
         }
-    }
-
-    private boolean isInWeb() {
-        AABB box = mc.player.getBoundingBox().deflate(1.0E-6);
-
-        int minX = Mth.floor(box.minX);
-        int minY = Mth.floor(box.minY);
-        int minZ = Mth.floor(box.minZ);
-        int maxX = Mth.floor(box.maxX);
-        int maxY = Mth.floor(box.maxY);
-        int maxZ = Mth.floor(box.maxZ);
-
-        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    mutablePos.set(x, y, z);
-                    if (mc.level.getBlockState(mutablePos).getBlock() instanceof WebBlock) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 
     public boolean cobweb() {
