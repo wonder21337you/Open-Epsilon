@@ -3,6 +3,7 @@ package com.github.epsilon.modules.impl.hud;
 import com.github.epsilon.graphics.renderers.RoundRectRenderer;
 import com.github.epsilon.graphics.renderers.ShadowRenderer;
 import com.github.epsilon.graphics.renderers.TextRenderer;
+import com.github.epsilon.graphics.shaders.BlurShader;
 import com.github.epsilon.graphics.text.StaticFontLoader;
 import com.github.epsilon.managers.ModuleManager;
 import com.github.epsilon.modules.Category;
@@ -11,6 +12,7 @@ import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.impl.BoolSetting;
 import com.github.epsilon.settings.impl.ColorSetting;
 import com.github.epsilon.settings.impl.DoubleSetting;
+import com.github.epsilon.settings.impl.IntSetting;
 import com.google.common.base.Suppliers;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -41,6 +43,9 @@ public class ModuleListHud extends HudModule {
     private final BoolSetting drawShadow = boolSetting("Drop Shadow", true);
     private final DoubleSetting shadowBlur = doubleSetting("Shadow Blur", 4.5, 0.1, 32.0, 0.5, drawShadow::getValue);
     private final ColorSetting shadowColor = colorSetting("Shadow Color", new Color(0, 0, 0, 150), drawShadow::getValue);
+
+    private final BoolSetting backgroundBlur = boolSetting("Background Blur", true);
+    private final IntSetting blurStrength = intSetting("Blur Strength", 8, 1, 16, 1);
 
     private static final float ROW_HEIGHT = 22.0f;
     private static final float ROW_SPACING = 4.0f;
@@ -108,6 +113,9 @@ public class ModuleListHud extends HudModule {
                     textBoxX = rowX + totalWidth - rowHeight - iconGap - boxWidth;
                 }
 
+                if (backgroundBlur.getValue()) {
+                    BlurShader.INSTANCE.render(iconBoxX, currentY, rowHeight, rowHeight, radius, blurStrength.getValue());
+                }
                 if (drawShadow.getValue()) {
                     shadowRenderer.addShadow(iconBoxX, currentY, rowHeight, rowHeight, radius, shadowBlur.getValue().floatValue(), withAlpha(shadowColor.getValue(), alpha));
                 }
@@ -124,6 +132,9 @@ public class ModuleListHud extends HudModule {
                 boxWidth = totalWidth;
             }
 
+            if (backgroundBlur.getValue()) {
+                BlurShader.INSTANCE.render(textBoxX, currentY, boxWidth, rowHeight, radius, blurStrength.getValue());
+            }
             if (drawShadow.getValue()) {
                 shadowRenderer.addShadow(textBoxX, currentY, boxWidth, rowHeight, radius, shadowBlur.getValue().floatValue(), withAlpha(shadowColor.getValue(), alpha));
             }

@@ -2,11 +2,13 @@ package com.github.epsilon.modules.impl.hud;
 
 import com.github.epsilon.graphics.renderers.RoundRectRenderer;
 import com.github.epsilon.graphics.renderers.ShadowRenderer;
+import com.github.epsilon.graphics.shaders.BlurShader;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.HudModule;
 import com.github.epsilon.settings.impl.BoolSetting;
 import com.github.epsilon.settings.impl.ColorSetting;
 import com.github.epsilon.settings.impl.DoubleSetting;
+import com.github.epsilon.settings.impl.IntSetting;
 import com.google.common.base.Suppliers;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -30,6 +32,8 @@ public class InventoryHud extends HudModule {
     private final BoolSetting drawShadow = boolSetting("Drop Shadow", true);
     private final DoubleSetting shadowBlur = doubleSetting("Shadow Blur", 4.5, 0.1, 32.0, 0.5, drawShadow::getValue);
     private final ColorSetting shadowColor = colorSetting("Shadow Color", new Color(0, 0, 0, 150), drawShadow::getValue);
+    private final BoolSetting backgroundBlur = boolSetting("Background Blur", true);
+    private final IntSetting blurStrength = intSetting("Blur Strength", 8, 1, 16, 1);
 
     private final BoolSetting showCount = boolSetting("Show Count", true);
 
@@ -56,6 +60,10 @@ public class InventoryHud extends HudModule {
 
         float totalWidth = padding * 2f + 9 * slotSize + (9 - 1) * gap;
         float totalHeight = padding * 2f + 3 * slotSize + (3 - 1) * gap;
+
+        if (backgroundBlur.getValue()) {
+            BlurShader.INSTANCE.render(this.x, this.y, totalWidth, totalHeight, radius, blurStrength.getValue());
+        }
 
         if (drawShadow.getValue()) {
             shadowRenderer.addShadow(this.x, this.y, totalWidth, totalHeight, radius, shadowBlur.getValue().floatValue(), shadowColor.getValue());

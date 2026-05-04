@@ -4,11 +4,13 @@ import com.github.epsilon.graphics.renderers.RoundRectRenderer;
 import com.github.epsilon.graphics.renderers.ShadowRenderer;
 import com.github.epsilon.graphics.renderers.TextRenderer;
 import com.github.epsilon.graphics.renderers.TextureRenderer;
+import com.github.epsilon.graphics.shaders.BlurShader;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.HudModule;
 import com.github.epsilon.settings.impl.BoolSetting;
 import com.github.epsilon.settings.impl.ColorSetting;
 import com.github.epsilon.settings.impl.DoubleSetting;
+import com.github.epsilon.settings.impl.IntSetting;
 import com.google.common.base.Suppliers;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -46,6 +48,9 @@ public class PotionHud extends HudModule {
     private final BoolSetting drawShadow = boolSetting("Drop Shadow", true);
     private final DoubleSetting shadowBlur = doubleSetting("Shadow Blur", 4.5, 0.1, 32.0, 0.5, drawShadow::getValue);
     private final ColorSetting shadowColor = colorSetting("Shadow Color", new Color(0, 0, 0, 150), drawShadow::getValue);
+
+    private final BoolSetting backgroundBlur = boolSetting("Background Blur", true);
+    private final IntSetting blurStrength = intSetting("Blur Strength", 8, 1, 16, 1);
 
     private final Supplier<TextRenderer> textRendererSupplier = Suppliers.memoize(TextRenderer::new);
     private final Supplier<RoundRectRenderer> roundRectRendererSupplier = Suppliers.memoize(RoundRectRenderer::new);
@@ -113,6 +118,10 @@ public class PotionHud extends HudModule {
 
             float rowWidth = info.totalWidth;
             float rowX = computeRowX(rowWidth, hAnchor);
+
+            if (backgroundBlur.getValue()) {
+                BlurShader.INSTANCE.render(rowX, currentY, rowWidth, rowHeight, radius, blurStrength.getValue());
+            }
 
             if (drawShadow.getValue()) {
                 shadowRenderer.addShadow(rowX, currentY, rowWidth, rowHeight, radius, shadowBlur.getValue().floatValue(), withAlpha(shadowColor.getValue(), alpha));
