@@ -3,7 +3,7 @@ package com.github.epsilon.mixins;
 import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.impl.RaytraceEvent;
 import com.github.epsilon.events.impl.StrafeEvent;
-import com.github.epsilon.modules.impl.combat.Velocity;
+import com.github.epsilon.modules.impl.movement.Velocity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.Minecraft;

@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.player;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
@@ -11,7 +11,7 @@ public class VClip extends Module {
     public static final VClip INSTANCE = new VClip();
 
     private VClip() {
-        super("V Clip", Category.PLAYER);
+        super("V Clip", Category.MOVEMENT);
     }
 
     private enum Mode {

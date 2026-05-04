@@ -1,7 +1,7 @@
 package com.github.epsilon.mixins;
 
 import com.github.epsilon.managers.RotationManager;
-import com.github.epsilon.modules.impl.player.AutoSprint;
+import com.github.epsilon.modules.impl.movement.AutoSprint;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.Minecraft;

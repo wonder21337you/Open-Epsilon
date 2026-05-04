@@ -7,6 +7,7 @@ public enum Category {
 
     COMBAT("b", "combat"),
     PLAYER("5", "player"),
+    MOVEMENT("@", "movement"),
     RENDER("a", "render"),
     HUD("E", "hud");
 

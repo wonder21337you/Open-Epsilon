@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.player;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.ClickEvent;
@@ -20,7 +20,7 @@ public class Stuck extends Module {
     private final EnumSetting<Mode> mode = enumSetting("Mode", Mode.NoPacket);
 
     private Stuck() {
-        super("Stuck", Category.PLAYER);
+        super("Stuck", Category.MOVEMENT);
     }
 
     private float lastYaw;

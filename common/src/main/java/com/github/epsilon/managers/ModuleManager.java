@@ -20,6 +20,7 @@ import com.github.epsilon.modules.impl.hud.ModuleListHud;
 import com.github.epsilon.modules.impl.hud.PotionHud;
 import com.github.epsilon.modules.impl.hud.WatermarkHud;
 import com.github.epsilon.modules.impl.hud.notification.NotificationsHud;
+import com.github.epsilon.modules.impl.movement.*;
 import com.github.epsilon.modules.impl.player.*;
 import com.github.epsilon.modules.impl.render.*;
 import com.github.epsilon.utils.client.ClientUtils;
@@ -69,35 +70,37 @@ public class ModuleManager {
                 SpearKill.INSTANCE,
                 Surround.INSTANCE,
                 TriggerBot.INSTANCE,
-                Velocity.INSTANCE,
 
                 // Player
                 AutoFirework.INSTANCE,
                 AutoKouZi.INSTANCE,
-                AutoSprint.INSTANCE,
                 AutoTool.INSTANCE,
                 BreakCooldown.INSTANCE,
                 Disabler.INSTANCE,
-                ElytraFly.INSTANCE,
                 ElytraSwap.INSTANCE,
                 FakePlayer.INSTANCE,
-                FastWeb.INSTANCE,
                 InvManager.INSTANCE,
                 JumpCooldown.INSTANCE,
-                MovementFix.INSTANCE,
                 MultiTask.INSTANCE,
-                NoFall.INSTANCE,
                 NoRotate.INSTANCE,
-                NoSlow.INSTANCE,
                 Phase.INSTANCE,
                 PacketEat.INSTANCE,
-                SafeWalk.INSTANCE,
                 Scaffold.INSTANCE,
                 Stealer.INSTANCE,
-                Stuck.INSTANCE,
                 UseCooldown.INSTANCE,
-                VClip.INSTANCE,
+
+                // Movement
+                AutoSprint.INSTANCE,
                 Blink.INSTANCE,
+                ElytraFly.INSTANCE,
+                FastWeb.INSTANCE,
+                MovementFix.INSTANCE,
+                NoFall.INSTANCE,
+                NoSlow.INSTANCE,
+                SafeWalk.INSTANCE,
+                Stuck.INSTANCE,
+                VClip.INSTANCE,
+                Velocity.INSTANCE,
 
                 // Render
                 AspectRatio.INSTANCE,

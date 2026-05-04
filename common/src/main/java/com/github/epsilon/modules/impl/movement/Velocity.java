@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.combat;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.KeyboardInputEvent;
@@ -6,6 +6,7 @@ import com.github.epsilon.events.impl.PacketEvent;
 import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
+import com.github.epsilon.modules.impl.combat.AntiBot;
 import com.github.epsilon.settings.impl.BoolSetting;
 import com.github.epsilon.settings.impl.DoubleSetting;
 import com.github.epsilon.settings.impl.EnumSetting;
@@ -34,7 +35,7 @@ public class Velocity extends Module {
     public static final Velocity INSTANCE = new Velocity();
 
     private Velocity() {
-        super("Velocity", Category.COMBAT);
+        super("Velocity", Category.MOVEMENT);
     }
 
     private enum Mode {

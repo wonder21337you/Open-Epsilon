@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.player;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.KeyboardInputEvent;
@@ -14,7 +14,7 @@ public class NoFall extends Module {
     public static final NoFall INSTANCE = new NoFall();
 
     private NoFall() {
-        super("NoFall", Category.PLAYER);
+        super("NoFall", Category.MOVEMENT);
     }
 
     private enum Mode {

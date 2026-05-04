@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.player;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.TickEvent;
@@ -13,7 +13,7 @@ public class AutoSprint extends Module {
     public static final AutoSprint INSTANCE = new AutoSprint();
 
     private AutoSprint() {
-        super("Auto Sprint", Category.PLAYER);
+        super("Auto Sprint", Category.MOVEMENT);
     }
 
     private enum Mode {

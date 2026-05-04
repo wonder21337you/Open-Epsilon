@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.player;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.PacketEvent;
@@ -27,7 +27,7 @@ public class Blink extends Module {
     public static final Blink INSTANCE = new Blink();
 
     public Blink() {
-        super("Blink", Category.PLAYER);
+        super("Blink", Category.MOVEMENT);
     }
 
     private final DoubleSetting tick = doubleSetting("Tick", 30, 5, 200, 1);

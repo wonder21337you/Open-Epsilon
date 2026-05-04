@@ -5,7 +5,7 @@ import com.github.epsilon.events.impl.PlayerTickEvent;
 import com.github.epsilon.events.impl.SendPositionEvent;
 import com.github.epsilon.events.impl.SlowdownEvent;
 import com.github.epsilon.events.impl.SwingHandEvent;
-import com.github.epsilon.modules.impl.combat.Velocity;
+import com.github.epsilon.modules.impl.movement.Velocity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.player.LocalPlayer;

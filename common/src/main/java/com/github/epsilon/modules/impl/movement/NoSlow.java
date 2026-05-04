@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.player;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.KeyboardInputEvent;
@@ -15,7 +15,7 @@ public class NoSlow extends Module {
     public static final NoSlow INSTANCE = new NoSlow();
 
     private NoSlow() {
-        super("No Slow", Category.PLAYER);
+        super("No Slow", Category.MOVEMENT);
     }
 
     private enum Mode {

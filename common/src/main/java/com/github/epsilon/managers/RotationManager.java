@@ -5,7 +5,7 @@ import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.bus.EventPriority;
 import com.github.epsilon.events.impl.*;
 import com.github.epsilon.modules.impl.ClientSetting;
-import com.github.epsilon.modules.impl.player.MovementFix;
+import com.github.epsilon.modules.impl.movement.MovementFix;
 import com.github.epsilon.utils.rotation.Priority;
 import com.github.epsilon.utils.rotation.RotationUtils;
 import net.minecraft.client.Minecraft;

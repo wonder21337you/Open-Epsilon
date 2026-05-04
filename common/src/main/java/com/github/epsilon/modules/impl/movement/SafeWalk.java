@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.player;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.SendPositionEvent;
@@ -11,7 +11,7 @@ public class SafeWalk extends Module {
     public static final SafeWalk INSTANCE = new SafeWalk();
 
     private SafeWalk() {
-        super("Safe Walk", Category.PLAYER);
+        super("Safe Walk", Category.MOVEMENT);
     }
 
     public boolean isOnBlockEdge(float sensitivity) {

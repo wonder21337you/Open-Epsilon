@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.player;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.events.impl.KeyboardInputEvent;
 import com.github.epsilon.modules.Category;
@@ -10,7 +10,7 @@ public class MovementFix extends Module {
     public static final MovementFix INSTANCE = new MovementFix();
 
     private MovementFix() {
-        super("Movement Fix", Category.PLAYER);
+        super("Movement Fix", Category.MOVEMENT);
     }
 
     public void fixMovement(KeyboardInputEvent event, float yaw) {

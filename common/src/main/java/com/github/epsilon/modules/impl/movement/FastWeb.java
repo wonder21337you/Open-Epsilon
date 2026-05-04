@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.player;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.SendPositionEvent;
@@ -14,7 +14,7 @@ public class FastWeb extends Module {
     public static final FastWeb INSTANCE = new FastWeb();
 
     private FastWeb() {
-        super("Fast Web", Category.PLAYER);
+        super("Fast Web", Category.MOVEMENT);
     }
 
     private enum Mode {
