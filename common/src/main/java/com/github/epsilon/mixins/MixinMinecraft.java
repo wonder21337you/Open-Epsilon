@@ -3,6 +3,7 @@ package com.github.epsilon.mixins;
 import com.github.epsilon.Epsilon;
 import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.impl.ClickEvent;
+import com.github.epsilon.events.impl.StartUseItemEvent;
 import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.events.impl.WorldEvent;
 import com.github.epsilon.modules.impl.ClientSetting;
@@ -50,6 +51,13 @@ public class MixinMinecraft {
     private void onHandleKeybinds(CallbackInfo ci) {
         ClickEvent event = EventBus.INSTANCE.post(new ClickEvent());
         if (event.isCancelled()) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/InteractionHand;values()[Lnet/minecraft/world/InteractionHand;"), cancellable = true)
+    private void onStartUseItemBeforeHands(CallbackInfo ci) {
+        if (EventBus.INSTANCE.post(new StartUseItemEvent()).isCancelled()) {
             ci.cancel();
         }
     }

@@ -672,7 +672,7 @@ public class PacketMine extends Module {
         }
 
         private Direction getDirection() {
-            return RotationUtils.getDirection(pos, direction);
+            return RotationUtils.getDirection(pos);
         }
 
         private void cancel() {

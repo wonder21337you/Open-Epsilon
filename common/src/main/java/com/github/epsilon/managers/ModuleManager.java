@@ -79,6 +79,7 @@ public class ModuleManager {
                 Disabler.INSTANCE,
                 ElytraSwap.INSTANCE,
                 FakePlayer.INSTANCE,
+                GhostHand.INSTANCE,
                 InvManager.INSTANCE,
                 JumpCooldown.INSTANCE,
                 MultiTask.INSTANCE,

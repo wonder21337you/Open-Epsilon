@@ -483,7 +483,7 @@ public class AutoCrystal extends Module {
                 return;
             }
 
-            Direction placementDirection = RotationUtils.getDirection(candidate.supportPos, Direction.UP);
+            Direction placementDirection = RotationUtils.getDirection(candidate.supportPos);
 
             boolean canPlace = candidate.throughWall
                     ? candidate.wallBypassAllowed && isAimingAtBlock(record.currentRotation(), candidate.targetRotation)

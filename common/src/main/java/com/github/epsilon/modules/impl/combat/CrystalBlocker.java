@@ -152,7 +152,7 @@ public class CrystalBlocker extends Module {
     private void placeBlock(BlockPos pos, FindItemResult item) {
         int oldSlot = mc.player.getInventory().getSelectedSlot();
 
-        Direction side = RotationUtils.getDirection(pos, Direction.UP);
+        Direction side = RotationUtils.getDirection(pos);
         BlockHitResult bhr = new BlockHitResult(Vec3.atCenterOf(pos), side, pos, false);
 
         if (switchMode.is(SwitchMode.Visible)) {
