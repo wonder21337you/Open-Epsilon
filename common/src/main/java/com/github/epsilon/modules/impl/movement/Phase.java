@@ -1,4 +1,4 @@
-package com.github.epsilon.modules.impl.player;
+package com.github.epsilon.modules.impl.movement;
 
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.CollisionEvent;
@@ -6,6 +6,7 @@ import com.github.epsilon.events.impl.DestroyBlockEvent;
 import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
+import com.github.epsilon.modules.impl.player.AutoTool;
 import com.github.epsilon.settings.impl.BoolSetting;
 import com.github.epsilon.settings.impl.DoubleSetting;
 import com.github.epsilon.settings.impl.EnumSetting;
@@ -33,7 +34,7 @@ public class Phase extends Module {
     public static final Phase INSTANCE = new Phase();
 
     private Phase() {
-        super("Phase", Category.PLAYER);
+        super("Phase", Category.MOVEMENT);
     }
 
     private enum Mode {

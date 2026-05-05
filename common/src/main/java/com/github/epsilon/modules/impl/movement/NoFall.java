@@ -14,7 +14,7 @@ public class NoFall extends Module {
     public static final NoFall INSTANCE = new NoFall();
 
     private NoFall() {
-        super("NoFall", Category.MOVEMENT);
+        super("No Fall", Category.MOVEMENT);
     }
 
     private enum Mode {
