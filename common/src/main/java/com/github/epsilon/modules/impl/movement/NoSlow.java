@@ -10,6 +10,11 @@ import com.github.epsilon.settings.impl.EnumSetting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Items;
 
+/**
+ * 别找了这没你想要的 GrimAC 全速度 NoSlow
+ * NoSlow 在群文件名字叫 epsilon_plus 是本客户端 Addon 代码经过混淆
+ */
+
 public class NoSlow extends Module {
 
     public static final NoSlow INSTANCE = new NoSlow();
