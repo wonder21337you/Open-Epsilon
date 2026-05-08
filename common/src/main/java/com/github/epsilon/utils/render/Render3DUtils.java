@@ -106,6 +106,18 @@ public class Render3DUtils {
         FILLED_BOX.draw(bufferBuilder.buildOrThrow());
     }
 
+    public static void drawOutlineBox(PoseStack stack, BlockPos blockPos, Color color) {
+        drawOutlineBox(stack, new AABB(blockPos), color.getRGB(), 2f);
+    }
+
+    public static void drawOutlineBox(PoseStack stack, AABB box, Color color) {
+        drawOutlineBox(stack, box, color.getRGB(), 2f);
+    }
+
+    public static void drawOutlineBox(PoseStack stack, AABB box, Color color, float thickness) {
+        drawOutlineBox(stack, box, color.getRGB(), thickness);
+    }
+
     public static void drawOutlineBox(PoseStack stack, AABB box, int color, float thickness) {
         BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH);
 
