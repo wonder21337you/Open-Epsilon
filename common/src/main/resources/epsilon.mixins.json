@@ -13,6 +13,7 @@
     "MixinDataComponentInitializers",
     "MixinEntity",
     "MixinEntityRenderer",
+    "MixinEquipmentLayerRenderer",
     "MixinFireworkRocketEntity",
     "MixinFlowingFluid",
     "MixinGameRenderer",

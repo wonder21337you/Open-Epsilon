@@ -106,6 +106,7 @@ public class ModuleManager {
                 // Render
                 AspectRatio.INSTANCE,
                 CameraClip.INSTANCE,
+                Chams.INSTANCE,
                 ESP.INSTANCE,
                 Fullbright.INSTANCE,
                 HandsView.INSTANCE,

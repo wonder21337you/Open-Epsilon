@@ -1,33 +1,39 @@
 package com.github.epsilon.mixins;
 
 import com.github.epsilon.managers.RotationManager;
+import com.github.epsilon.modules.impl.render.Chams;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Vector2f;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(LivingEntityRenderer.class)
-public class MixinLivingEntityRenderer<S extends LivingEntityRenderState> {
+public abstract class MixinLivingEntityRenderer<S extends LivingEntityRenderState> {
 
-    /**
-     * 不好看
-     */
-    /*@ModifyExpressionValue(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;solveBodyRot(Lnet/minecraft/world/entity/LivingEntity;FF)F"))
-    private float hookBodyYaw(float original, LivingEntity entity, S state, float tickDelta) {
-        if (entity == Minecraft.getInstance().player) {
-            Vector2f rotation = RotationManager.INSTANCE.animationRotation;
-            Vector2f lastRotation = RotationManager.INSTANCE.lastAnimationRotation;
-            if (RotationManager.INSTANCE.isActive() && rotation != null && lastRotation != null) {
-                return Mth.rotLerp(tickDelta, lastRotation.x, rotation.x);
-            }
+    @Shadow
+    public abstract Identifier getTextureLocation(S s);
+
+    @ModifyReturnValue(method = "getRenderType", at = @At("RETURN"))
+    private RenderType modifyRenderType(RenderType original, S state, boolean isBodyVisible, boolean forceTransparent, boolean appearGlowing) {
+        Chams chamsModule = Chams.INSTANCE;
+
+        if (!chamsModule.isEnabled() || state.entityType != EntityType.PLAYER) {
+            return original;
         }
-        return original;
-    }*/
+
+        return Chams.INSTANCE.getRenderType(getTextureLocation(state));
+    }
+
     @ModifyExpressionValue(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;rotLerp(FFF)F"))
     private float hookHeadYaw(float original, LivingEntity entity, S state, float partialTick) {
         if (entity == Minecraft.getInstance().player) {
