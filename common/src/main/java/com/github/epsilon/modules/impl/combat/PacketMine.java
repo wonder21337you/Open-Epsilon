@@ -146,20 +146,6 @@ public class PacketMine extends Module {
         }
     }
 
-    public boolean isInstantMining(BlockPos pos) {
-        if (!isEnabled() || pos == null || !instantMine.getValue()) {
-            return false;
-        }
-
-        for (MineAction action : actions) {
-            if (!action.removed && action.pos.equals(pos)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     @EventHandler
     private void onStartBreakingBlock(AttackBlockEvent event) {
         if (!canBreak(event.getBlockPos())) return;
