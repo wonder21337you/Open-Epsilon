@@ -86,6 +86,7 @@
   "epsilon.modules.client setting.chat prefix color end": "Chat Prefix Color End",
   "epsilon.modules.client setting.chat prefix gradient speed": "Chat Prefix Gradient Speed",
   "epsilon.modules.anti bot": "Anti Bot",
+  "epsilon.modules.anti alias": "Anti Alias",
   "epsilon.modules.aspect ratio": "Aspect Ratio",
   "epsilon.modules.aspect ratio.ratio": "Ratio",
   "epsilon.modules.auto clicker": "Auto Clicker",
