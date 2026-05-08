@@ -61,7 +61,7 @@ public class Render3DUtils {
     }
 
     public static void drawFilledFadeBox(AABB box, int c, int c1) {
-        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         Vec3 camPos = mc.getEntityRenderDispatcher().camera.position();
         float minX = (float) (box.minX - camPos.x);
@@ -73,41 +73,41 @@ public class Render3DUtils {
 
         Matrix4f matrix = mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState.viewRotationMatrix;
 
-        vertex(bufferBuilder, matrix, minX, minY, minZ, c);
-        vertex(bufferBuilder, matrix, minX, minY, maxZ, c);
-        vertex(bufferBuilder, matrix, maxX, minY, maxZ, c);
-        vertex(bufferBuilder, matrix, maxX, minY, minZ, c);
+        vertex(buffer, matrix, minX, minY, minZ, c);
+        vertex(buffer, matrix, minX, minY, maxZ, c);
+        vertex(buffer, matrix, maxX, minY, maxZ, c);
+        vertex(buffer, matrix, maxX, minY, minZ, c);
 
-        vertex(bufferBuilder, matrix, minX, maxY, minZ, c1);
-        vertex(bufferBuilder, matrix, maxX, maxY, minZ, c1);
-        vertex(bufferBuilder, matrix, maxX, maxY, maxZ, c1);
-        vertex(bufferBuilder, matrix, minX, maxY, maxZ, c);
+        vertex(buffer, matrix, minX, maxY, minZ, c1);
+        vertex(buffer, matrix, maxX, maxY, minZ, c1);
+        vertex(buffer, matrix, maxX, maxY, maxZ, c1);
+        vertex(buffer, matrix, minX, maxY, maxZ, c);
 
-        vertex(bufferBuilder, matrix, minX, minY, minZ, c);
-        vertex(bufferBuilder, matrix, minX, maxY, minZ, c1);
-        vertex(bufferBuilder, matrix, maxX, maxY, minZ, c1);
-        vertex(bufferBuilder, matrix, maxX, minY, minZ, c);
+        vertex(buffer, matrix, minX, minY, minZ, c);
+        vertex(buffer, matrix, minX, maxY, minZ, c1);
+        vertex(buffer, matrix, maxX, maxY, minZ, c1);
+        vertex(buffer, matrix, maxX, minY, minZ, c);
 
-        vertex(bufferBuilder, matrix, maxX, minY, minZ, c);
-        vertex(bufferBuilder, matrix, maxX, maxY, minZ, c1);
-        vertex(bufferBuilder, matrix, maxX, maxY, maxZ, c1);
-        vertex(bufferBuilder, matrix, maxX, minY, maxZ, c);
+        vertex(buffer, matrix, maxX, minY, minZ, c);
+        vertex(buffer, matrix, maxX, maxY, minZ, c1);
+        vertex(buffer, matrix, maxX, maxY, maxZ, c1);
+        vertex(buffer, matrix, maxX, minY, maxZ, c);
 
-        vertex(bufferBuilder, matrix, minX, minY, maxZ, c);
-        vertex(bufferBuilder, matrix, maxX, minY, maxZ, c);
-        vertex(bufferBuilder, matrix, maxX, maxY, maxZ, c1);
-        vertex(bufferBuilder, matrix, minX, maxY, maxZ, c1);
+        vertex(buffer, matrix, minX, minY, maxZ, c);
+        vertex(buffer, matrix, maxX, minY, maxZ, c);
+        vertex(buffer, matrix, maxX, maxY, maxZ, c1);
+        vertex(buffer, matrix, minX, maxY, maxZ, c1);
 
-        vertex(bufferBuilder, matrix, minX, minY, minZ, c);
-        vertex(bufferBuilder, matrix, minX, minY, maxZ, c);
-        vertex(bufferBuilder, matrix, minX, maxY, maxZ, c1);
-        vertex(bufferBuilder, matrix, minX, maxY, minZ, c1);
+        vertex(buffer, matrix, minX, minY, minZ, c);
+        vertex(buffer, matrix, minX, minY, maxZ, c);
+        vertex(buffer, matrix, minX, maxY, maxZ, c1);
+        vertex(buffer, matrix, minX, maxY, minZ, c1);
 
-        FILLED_BOX.draw(bufferBuilder.buildOrThrow());
+        FILLED_BOX.draw(buffer.buildOrThrow());
     }
 
     public static void drawOutlineBox(PoseStack stack, BlockPos blockPos, Color color) {
-        drawOutlineBox(stack, new AABB(blockPos), color.getRGB(), 2f);
+        drawOutlineBox(stack, new AABB(blockPos), color);
     }
 
     public static void drawOutlineBox(PoseStack stack, AABB box, Color color) {
@@ -129,8 +129,8 @@ public class Render3DUtils {
         float maxY = (float) (box.maxY - camPos.y);
         float maxZ = (float) (box.maxZ - camPos.z);
 
-        Matrix4f matrix = mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState.viewRotationMatrix;
         PoseStack.Pose entry = stack.last();
+        Matrix4f matrix = entry.pose();
 
         vertexLine(buffer, matrix, entry, minX, minY, minZ, maxX, minY, minZ, color, thickness);
         vertexLine(buffer, matrix, entry, maxX, minY, minZ, maxX, minY, maxZ, color, thickness);
