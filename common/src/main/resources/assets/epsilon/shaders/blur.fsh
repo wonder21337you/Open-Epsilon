@@ -11,12 +11,20 @@ layout(std140) uniform BlurUniforms {
 
 layout(location = 0) out vec4 fragColor;
 
-float roundedBoxSDF(vec2 center, vec2 size, vec4 r) {
-    vec2 r_side = (center.x > 0.0) ? r.yz : r.xw;
-    float radius = (center.y > 0.0) ? r_side.y : r_side.x;
+float roundRectDistance(vec2 position, vec4 innerRect, vec4 radius) {
+    vec2 halfSize = (innerRect.zw - innerRect.xy) * 0.5;
+    vec2 center = (innerRect.xy + innerRect.zw) * 0.5;
+    vec2 p = position - center;
 
-    vec2 q = abs(center) - size + radius;
-    return min(max(q.x,q.y),0.0) + length(max(q,0.0)) - radius;
+    vec2 s = step(0.0, p);
+    float rCurrent = mix(
+        mix(radius.x, radius.w, s.y),
+        mix(radius.y, radius.z, s.y),
+        s.x
+    );
+
+    vec2 q = abs(p) - halfSize + rCurrent;
+    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - rCurrent;
 }
 
 vec4 blur() {
@@ -45,10 +53,12 @@ void main() {
     vec2 uSize = Params2.xy;
     vec2 uLocation = Params2.zw;
     vec4 radii = Params3;
+    vec4 bounds = vec4(uLocation, uLocation + uSize);
 
-    vec2 halfSize = uSize / 2.0;
+    float dist = roundRectDistance(gl_FragCoord.xy, bounds, radii);
+    float delta = fwidth(dist);
+    float alpha = 1.0 - smoothstep(-delta, delta, dist);
 
-    float dist = roundedBoxSDF(gl_FragCoord.xy - uLocation - halfSize, halfSize, radii);
-    float smoothedAlpha = (1.0 - smoothstep(0.0, 1.0, dist));
-    fragColor = vec4(blur().rgb, smoothedAlpha);
+    fragColor = vec4(blur().rgb, alpha);
+    if (alpha < 0.001) discard;
 }

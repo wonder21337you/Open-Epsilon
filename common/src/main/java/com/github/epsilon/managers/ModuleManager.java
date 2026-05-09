@@ -15,10 +15,7 @@ import com.github.epsilon.modules.HudModule;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.modules.impl.ClientSetting;
 import com.github.epsilon.modules.impl.combat.*;
-import com.github.epsilon.modules.impl.hud.InventoryHud;
-import com.github.epsilon.modules.impl.hud.ModuleListHud;
-import com.github.epsilon.modules.impl.hud.PotionHud;
-import com.github.epsilon.modules.impl.hud.WatermarkHud;
+import com.github.epsilon.modules.impl.hud.*;
 import com.github.epsilon.modules.impl.hud.notification.NotificationsHud;
 import com.github.epsilon.modules.impl.movement.*;
 import com.github.epsilon.modules.impl.player.*;
@@ -122,6 +119,7 @@ public class ModuleManager {
                 InventoryHud.INSTANCE,
                 ModuleListHud.INSTANCE,
                 PotionHud.INSTANCE,
+                TargetHud.INSTANCE,
                 WatermarkHud.INSTANCE
 
         ));

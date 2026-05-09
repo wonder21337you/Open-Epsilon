@@ -4,6 +4,7 @@ import com.github.epsilon.assets.i18n.I18NFileGenerator;
 import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.managers.AddonManager;
 import com.github.epsilon.managers.ConfigManager;
+import com.github.epsilon.managers.HealthManager;
 import com.github.epsilon.managers.ModuleManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +29,7 @@ public class Epsilon {
         ModuleManager.INSTANCE.initModules();
         AddonManager.INSTANCE.setupAddons();
         ConfigManager.INSTANCE.initConfig();
+        HealthManager.INSTANCE.getClass();
 
         // 生成空的 i18n 文件
         I18NFileGenerator.generate("epsilon-empty-i18n.json");

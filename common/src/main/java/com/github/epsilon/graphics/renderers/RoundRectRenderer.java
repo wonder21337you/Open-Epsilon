@@ -51,9 +51,7 @@ public class RoundRectRenderer implements IRenderer {
     /**
      * 颜色顺序对应四个角顶点：左上、左下、右下、右上 (TL, BL, BR, TR)
      */
-    public void addRoundRectGradient(float x, float y, float width, float height,
-                                     float rTL, float rTR, float rBR, float rBL,
-                                     Color cTL, Color cBL, Color cBR, Color cTR) {
+    public void addRoundRectGradient(float x, float y, float width, float height, float rTL, float rTR, float rBR, float rBL, Color cTL, Color cBL, Color cBR, Color cTR) {
         buffer.tryMap();
         float x2 = x + width, y2 = y + height;
         int argbTL = ARGB.toABGR(cTL.getRGB());
