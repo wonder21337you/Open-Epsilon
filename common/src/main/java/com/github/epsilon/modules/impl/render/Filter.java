@@ -21,7 +21,7 @@ public class Filter extends Module {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onAfterRender3D(AfterRender3DEvent event) {
+    private void onAfterRender3D(AfterRender3DEvent event) {
         if (nullCheck()) {
             return;
         }

@@ -1,7 +1,6 @@
 package com.github.epsilon.mixins;
 
 import com.github.epsilon.modules.impl.render.NameTags;
-import com.github.epsilon.modules.impl.render.NoRender;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.LivingEntity;

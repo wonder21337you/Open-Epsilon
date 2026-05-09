@@ -117,7 +117,8 @@ public class NameTags extends Module {
             float visualRight = Math.max(x + boxWidth, itemLeft + itemRowWidth);
             float visualTop = equipmentItems.isEmpty() ? y : itemTop;
 
-            if (visualRight < 0.0f || y + boxHeight < 0.0f || visualLeft > screenWidth || visualTop > screenHeight) continue;
+            if (visualRight < 0.0f || y + boxHeight < 0.0f || visualLeft > screenWidth || visualTop > screenHeight)
+                continue;
 
             Color healthColor = totalHealth < 10.0f ? new Color(255, 214, 64, 240) : new Color(120, 255, 120, 240);
             final var isFriend = FriendManager.INSTANCE.isFriend(nameText);
