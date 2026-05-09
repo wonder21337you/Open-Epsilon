@@ -1,6 +1,7 @@
 package com.github.epsilon.gui.panel.component;
 
 import com.github.epsilon.graphics.renderers.RectRenderer;
+import com.github.epsilon.graphics.renderers.RoundRectOutlineRenderer;
 import com.github.epsilon.graphics.renderers.RoundRectRenderer;
 import com.github.epsilon.graphics.renderers.TextRenderer;
 import com.github.epsilon.graphics.text.ttf.TtfFontLoader;
@@ -59,17 +60,32 @@ public class PanelElements {
     }
 
     public static void drawSwitch(RoundRectRenderer roundRectRenderer, PanelLayout.Rect rect, float toggleProgress, float hoverProgress) {
-        Color track = MD3Theme.lerp(MD3Theme.SURFACE_CONTAINER_HIGHEST, MD3Theme.PRIMARY, toggleProgress);
-        Color knob = MD3Theme.lerp(MD3Theme.OUTLINE, MD3Theme.ON_PRIMARY, toggleProgress);
+        drawSwitch(roundRectRenderer, null, rect, toggleProgress, hoverProgress);
+    }
 
-        float knobSize = 8.0f + 3.0f * toggleProgress;
-        float knobTravel = rect.width() - 10.0f - knobSize;
-        float knobX = rect.x() + 5.0f + knobTravel * toggleProgress;
+    public static void drawSwitch(RoundRectRenderer roundRectRenderer, RoundRectOutlineRenderer roundRectOutlineRenderer, PanelLayout.Rect rect, float toggleProgress, float hoverProgress) {
+        Color track = MD3Theme.switchTrack(toggleProgress);
+        Color knob = MD3Theme.switchKnob(toggleProgress);
+        Color outline = MD3Theme.switchTrackOutline(toggleProgress, hoverProgress);
+        float clampedToggle = Math.clamp(toggleProgress, 0.0f, 1.0f);
+        float knobSize = MD3Theme.SWITCH_HANDLE_SIZE_OFF
+                + (MD3Theme.SWITCH_HANDLE_SIZE_ON - MD3Theme.SWITCH_HANDLE_SIZE_OFF) * clampedToggle;
+        float knobStartX = rect.x() + MD3Theme.SWITCH_HANDLE_INSET_OFF;
+        float knobEndX = rect.right() - MD3Theme.SWITCH_HANDLE_INSET_ON - knobSize;
+        float knobX = knobStartX + (knobEndX - knobStartX) * clampedToggle;
         float knobY = rect.centerY() - knobSize / 2.0f;
 
         roundRectRenderer.addRoundRect(rect.x(), rect.y(), rect.width(), rect.height(), rect.height() / 2.0f, track);
+        if (outline.getAlpha() > 0 && roundRectOutlineRenderer != null) {
+            roundRectOutlineRenderer.addOutline(
+                    rect.x(), rect.y(), rect.width(), rect.height(),
+                    rect.height() / 2.0f,
+                    MD3Theme.switchTrackOutlineWidth(toggleProgress),
+                    outline
+            );
+        }
         if (hoverProgress > 0.02f) {
-            float haloSize = 16.0f;
+            float haloSize = MD3Theme.SWITCH_STATE_LAYER_SIZE;
             float haloX = knobX + knobSize / 2.0f - haloSize / 2.0f;
             float haloY = rect.centerY() - haloSize / 2.0f;
             roundRectRenderer.addRoundRect(haloX, haloY, haloSize, haloSize, haloSize / 2.0f,

@@ -1,12 +1,10 @@
 package com.github.epsilon.gui.panel.dsl;
 
-import com.github.epsilon.graphics.renderers.RectRenderer;
-import com.github.epsilon.graphics.renderers.RoundRectRenderer;
-import com.github.epsilon.graphics.renderers.ShadowRenderer;
-import com.github.epsilon.graphics.renderers.TextRenderer;
+import com.github.epsilon.graphics.renderers.*;
 import com.github.epsilon.graphics.text.ttf.TtfFontLoader;
 import com.github.epsilon.gui.panel.MD3Theme;
 import com.github.epsilon.gui.panel.PanelLayout;
+import com.github.epsilon.gui.panel.component.PanelElements;
 import com.github.epsilon.gui.panel.utils.PanelContentBuffer;
 
 import java.awt.*;
@@ -31,7 +29,7 @@ public class PanelUiCompiler {
      * @param textRenderer      文本 renderer
      */
     public static void render(PanelUiTree tree, RoundRectRenderer roundRectRenderer, RectRenderer rectRenderer, TextRenderer textRenderer) {
-        render(tree, null, roundRectRenderer, rectRenderer, textRenderer);
+        render(tree, null, roundRectRenderer, null, rectRenderer, textRenderer);
     }
 
     /**
@@ -47,7 +45,12 @@ public class PanelUiCompiler {
      * @param textRenderer      文本 renderer
      */
     public static void render(PanelUiTree tree, ShadowRenderer shadowRenderer, RoundRectRenderer roundRectRenderer, RectRenderer rectRenderer, TextRenderer textRenderer) {
-        renderNodes(tree.nodes(), new RenderTarget(shadowRenderer, roundRectRenderer, rectRenderer, textRenderer));
+        render(tree, shadowRenderer, roundRectRenderer, null, rectRenderer, textRenderer);
+    }
+
+    public static void render(PanelUiTree tree, ShadowRenderer shadowRenderer, RoundRectRenderer roundRectRenderer,
+                              RoundRectOutlineRenderer roundRectOutlineRenderer, RectRenderer rectRenderer, TextRenderer textRenderer) {
+        renderNodes(tree.nodes(), new RenderTarget(shadowRenderer, roundRectRenderer, roundRectOutlineRenderer, rectRenderer, textRenderer));
     }
 
     private static void renderNodes(List<PanelUiTree.UiNode> nodes, RenderTarget target) {
@@ -256,21 +259,7 @@ public class PanelUiCompiler {
     }
 
     private static void renderSwitch(RenderTarget target, PanelLayout.Rect bounds, float toggleProgress, float hoverProgress) {
-        Color track = MD3Theme.lerp(MD3Theme.SURFACE_CONTAINER_HIGHEST, MD3Theme.PRIMARY, toggleProgress);
-        Color knob = MD3Theme.lerp(MD3Theme.OUTLINE, MD3Theme.ON_PRIMARY, toggleProgress);
-        float knobSize = 8.0f + 3.0f * toggleProgress;
-        float knobTravel = bounds.width() - 10.0f - knobSize;
-        float knobX = bounds.x() + 5.0f + knobTravel * toggleProgress;
-        float knobY = bounds.centerY() - knobSize / 2.0f;
-        target.roundRectRenderer().addRoundRect(bounds.x(), bounds.y(), bounds.width(), bounds.height(), bounds.height() / 2.0f, track);
-        if (hoverProgress > 0.02f) {
-            float haloSize = 16.0f;
-            float haloX = knobX + knobSize / 2.0f - haloSize / 2.0f;
-            float haloY = bounds.centerY() - haloSize / 2.0f;
-            target.roundRectRenderer().addRoundRect(haloX, haloY, haloSize, haloSize, haloSize / 2.0f,
-                    MD3Theme.stateLayer(MD3Theme.TEXT_PRIMARY, hoverProgress, 18));
-        }
-        target.roundRectRenderer().addRoundRect(knobX, knobY, knobSize, knobSize, knobSize / 2.0f, knob);
+        PanelElements.drawSwitch(target.roundRectRenderer(), target.roundRectOutlineRenderer(), bounds, toggleProgress, hoverProgress);
     }
 
     private static void renderFilledField(RenderTarget target, PanelLayout.Rect bounds, boolean focused, float hoverProgress) {
@@ -327,15 +316,14 @@ public class PanelUiCompiler {
     }
 
     private record RenderTarget(ShadowRenderer shadowRenderer, RoundRectRenderer roundRectRenderer,
-                                RectRenderer rectRenderer, TextRenderer textRenderer,
-                                PanelContentBuffer buffer) {
-        private RenderTarget(ShadowRenderer shadowRenderer, RoundRectRenderer roundRectRenderer,
-                             RectRenderer rectRenderer, TextRenderer textRenderer) {
-            this(shadowRenderer, roundRectRenderer, rectRenderer, textRenderer, null);
+                                RoundRectOutlineRenderer roundRectOutlineRenderer, RectRenderer rectRenderer,
+                                TextRenderer textRenderer, PanelContentBuffer buffer) {
+        private RenderTarget(ShadowRenderer shadowRenderer, RoundRectRenderer roundRectRenderer, RoundRectOutlineRenderer roundRectOutlineRenderer, RectRenderer rectRenderer, TextRenderer textRenderer) {
+            this(shadowRenderer, roundRectRenderer, roundRectOutlineRenderer, rectRenderer, textRenderer, null);
         }
 
         private static RenderTarget forContentBuffer(PanelContentBuffer buffer) {
-            return new RenderTarget(buffer.shadowRenderer(), buffer.roundRectRenderer(), buffer.rectRenderer(), buffer.textRenderer(), buffer);
+            return new RenderTarget(buffer.shadowRenderer(), buffer.roundRectRenderer(), buffer.roundRectOutlineRenderer(), buffer.rectRenderer(), buffer.textRenderer(), buffer);
         }
     }
 

@@ -65,8 +65,13 @@ public class MD3Theme {
     public static final float CONTROL_HEIGHT = 18.0f;
     public static final float CONTROL_RADIUS = 7.0f;
     public static final float COMPACT_CHIP_HEIGHT = 16.0f;
-    public static final float SWITCH_WIDTH = 30.0f;
+    public static final float SWITCH_WIDTH = 26.0f;
     public static final float SWITCH_HEIGHT = 16.0f;
+    public static final float SWITCH_HANDLE_SIZE_OFF = 8.0f;
+    public static final float SWITCH_HANDLE_SIZE_ON = 12.0f;
+    public static final float SWITCH_HANDLE_INSET_OFF = 4.0f;
+    public static final float SWITCH_HANDLE_INSET_ON = 2.0f;
+    public static final float SWITCH_STATE_LAYER_SIZE = 20.0f;
 
     private MD3Theme() {
     }
@@ -174,6 +179,25 @@ public class MD3Theme {
 
     public static Color segmentedControlInactiveLabel() {
         return isLightTheme() ? TEXT_SECONDARY : TEXT_MUTED;
+    }
+
+    public static Color switchTrack(float toggleProgress) {
+        return lerp(SURFACE_CONTAINER_HIGHEST, PRIMARY, toggleProgress);
+    }
+
+    public static Color switchKnob(float toggleProgress) {
+        return lerp(OUTLINE, ON_PRIMARY, toggleProgress);
+    }
+
+    public static Color switchTrackOutline(float toggleProgress, float hoverProgress) {
+        float inactive = 1.0f - Mth.clamp(toggleProgress, 0.0f, 1.0f);
+        float hoverMix = Mth.clamp(hoverProgress * 0.35f, 0.0f, 1.0f);
+        Color base = lerp(OUTLINE, TEXT_PRIMARY, hoverMix);
+        return withAlpha(base, (int) (inactive * (isLightTheme() ? 188 : 168)));
+    }
+
+    public static float switchTrackOutlineWidth(float toggleProgress) {
+        return 1.0f + (1.0f - Mth.clamp(toggleProgress, 0.0f, 1.0f)) * 0.1f;
     }
 
     private record ThemePalette(

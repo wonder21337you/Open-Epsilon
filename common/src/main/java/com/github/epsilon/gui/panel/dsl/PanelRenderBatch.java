@@ -1,9 +1,6 @@
 package com.github.epsilon.gui.panel.dsl;
 
-import com.github.epsilon.graphics.renderers.RectRenderer;
-import com.github.epsilon.graphics.renderers.RoundRectRenderer;
-import com.github.epsilon.graphics.renderers.ShadowRenderer;
-import com.github.epsilon.graphics.renderers.TextRenderer;
+import com.github.epsilon.graphics.renderers.*;
 
 /**
  * 面板 UI 的通用 renderer 批次封装。
@@ -12,10 +9,11 @@ import com.github.epsilon.graphics.renderers.TextRenderer;
  * {@link PanelUiCompiler} 的编译输出，并在统一阶段执行 flush 或 clear。
  */
 public record PanelRenderBatch(ShadowRenderer shadowRenderer, RoundRectRenderer roundRectRenderer,
-                               RectRenderer rectRenderer, TextRenderer textRenderer) {
+                               RoundRectOutlineRenderer roundRectOutlineRenderer, RectRenderer rectRenderer,
+                               TextRenderer textRenderer) {
 
     public PanelRenderBatch() {
-        this(new ShadowRenderer(), new RoundRectRenderer(), new RectRenderer(), new TextRenderer());
+        this(new ShadowRenderer(), new RoundRectRenderer(), new RoundRectOutlineRenderer(), new RectRenderer(), new TextRenderer());
     }
 
     /**
@@ -24,7 +22,7 @@ public record PanelRenderBatch(ShadowRenderer shadowRenderer, RoundRectRenderer 
      * @param tree 待编译的 UI 树
      */
     public void render(PanelUiTree tree) {
-        PanelUiCompiler.render(tree, shadowRenderer, roundRectRenderer, rectRenderer, textRenderer);
+        PanelUiCompiler.render(tree, shadowRenderer, roundRectRenderer, roundRectOutlineRenderer, rectRenderer, textRenderer);
     }
 
     /**
@@ -35,6 +33,7 @@ public record PanelRenderBatch(ShadowRenderer shadowRenderer, RoundRectRenderer 
     public void flush() {
         shadowRenderer.draw();
         roundRectRenderer.draw();
+        roundRectOutlineRenderer.draw();
         rectRenderer.draw();
         textRenderer.draw();
     }
@@ -45,6 +44,7 @@ public record PanelRenderBatch(ShadowRenderer shadowRenderer, RoundRectRenderer 
     public void clear() {
         shadowRenderer.clear();
         roundRectRenderer.clear();
+        roundRectOutlineRenderer.clear();
         rectRenderer.clear();
         textRenderer.clear();
     }
@@ -56,5 +56,5 @@ public record PanelRenderBatch(ShadowRenderer shadowRenderer, RoundRectRenderer 
         flush();
         clear();
     }
-}
 
+}
