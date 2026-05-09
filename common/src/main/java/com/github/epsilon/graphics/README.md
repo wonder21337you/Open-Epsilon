@@ -114,4 +114,4 @@ efficient. It simply re-triggers the draw command for existing GPU data without 
 
 ---
 
-Copyright © 2026 slmpc.
+Copyright © 2026 NekoyaHouse.
