@@ -22,8 +22,6 @@ import java.awt.*;
 
 public class Render3DUtils {
 
-    static Minecraft mc = Minecraft.getInstance();
-
     private static final RenderPipeline FILLED_BOX_PIPELINE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
             .withLocation(ResourceLocationUtils.getIdentifier("pipeline/filled_box"))
             .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
@@ -42,10 +40,12 @@ public class Render3DUtils {
             .withCull(false)
             .build();
 
-    private static final RenderType LINES = RenderType.create("sakura_lines", RenderSetup.builder(LINES_PIPELINE)
+    public static final RenderType LINES = RenderType.create("sakura_lines", RenderSetup.builder(LINES_PIPELINE)
             .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
             .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
             .createRenderSetup());
+
+    private static Minecraft mc = Minecraft.getInstance();
 
     public static void drawFilledBox(BlockPos blockPos, Color color) {
         drawFilledBox(new AABB(blockPos), color.getRGB());

@@ -23,7 +23,7 @@ import org.joml.Matrix4f;
 
 import java.awt.*;
 
-public class Firefly {
+public class FireflyESP {
 
     public enum ColorMode {
         Solid,
@@ -35,14 +35,14 @@ public class Firefly {
 
     private static final Identifier FIREFLY_TEX = ResourceLocationUtils.getIdentifier("textures/particles/firefly.png");
 
-    private static final RenderPipeline FIREFLY_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-            .withLocation("pipeline/sakura_firefly")
+    private static final RenderPipeline TARGET_ICON_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+            .withLocation("pipeline/epsilon_target_icon")
             .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
             .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
             .withCull(false)
             .build();
 
-    private static final RenderType FIREFLY_LAYER = RenderType.create("sakura_firefly_layer", RenderSetup.builder(FIREFLY_PIPELINE)
+    private static final RenderType TARGET_ICON_LAYER = RenderType.create("epsilon_target_icon", RenderSetup.builder(TARGET_ICON_PIPELINE)
             .withTexture("Sampler0", FIREFLY_TEX)
             .sortOnUpload()
             .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
@@ -100,7 +100,7 @@ public class Firefly {
             }
         }
 
-        FIREFLY_LAYER.draw(buffer.buildOrThrow());
+        TARGET_ICON_LAYER.draw(buffer.buildOrThrow());
     }
 
     private static Color resolveColor(float age, int index, int ringIndex, int espLength, ColorMode mode, Color primaryColor, Color secondaryColor, float mixAmount, float blendSpeed, float rainbowSpeed, float rainbowSaturation, float rainbowBrightness) {
