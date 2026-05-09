@@ -125,10 +125,8 @@ public class ModuleRow {
         scope.toggle(toggleBounds, toggleProgress, toggleHoverProgress);
 
         if (keyWidth <= KEYBIND_CLIP_WIDTH + 0.5f) {
-            // Fits inside the clip area: render the regular text right-aligned to the toggle.
             scope.text(keybindText, clipRight - keyWidth, keyY, keyScale, keyColor);
         } else {
-            // Overflow: render through the marquee path so it gets its own scissor and a horizontal scroll.
             float overflow = keyWidth - clipWidth;
             float scrollOffset = -overflow * marqueePhase();
             scope.marqueeText(keybindText, clipX + scrollOffset, keyY, keyScale, keyColor, keybindClip);
@@ -142,10 +140,10 @@ public class ModuleRow {
     }
 
     private static float marqueePhase() {
-        long period = 5000L; // total cycle = 5s
-        long pause = 800L;   // dwell at each end
+        long period = 5000L;
+        long pause = 800L;
         long t = System.currentTimeMillis() % period;
-        long travel = (period - pause * 2L) / 2L; // ms to travel one direction
+        long travel = (period - pause * 2L) / 2L;
         if (t < pause) {
             return 0.0f;
         }
