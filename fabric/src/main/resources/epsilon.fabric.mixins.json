@@ -3,7 +3,6 @@
   "package": "com.github.epsilon.fabric.mixins",
   "compatibilityLevel": "JAVA_25",
   "client": [
-    "MixinMinecraft"
   ],
   "injectors": {
     "defaultRequire": 1

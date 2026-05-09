@@ -16,10 +16,6 @@ public class EpsilonFabric implements ClientModInitializer {
 
     public static final String ADDON_ENTRYPOINT_KEY = "epsilon:addon";
 
-    public static void init() {
-
-    }
-
     @Override
     public void onInitializeClient() {
         EpsilonAddonSetupEvent addonEvent = new EpsilonAddonSetupEvent();
@@ -41,4 +37,5 @@ public class EpsilonFabric implements ClientModInitializer {
                 new LanguageReloadListener()
         );
     }
+
 }
