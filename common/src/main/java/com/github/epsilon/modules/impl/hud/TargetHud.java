@@ -1,5 +1,6 @@
 package com.github.epsilon.modules.impl.hud;
 
+import com.github.epsilon.graphics.LuminTexture;
 import com.github.epsilon.graphics.renderers.*;
 import com.github.epsilon.graphics.shaders.BlurShader;
 import com.github.epsilon.gui.hudeditor.HudEditorScreen;
@@ -14,8 +15,7 @@ import com.google.common.base.Suppliers;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.resources.Identifier;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -143,8 +143,16 @@ public class TargetHud extends HudModule {
             roundRectOutlineRenderer.drawAndClear();
         }
 
-        textureRenderer.addPlayerHead(getHeadTexture(target), headX, headY, headSize, headSize * 0.23f, Color.WHITE);
-        textureRenderer.drawAndClear();
+        if (target instanceof AbstractClientPlayer player) {
+            AbstractTexture abstractTexture = mc.getTextureManager().getTexture(player.getSkin().body().texturePath());
+            textureRenderer.addPlayerHead(
+                    new LuminTexture(abstractTexture.getTexture(), abstractTexture.getTextureView(), abstractTexture.getSampler()),
+                    headX, headY, headSize, headSize * 0.23f, Color.WHITE
+            );
+            textureRenderer.drawAndClear();
+        } else {
+            roundRectRenderer.addRoundRect(headX, headY, headSize, headSize, headSize * 0.23f, new Color(80, 80, 80, 200));
+        }
 
         textRenderer.addText(nameText, textStartX, contentY, textScale, textColor.getValue());
         textRenderer.addText(healthText, healthTextX, contentY, textScale, textColor.getValue());
@@ -197,14 +205,6 @@ public class TargetHud extends HudModule {
         }
         float speed = Mth.clamp(frameTime * delaySpeed.getValue().floatValue() * 2.0f, 0.0f, 1.0f);
         return Mth.lerp(speed, delayedHealth, currentHealth);
-    }
-
-    private static Identifier getHeadTexture(LivingEntity target) {
-        // 可能有更好的处理方式，但我不知道
-        if (target instanceof AbstractClientPlayer player) {
-            return player.getSkin().body().id();
-        }
-        return DefaultPlayerSkin.get(target.getUUID()).body().id();
     }
 
 }

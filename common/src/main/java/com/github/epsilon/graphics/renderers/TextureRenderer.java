@@ -70,6 +70,11 @@ public class TextureRenderer implements IRenderer {
         addRoundedTexture(texture, x, y, width, height, radiusTL, radiusTR, radiusBR, radiusBL, u0, v0, u1, v1, color, true);
     }
 
+    public void addPlayerHead(LuminTexture texture, float x, float y, float size, float radius, Color color) {
+        addRoundedTexture(texture, x, y, size, size, radius, 8f / 64f, 8f / 64f, 16f / 64f, 16f / 64f, color);
+        addRoundedTexture(texture, x, y, size, size, radius, 40f / 64f, 8f / 64f, 48f / 64f, 16f / 64f, color);
+    }
+
     public void addPlayerHead(Identifier texture, float x, float y, float size, float radius, Color color) {
         addRoundedTexture(texture, x, y, size, size, radius, 8f / 64f, 8f / 64f, 16f / 64f, 16f / 64f, color);
         addRoundedTexture(texture, x, y, size, size, radius, 40f / 64f, 8f / 64f, 48f / 64f, 16f / 64f, color);
