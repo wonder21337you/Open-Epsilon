@@ -39,7 +39,6 @@ public class CaptureMarkESP {
 
     private static final RenderType TARGET_ICON_LAYER = RenderType.create("epsilon_target_icon", RenderSetup.builder(TARGET_ICON_PIPELINE)
             .withTexture("Sampler0", CAPTUREMARK_TEX)
-            .sortOnUpload()
             .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
             .setOutputTarget(OutputTarget.MAIN_TARGET)
             .createRenderSetup());

@@ -60,11 +60,10 @@ public class Velocity extends Module {
                     return;
                 }
 
-                if (explosion.getValue() && event.getPacket() instanceof ClientboundExplodePacket packet) {
-                    if (explosionOnlyBlock.getValue() && !PlayerUtils.isInBlock()) {
-                        return;
-                    }
-
+                if (
+                        explosion.getValue() && event.getPacket() instanceof ClientboundExplodePacket packet
+                                && (!explosionOnlyBlock.getValue() || PlayerUtils.isInBlock())
+                ) {
                     event.setPacket(new ClientboundExplodePacket(
                             packet.center(),
                             packet.radius(),

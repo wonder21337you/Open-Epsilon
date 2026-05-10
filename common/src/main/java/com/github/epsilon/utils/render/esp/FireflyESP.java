@@ -18,10 +18,12 @@ import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Matrix4f;
 
 import java.awt.*;
+import java.util.function.Function;
 
 public class FireflyESP {
 
@@ -35,21 +37,32 @@ public class FireflyESP {
 
     private static final Identifier FIREFLY_TEX = ResourceLocationUtils.getIdentifier("textures/particles/firefly.png");
 
-    private static final RenderPipeline TARGET_ICON_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+    private static final RenderPipeline TARGET_ICON_NO_DEPTH_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withLocation("pipeline/epsilon_target_icon")
             .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
             .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
             .withCull(false)
             .build();
 
-    private static final RenderType TARGET_ICON_LAYER = RenderType.create("epsilon_target_icon", RenderSetup.builder(TARGET_ICON_PIPELINE)
-            .withTexture("Sampler0", FIREFLY_TEX)
-            .sortOnUpload()
-            .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
-            .setOutputTarget(OutputTarget.MAIN_TARGET)
-            .createRenderSetup());
+    private static final RenderPipeline TARGET_ICON_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+            .withLocation("pipeline/epsilon_target_icon")
+            .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
+            .withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
+            .withCull(false)
+            .build();
+
+    private static final Function<RenderPipeline, RenderType> TARGET_ICON_LAYER = Util.memoize(
+            renderPipeline -> RenderType.create("epsilon_target_icon", RenderSetup.builder(renderPipeline)
+                    .withTexture("Sampler0", FIREFLY_TEX)
+                    .sortOnUpload()
+                    .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
+                    .setOutputTarget(OutputTarget.MAIN_TARGET)
+                    .createRenderSetup())
+    );
 
     public static void render(PoseStack stack, LivingEntity target, int espLength, int factor, double shaking, double amplitude, Color color, ColorMode colorMode, Color secondColor, double colorMix, double colorSpeed, double rainbowSpeed, double rainbowSaturation, double rainbowBrightness) {
+        boolean canSee = mc.player.hasLineOfSight(target);
+
         Camera camera = mc.gameRenderer.getMainCamera();
         float tickDelta = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
 
@@ -100,7 +113,7 @@ public class FireflyESP {
             }
         }
 
-        TARGET_ICON_LAYER.draw(buffer.buildOrThrow());
+        TARGET_ICON_LAYER.apply(canSee ? TARGET_ICON_PIPELINE : TARGET_ICON_NO_DEPTH_PIPELINE).draw(buffer.buildOrThrow());
     }
 
     private static Color resolveColor(float age, int index, int ringIndex, int espLength, ColorMode mode, Color primaryColor, Color secondaryColor, float mixAmount, float blendSpeed, float rainbowSpeed, float rainbowSaturation, float rainbowBrightness) {

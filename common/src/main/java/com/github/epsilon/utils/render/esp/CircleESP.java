@@ -1,40 +1,66 @@
 package com.github.epsilon.utils.render.esp;
 
 import com.github.epsilon.assets.resources.ResourceLocationUtils;
-import com.github.epsilon.utils.render.Render3DUtils;
 import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.rendertype.LayeringTransform;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import java.awt.*;
+import java.util.function.Function;
 
 public class CircleESP {
 
     private static final Minecraft mc = Minecraft.getInstance();
 
-    private static final RenderPipeline TRIANGLE_STRIP_PIPELINE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
+    private static final RenderPipeline TRIANGLE_STRIP_NO_DEPTH_PIPELINE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
             .withLocation(ResourceLocationUtils.getIdentifier("pipeline/triangle_strip"))
             .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
             .withCull(false)
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_STRIP)
             .build();
 
-    private static final RenderType TRIANGLE_STRIP = RenderType.create("epsilon_triangle_strip", RenderSetup.builder(TRIANGLE_STRIP_PIPELINE)
-            .sortOnUpload()
-            .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
-            .createRenderSetup());
+    private static final RenderPipeline TRIANGLE_STRIP_PIPELINE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
+            .withLocation(ResourceLocationUtils.getIdentifier("pipeline/triangle_strip"))
+            .withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
+            .withCull(false)
+            .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_STRIP)
+            .build();
+
+    private static final Function<RenderPipeline, RenderType> TRIANGLE_STRIP = Util.memoize(
+            renderPipeline -> RenderType.create("epsilon_triangle_strip", RenderSetup.builder(renderPipeline)
+                    .createRenderSetup())
+    );
+
+    private static final RenderPipeline CIRCLE_LINES_NO_DEPTH_PIPELINE = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
+            .withLocation(ResourceLocationUtils.getIdentifier("pipeline/circle_lines"))
+            .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
+            .withCull(false)
+            .build();
+
+    private static final RenderPipeline CIRCLE_LINES_PIPELINE = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
+            .withLocation(ResourceLocationUtils.getIdentifier("pipeline/circle_lines"))
+            .withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
+            .withCull(false)
+            .build();
+
+    private static final Function<RenderPipeline, RenderType> CIRCLE_LINES = Util.memoize(
+            renderPipeline -> RenderType.create("epsilon_circle_lines", RenderSetup.builder(renderPipeline)
+                    .createRenderSetup())
+    );
 
     public static void render(PoseStack poseStack, LivingEntity target, float radius, Color sideColor, Color lineColor, float alphaFactor) {
+        boolean canSee = mc.player.hasLineOfSight(target);
+
         float ticks = (float) (System.currentTimeMillis() % 1000000) * 0.004f;
         float alpha = 0.35f + 0.65f * ((Mth.sin(ticks * 1.8f) + 1.0f) * 0.5f) * alphaFactor;
 
@@ -58,7 +84,7 @@ public class CircleESP {
             triBuffer.addVertex(matrix, vecX, 0, vecZ).setColor(sideColor.getAlpha() / 255.0f, sideColor.getGreen() / 255.0f, sideColor.getBlue() / 255.0f, 0.52f * alpha);
         }
 
-        TRIANGLE_STRIP.draw(triBuffer.buildOrThrow());
+        TRIANGLE_STRIP.apply(canSee ? TRIANGLE_STRIP_PIPELINE : TRIANGLE_STRIP_NO_DEPTH_PIPELINE).draw(triBuffer.buildOrThrow());
 
         BufferBuilder lineBuffer = Tesselator.getInstance().begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH);
         PoseStack.Pose entry = poseStack.last();
@@ -75,7 +101,7 @@ public class CircleESP {
             lineBuffer.addVertex(entry, nextPoint.x, 0f, nextPoint.y).setColor(lineColor.getRed(), lineColor.getGreen(), lineColor.getBlue(), Math.round(lineColor.getAlpha() * alpha)).setNormal(entry, normal.x, 0f, normal.y).setLineWidth(2f);
         }
 
-        Render3DUtils.LINES.draw(lineBuffer.buildOrThrow());
+        CIRCLE_LINES.apply(canSee ? CIRCLE_LINES_PIPELINE : CIRCLE_LINES_NO_DEPTH_PIPELINE).draw(lineBuffer.buildOrThrow());
 
         poseStack.popPose();
     }
