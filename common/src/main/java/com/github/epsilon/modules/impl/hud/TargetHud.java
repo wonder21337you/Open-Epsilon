@@ -45,7 +45,7 @@ public class TargetHud extends HudModule {
     private final DoubleSetting delaySpeed = doubleSetting("Delay Speed", 2.0, 0.1, 10.0, 0.1, delayBar::getValue);
     private final BoolSetting barOutline = boolSetting("Bar Outline", true);
     private final DoubleSetting barOutlineWidth = doubleSetting("Bar Outline Width", 1.0, 0.5, 5.0, 0.5, barOutline::getValue);
-    // 你自己加 private final ColorSetting backgroundColor = colorSetting("Background Color", new Color(85, 108, 40, 110));
+    private final ColorSetting backgroundColor = colorSetting("Background Color", new Color(15, 15, 15, 200));
     private final ColorSetting barBackgroundColor = colorSetting("Bar Background Color", new Color(255, 255, 255, 70));
     private final ColorSetting barFillColor = colorSetting("Bar Fill Color", new Color(255, 236, 248, 245));
     private final ColorSetting delayBarColor = colorSetting("Delay Bar Color", new Color(190, 190, 190, 130), delayBar::getValue);
@@ -127,6 +127,7 @@ public class TargetHud extends HudModule {
             shadowRenderer.drawAndClear();
         }
 
+        roundRectRenderer.addRoundRect(this.x, this.y, panelWidth, panelHeight, cornerRadius, backgroundColor.getValue());
         roundRectRenderer.addRoundRect(this.x + pad, barY, barWidth, barHeight, barRadius, barBackgroundColor.getValue());
         if (delayBar.getValue() && delayedHealth > displayedHealth) {
             roundRectRenderer.addRoundRect(this.x + pad, barY, delayedBarWidth, barHeight, barRadius, delayBarColor.getValue());
