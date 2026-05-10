@@ -53,6 +53,7 @@ public class ModuleManager {
                 AutoHitCrystal.INSTANCE,
                 AutoMend.INSTANCE,
                 AutoTotem.INSTANCE,
+                AutoWeapon.INSTANCE,
                 ZealotCrystalPlus.INSTANCE,
                 CrystalAura.INSTANCE,
                 CrystalBlocker.INSTANCE,
