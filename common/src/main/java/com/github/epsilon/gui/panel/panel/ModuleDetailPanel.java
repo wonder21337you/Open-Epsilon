@@ -52,6 +52,7 @@ public class ModuleDetailPanel {
     private String lastModuleKey = "";
     private List<String> lastVisibleSettings = List.of();
     private final ScrollBarDragState scrollBarDrag = new ScrollBarDragState();
+    private float scrollVelocity = 0;
     private final Animation bindModeAnimation = new Animation(Easing.EASE_OUT_CUBIC, 180L);
     private final Animation bindModeHoverAnimation = new Animation(Easing.EASE_OUT_CUBIC, 120L);
     private final Animation keybindHoverAnimation = new Animation(Easing.EASE_OUT_CUBIC, 120L);
@@ -84,6 +85,16 @@ public class ModuleDetailPanel {
     public void render(GuiGraphicsExtractor GuiGraphicsExtractor, PanelLayout.Rect bounds, int mouseX, int mouseY, float partialTick) {
         this.bounds = bounds;
         this.guiHeight = GuiGraphicsExtractor.guiHeight();
+
+        if (Math.abs(scrollVelocity) > 0.01f) {
+            state.scrollDetail(scrollVelocity * partialTick);
+            scrollVelocity *= 0.86f;
+            if (Math.abs(scrollVelocity) < 0.3f) {
+                scrollVelocity = 0;
+            }
+            markDirty();
+        }
+
         boolean popupConsumesHover = settingListController.isPopupHovered(mouseX, mouseY);
         int effectiveMouseX = popupConsumesHover ? Integer.MIN_VALUE : mouseX;
         int effectiveMouseY = popupConsumesHover ? Integer.MIN_VALUE : mouseY;
@@ -108,37 +119,48 @@ public class ModuleDetailPanel {
 
         PanelLayout.Rect viewport = getViewport();
         List<Setting<?>> settings = module.getSettings().stream().filter(Setting::isAvailable).toList();
-        float contentHeight = settings.size() * (28.0f + MD3Theme.ROW_GAP);
+        float contentHeight = settingListController.getContentHeight(settings);
         state.setMaxDetailScroll(contentHeight - viewport.height());
         float maxDetailScroll = Math.max(0, contentHeight - viewport.height());
         boolean hasScrollBar = maxDetailScroll > 0;
         float rowWidth = hasScrollBar ? viewport.width() - ScrollBarUtils.TOTAL_WIDTH : viewport.width();
         long contentSignature = buildContentSignature(module, settings);
+        boolean rebuildContent = shouldRebuildContent(bounds, mouseX, mouseY, module, settings, GuiGraphicsExtractor.guiHeight(), contentSignature);
 
-        if (shouldRebuildContent(bounds, mouseX, mouseY, module, settings, GuiGraphicsExtractor.guiHeight(), contentSignature)) {
+        if (rebuildContent) {
             contentBuffer.clear();
             contentState.beginRebuild();
-
-            settingListController.layoutRows(settings, viewport, state.getDetailScroll(), rowWidth, (setting, row, rowBounds) -> {
-                if (row instanceof KeybindSettingRow keybindRow) {
-                    keybindRow.setListening(state.getListeningKeybindSetting() == keybindRow.getSetting());
-                }
-                Animation hoverAnimation = hoverAnimations.computeIfAbsent(setting, ignored -> new Animation(Easing.EASE_OUT_CUBIC, 120L));
-                hoverAnimation.run(rowBounds.contains(effectiveMouseX, effectiveMouseY) ? 1.0f : 0.0f);
-                row.render(GuiGraphicsExtractor, contentBuffer.roundRectRenderer(), contentBuffer.roundRectOutlineRenderer(), contentBuffer.rectRenderer(), contentBuffer.textRenderer(), rowBounds, hoverAnimation.getValue(), effectiveMouseX, effectiveMouseY, partialTick);
-                contentState.noteAnimation(!hoverAnimation.isFinished() || row.hasActiveAnimation());
-            });
-
-            rememberSnapshot(bounds, mouseX, mouseY, module, settings, GuiGraphicsExtractor.guiHeight(), contentSignature);
         }
 
-        contentBuffer.queueViewport(viewport, guiHeight, state.getDetailScroll(), maxDetailScroll, contentHeight);
+        PanelUiTree contentTree = PanelUiTree.build(scope -> scope.viewport(contentBuffer, viewport, guiHeight,
+                state.getDetailScroll(), maxDetailScroll, contentHeight, content -> {
+                    if (!rebuildContent) {
+                        return;
+                    }
+                    settingListController.layoutRows(settings, viewport, state.getDetailScroll(), rowWidth,
+                            content, textRenderer, effectiveMouseX, effectiveMouseY, (setting, row, rowBounds) -> {
+                                if (row instanceof KeybindSettingRow keybindRow) {
+                                    keybindRow.setListening(state.getListeningKeybindSetting() == keybindRow.getSetting());
+                                }
+                                Animation hoverAnimation = hoverAnimations.computeIfAbsent(setting, ignored -> new Animation(Easing.EASE_OUT_CUBIC, 120L));
+                                hoverAnimation.run(rowBounds.contains(effectiveMouseX, effectiveMouseY) ? 1.0f : 0.0f);
+                                row.buildUi(content, GuiGraphicsExtractor, textRenderer, rowBounds, hoverAnimation.getValue(), effectiveMouseX, effectiveMouseY, partialTick);
+                                contentState.noteAnimation(!hoverAnimation.isFinished() || row.hasActiveAnimation());
+                            });
+                    contentState.noteAnimation(settingListController.hasActiveAnimations());
+                }));
+        PanelUiCompiler.render(contentTree, roundRectRenderer, rectRenderer, textRenderer);
+
+        if (rebuildContent) {
+            rememberSnapshot(bounds, mouseX, mouseY, module, settings, GuiGraphicsExtractor.guiHeight(), contentSignature);
+        }
     }
 
     public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
         if (bounds == null) {
             return false;
         }
+        scrollVelocity = 0;
         Module module = state.getSelectedModule();
         if (module == null || headerBounds == null) {
             return false;
@@ -249,7 +271,7 @@ public class ModuleDetailPanel {
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         PanelLayout.Rect viewport = getViewport();
         if (bounds != null && viewport.contains(mouseX, mouseY)) {
-            state.scrollDetail(-scrollY * 20.0f);
+            scrollVelocity -= (float) scrollY * 24f;
             markDirty();
             return true;
         }
@@ -476,6 +498,7 @@ public class ModuleDetailPanel {
 
     public boolean hasActiveAnimations() {
         return contentState.hasActiveAnimations()
+                || settingListController.hasActiveAnimations()
                 || !keybindHoverAnimation.isFinished()
                 || !keybindFocusAnimation.isFinished()
                 || !bindModeAnimation.isFinished()
@@ -522,6 +545,10 @@ public class ModuleDetailPanel {
         for (Setting<?> setting : settings) {
             signature = signature * 31L + setting.getName().hashCode();
             signature = signature * 31L + (setting.isAvailable() ? 1 : 0);
+            if (setting.getGroup() != null) {
+                signature = signature * 31L + setting.getGroup().getName().hashCode();
+                signature = signature * 31L + (setting.getGroup().isCollapsed() ? 1 : 0);
+            }
         }
         return signature;
     }
