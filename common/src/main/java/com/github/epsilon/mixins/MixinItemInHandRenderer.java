@@ -1,6 +1,5 @@
 package com.github.epsilon.mixins;
 
-import com.github.epsilon.managers.HotbarManager;
 import com.github.epsilon.modules.impl.render.HandsView;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -59,15 +58,14 @@ public abstract class MixinItemInHandRenderer {
     @Inject(method = "tick", at = @At("RETURN"))
     private void hideHotbarSwitchAnimation(CallbackInfo ci) {
         HandsView handsView = HandsView.INSTANCE;
-        boolean shouldHBManagerHide = HotbarManager.INSTANCE.shouldHideSwitchAnimation();
 
-        boolean shouldMainHide = shouldHBManagerHide || (handsView.isEnabled() && handsView.disableSwapMain.getValue());
+        boolean shouldMainHide = handsView.isEnabled() && handsView.disableSwapMain.getValue();
         if (shouldMainHide) {
             mainHandHeight = 1.0f;
             mainHandItem = minecraft.player.getMainHandItem();
         }
 
-        boolean shouldOffHide = shouldHBManagerHide || (handsView.isEnabled() && handsView.disableSwapOff.getValue());
+        boolean shouldOffHide = handsView.isEnabled() && handsView.disableSwapOff.getValue();
         if (shouldOffHide) {
             offHandHeight = 1.0f;
             offHandItem = minecraft.player.getOffhandItem();

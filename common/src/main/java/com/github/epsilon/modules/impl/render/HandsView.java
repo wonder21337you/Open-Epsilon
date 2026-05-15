@@ -1,7 +1,5 @@
 package com.github.epsilon.modules.impl.render;
 
-import com.github.epsilon.events.bus.EventHandler;
-import com.github.epsilon.events.impl.PlayerTickEvent;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.modules.impl.combat.KillAura;
