@@ -21,7 +21,7 @@ public class Epsilon {
     public static int skipTicks;
 
     public static void init() {
-        LOGGER.info("Welcome to Epsilon, Meow~");
+        LOGGER.info("Welcome to Epsilon.");
 
         EventBus.INSTANCE.registerLambdaFactory(Epsilon.class.getPackageName(), (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
 
@@ -37,10 +37,10 @@ public class Epsilon {
         // 添加一个退出游戏时候的钩子
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             ConfigManager.INSTANCE.saveNow();
-            Epsilon.LOGGER.info("Epsilon saved config on shutdown");
+            Epsilon.LOGGER.info("Epsilon saved config on shutdown.");
         }));
 
-        Epsilon.LOGGER.info("Epsilon has loaded successfully, Meow~");
+        Epsilon.LOGGER.info("Epsilon has loaded successfully.");
     }
 
 }
