@@ -1,6 +1,6 @@
 package com.github.epsilon.gui.dropdown.component;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
 import com.github.epsilon.assets.i18n.EpsilonTranslateComponent;
 import com.github.epsilon.assets.i18n.TranslateComponent;
 import com.github.epsilon.graphics.text.StaticFontLoader;
@@ -99,7 +99,7 @@ public class MainDropdownPanel extends AbstractDropdownPanel {
 
     private void drawBrandHeader(DropdownRenderer renderer, float headerY) {
         float versionScale = 0.7f;
-        renderer.text().addText(Epsilon.VERSION, x + CONTENT_PADDING, headerY + 6.0f, versionScale, MD3Theme.TEXT_MUTED);
+        renderer.text().addText(Constants.VERSION, x + CONTENT_PADDING, headerY + 6.0f, versionScale, MD3Theme.TEXT_MUTED);
     }
 
     @Override

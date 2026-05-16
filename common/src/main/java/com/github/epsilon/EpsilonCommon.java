@@ -6,22 +6,15 @@ import com.github.epsilon.managers.AddonManager;
 import com.github.epsilon.managers.ConfigManager;
 import com.github.epsilon.managers.HealthManager;
 import com.github.epsilon.managers.ModuleManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.lang.invoke.MethodHandles;
 
-public class Epsilon {
-
-    public static final String MOD_ID = BuildConfig.MOD_ID;
-    public static final String VERSION = BuildConfig.VERSION;
-
-    public static final Logger LOGGER = LogManager.getLogger("Epsilon");
+public class EpsilonCommon {
 
     public static void init() {
-        LOGGER.info("Welcome to Epsilon.");
+        Constants.LOGGER.info("Welcome to Epsilon.");
 
-        EventBus.INSTANCE.registerLambdaFactory(Epsilon.class.getPackageName(), (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
+        EventBus.INSTANCE.registerLambdaFactory(EpsilonCommon.class.getPackageName(), (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
 
         // 初始化 Managers
         ModuleManager.INSTANCE.initModules();
@@ -35,10 +28,10 @@ public class Epsilon {
         // 添加一个退出游戏时候的钩子
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             ConfigManager.INSTANCE.saveNow();
-            Epsilon.LOGGER.info("Epsilon saved config on shutdown.");
+            Constants.LOGGER.info("Epsilon saved config on shutdown.");
         }));
 
-        Epsilon.LOGGER.info("Epsilon has loaded successfully.");
+        Constants.LOGGER.info("Epsilon has loaded successfully.");
     }
 
 }

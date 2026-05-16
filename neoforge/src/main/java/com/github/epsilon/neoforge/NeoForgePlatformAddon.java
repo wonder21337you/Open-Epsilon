@@ -1,6 +1,6 @@
 package com.github.epsilon.neoforge;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
 import com.github.epsilon.addon.EpsilonAddon;
 import com.github.epsilon.neoforge.modules.NeoModuleTest;
 import com.github.epsilon.settings.impl.BoolSetting;
@@ -21,7 +21,7 @@ public class NeoForgePlatformAddon extends EpsilonAddon {
     @Override
     public void onSetup() {
         registerModule(NeoModuleTest.INSTANCE);
-        Epsilon.LOGGER.info("NeoForge platform addon initialized.");
+        Constants.LOGGER.info("NeoForge platform addon initialized.");
     }
 
     @Override
@@ -36,7 +36,7 @@ public class NeoForgePlatformAddon extends EpsilonAddon {
 
     @Override
     public String getVersion() {
-        return Epsilon.VERSION;
+        return Constants.VERSION;
     }
 
     @Override

@@ -1,7 +1,8 @@
 package com.github.epsilon.gui.panel.utils;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+
+import static com.github.epsilon.Constants.mc;
 
 public class IMEFocusHelper {
 
@@ -16,7 +17,6 @@ public class IMEFocusHelper {
      * Call this whenever a custom text field gains focus.
      */
     public static void activate() {
-        Minecraft mc = Minecraft.getInstance();
         Screen screen = mc.screen;
         if (screen != null) {
             mc.onTextInputFocusChange(screen, true);
@@ -33,7 +33,6 @@ public class IMEFocusHelper {
      * releasing the IME composition lock.</p>
      */
     public static void deactivate() {
-        Minecraft mc = Minecraft.getInstance();
         Screen screen = mc.screen;
         if (screen != null) {
             mc.onTextInputFocusChange(screen, false);

@@ -1,6 +1,6 @@
 package com.github.epsilon.modules.impl.hud;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
 import com.github.epsilon.graphics.renderers.RoundRectRenderer;
 import com.github.epsilon.graphics.renderers.ShadowRenderer;
 import com.github.epsilon.graphics.renderers.TextRenderer;
@@ -11,7 +11,6 @@ import com.github.epsilon.modules.HudModule;
 import com.github.epsilon.settings.impl.*;
 import com.google.common.base.Suppliers;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.awt.*;
@@ -85,8 +84,8 @@ public class WatermarkHUD extends HudModule {
 
         String brandText = computeBrand(fullBrand, animSpeed.getValue().floatValue());
 
-        String fpsText = "FPS:" + Minecraft.getInstance().getFps();
-        String versionText = Epsilon.VERSION;
+        String fpsText = "FPS:" + mc.getFps();
+        String versionText = Constants.VERSION;
 
         float brandW = textRenderer.getWidth(fullBrand, s);
         float fpsW = textRenderer.getWidth(fpsText, s);

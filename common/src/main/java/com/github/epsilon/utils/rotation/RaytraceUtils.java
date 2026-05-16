@@ -1,6 +1,5 @@
 package com.github.epsilon.utils.rotation;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -13,9 +12,9 @@ import org.joml.Vector2f;
 
 import java.util.function.Predicate;
 
-public class RaytraceUtils {
+import static com.github.epsilon.Constants.mc;
 
-    static Minecraft mc = Minecraft.getInstance();
+public class RaytraceUtils {
 
     public static Vec3 getRotationVector(Vector2f rotation) {
         return getRotationVector(rotation.x, rotation.y);

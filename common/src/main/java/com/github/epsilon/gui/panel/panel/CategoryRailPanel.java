@@ -1,6 +1,6 @@
 package com.github.epsilon.gui.panel.panel;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
 import com.github.epsilon.assets.i18n.EpsilonTranslateComponent;
 import com.github.epsilon.assets.i18n.TranslateComponent;
 import com.github.epsilon.graphics.renderers.RectRenderer;
@@ -106,7 +106,7 @@ public class CategoryRailPanel {
                 float subtitleOffset = (1.0f - subtitleProgress) * 10.0f;
                 scope.text("Epsilon", bounds.x() + 38.0f + titleOffset, titleY, titleScale, MD3Theme.withAlpha(MD3Theme.TEXT_PRIMARY, (int) (255 * titleProgress)));
                 if (subtitleProgress > 0.02f) {
-                    scope.text(Epsilon.VERSION, bounds.x() + 38.0f + subtitleOffset, subtitleY, subtitleScale, MD3Theme.withAlpha(MD3Theme.TEXT_SECONDARY, (int) (210 * subtitleProgress)));
+                    scope.text(Constants.VERSION, bounds.x() + 38.0f + subtitleOffset, subtitleY, subtitleScale, MD3Theme.withAlpha(MD3Theme.TEXT_SECONDARY, (int) (210 * subtitleProgress)));
                 }
                 if (dividerProgress > 0.02f) {
                     float dividerY = subtitleY + clippedTextRenderer.getHeight(subtitleScale) + 4.0f;

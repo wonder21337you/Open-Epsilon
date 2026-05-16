@@ -2,7 +2,8 @@ package com.github.epsilon.gui.panel.utils;
 
 import com.github.epsilon.graphics.renderers.*;
 import com.github.epsilon.gui.panel.PanelLayout;
-import net.minecraft.client.Minecraft;
+
+import static com.github.epsilon.Constants.mc;
 
 public class PanelScissor {
 
@@ -10,7 +11,7 @@ public class PanelScissor {
     }
 
     public static void apply(PanelLayout.Rect rect, RectRenderer rectRenderer, RoundRectRenderer roundRectRenderer, RoundRectOutlineRenderer roundRectOutlineRenderer, ShadowRenderer shadowRenderer, TriangleRenderer triangleRenderer, TextRenderer textRenderer, int guiHeight) {
-        int scale = Minecraft.getInstance().getWindow().getGuiScale();
+        int scale = mc.getWindow().getGuiScale();
         int x = Math.round(rect.x() * scale);
         int y = Math.round((guiHeight - rect.bottom()) * scale);
         int width = Math.round(rect.width() * scale);

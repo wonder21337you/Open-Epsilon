@@ -1,6 +1,6 @@
 package com.github.epsilon.mixins;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
 import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.impl.ClickEvent;
 import com.github.epsilon.events.impl.StartUseItemEvent;
@@ -45,7 +45,7 @@ public class MixinMinecraft {
 
     @ModifyArg(method = "updateTitle", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;setTitle(Ljava/lang/String;)V"))
     private String onUpdateTitle(String title) {
-        return ClientSetting.INSTANCE.customTitle.getValue() ? "Epsilon " + Epsilon.VERSION + " for " + title : title;
+        return ClientSetting.INSTANCE.customTitle.getValue() ? "Epsilon " + Constants.VERSION + " for " + title : title;
     }
 
     @Inject(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)

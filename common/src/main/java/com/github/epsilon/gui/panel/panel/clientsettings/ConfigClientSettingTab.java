@@ -1,6 +1,6 @@
 package com.github.epsilon.gui.panel.panel.clientsettings;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
 import com.github.epsilon.assets.holders.TranslateHolder;
 import com.github.epsilon.assets.i18n.EpsilonTranslateComponent;
 import com.github.epsilon.assets.i18n.TranslateComponent;
@@ -413,7 +413,7 @@ public class ConfigClientSettingTab implements ClientSettingTabView {
             inputField.setCursorToEnd();
             state.setConfigScroll(0.0f);
         } catch (Exception exception) {
-            Epsilon.LOGGER.error("保存配置失败", exception);
+            Constants.LOGGER.error("保存配置失败", exception);
             openErrorPopup(saveErrorComponent::getTranslatedName, exception);
         }
     }
@@ -423,7 +423,7 @@ public class ConfigClientSettingTab implements ClientSettingTabView {
             ConfigManager.INSTANCE.reloadOrThrow();
             markDirty();
         } catch (Exception exception) {
-            Epsilon.LOGGER.error("重载配置失败", exception);
+            Constants.LOGGER.error("重载配置失败", exception);
             openErrorPopup(reloadErrorComponent::getTranslatedName, exception);
         }
     }
@@ -433,7 +433,7 @@ public class ConfigClientSettingTab implements ClientSettingTabView {
             Path exported = ConfigManager.INSTANCE.exportActiveConfigToZip(inputField.getText());
             openExportSuccessPopup(exported);
         } catch (Exception exception) {
-            Epsilon.LOGGER.error("导出配置失败", exception);
+            Constants.LOGGER.error("导出配置失败", exception);
             openErrorPopup(exportErrorComponent::getTranslatedName, exception);
         }
     }
@@ -462,7 +462,7 @@ public class ConfigClientSettingTab implements ClientSettingTabView {
             inputField.setText(configName);
             inputField.setCursorToEnd();
         } catch (Exception exception) {
-            Epsilon.LOGGER.error("切换配置失败", exception);
+            Constants.LOGGER.error("切换配置失败", exception);
             openErrorPopup(switchErrorComponent::getTranslatedName, exception);
         }
     }
@@ -478,7 +478,7 @@ public class ConfigClientSettingTab implements ClientSettingTabView {
                 inputField.setCursorToEnd();
             }
         } catch (Exception exception) {
-            Epsilon.LOGGER.error("删除配置失败", exception);
+            Constants.LOGGER.error("删除配置失败", exception);
             openErrorPopup(deleteErrorComponent::getTranslatedName, exception);
         }
     }

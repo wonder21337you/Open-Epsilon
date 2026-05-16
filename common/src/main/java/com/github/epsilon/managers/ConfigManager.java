@@ -1,6 +1,6 @@
 package com.github.epsilon.managers;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
 import com.github.epsilon.addon.EpsilonAddon;
 import com.github.epsilon.assets.config.LegacyConfigMigrator;
 import com.github.epsilon.modules.HudModule;
@@ -60,7 +60,7 @@ public class ConfigManager {
             ensureConfigExists(activeConfigName);
             loadActiveConfigSnapshot();
         } catch (Exception e) {
-            Epsilon.LOGGER.error("初始化配置失败", e);
+            Constants.LOGGER.error("初始化配置失败", e);
         }
     }
 
@@ -92,7 +92,7 @@ public class ConfigManager {
         try {
             return listConfigsInternal(true);
         } catch (IOException e) {
-            Epsilon.LOGGER.error("列出配置失败", e);
+            Constants.LOGGER.error("列出配置失败", e);
             return List.of(activeConfigName);
         }
     }
@@ -101,7 +101,7 @@ public class ConfigManager {
         try {
             reloadOrThrow();
         } catch (Exception e) {
-            Epsilon.LOGGER.error("重载配置失败", e);
+            Constants.LOGGER.error("重载配置失败", e);
         }
     }
 
@@ -120,7 +120,7 @@ public class ConfigManager {
         try {
             saveActiveConfigSnapshot();
         } catch (Exception e) {
-            Epsilon.LOGGER.error("保存配置失败", e);
+            Constants.LOGGER.error("保存配置失败", e);
         }
     }
 
@@ -267,7 +267,7 @@ public class ConfigManager {
             if (parsed == null || !parsed.isJsonObject()) return;
             applyModuleObject(module, parsed.getAsJsonObject());
         } catch (Exception e) {
-            Epsilon.LOGGER.error("读取模块配置失败: {}", file, e);
+            Constants.LOGGER.error("读取模块配置失败: {}", file, e);
         }
     }
 
@@ -330,7 +330,7 @@ public class ConfigManager {
             String json = gson.toJson(buildModuleObject(module));
             Files.writeString(file, json, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
         } catch (IOException e) {
-            Epsilon.LOGGER.error("写入模块配置失败: {}", file, e);
+            Constants.LOGGER.error("写入模块配置失败: {}", file, e);
             throw e;
         }
     }
@@ -394,7 +394,7 @@ public class ConfigManager {
                 applySetting(setting, settingsObj.get(setting.getName()));
             }
         } catch (Exception e) {
-            Epsilon.LOGGER.error("读取 addon 配置失败: {}", file, e);
+            Constants.LOGGER.error("读取 addon 配置失败: {}", file, e);
         }
     }
 
@@ -412,7 +412,7 @@ public class ConfigManager {
                     StandardOpenOption.TRUNCATE_EXISTING,
                     StandardOpenOption.WRITE);
         } catch (IOException e) {
-            Epsilon.LOGGER.error("写入 addon 配置失败: {}", file, e);
+            Constants.LOGGER.error("写入 addon 配置失败: {}", file, e);
             throw e;
         }
     }
@@ -445,7 +445,7 @@ public class ConfigManager {
                     StandardOpenOption.TRUNCATE_EXISTING,
                     StandardOpenOption.WRITE);
         } catch (IOException e) {
-            Epsilon.LOGGER.error("写入好友文件失败: {}", friendFile, e);
+            Constants.LOGGER.error("写入好友文件失败: {}", friendFile, e);
             throw e;
         }
     }
@@ -465,7 +465,7 @@ public class ConfigManager {
                 }
             }
         } catch (Exception e) {
-            Epsilon.LOGGER.error("读取好友文件失败: {}", friendFile, e);
+            Constants.LOGGER.error("读取好友文件失败: {}", friendFile, e);
         }
     }
 

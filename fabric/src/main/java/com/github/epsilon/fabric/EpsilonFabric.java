@@ -1,6 +1,7 @@
 package com.github.epsilon.fabric;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
+import com.github.epsilon.EpsilonCommon;
 import com.github.epsilon.addon.AddonBootstrap;
 import com.github.epsilon.addon.EpsilonAddonSetupEvent;
 import com.github.epsilon.assets.i18n.LanguageReloadListener;
@@ -25,12 +26,12 @@ public class EpsilonFabric implements ClientModInitializer {
                 FabricEpsilonAddonEntrypoint entrypoint = container.getEntrypoint();
                 entrypoint.registerAddon(addonEvent);
             } catch (Throwable t) {
-                Epsilon.LOGGER.error("Failed to register addon entrypoint from mod: {}", providerId, t);
+                Constants.LOGGER.error("Failed to register addon entrypoint from mod: {}", providerId, t);
             }
         }
         AddonBootstrap.registerAddons(addonEvent);
 
-        Epsilon.init();
+        EpsilonCommon.init();
 
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(
                 ResourceLocationUtils.getIdentifier("objects/reload_listener"),

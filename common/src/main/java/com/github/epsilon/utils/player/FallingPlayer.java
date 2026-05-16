@@ -1,23 +1,30 @@
 package com.github.epsilon.utils.player;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+
+import static com.github.epsilon.Constants.mc;
 
 public class FallingPlayer {
 
-    public double x;
-    public double y;
-    public double z;
+    private double x;
+    private double y;
+    private double z;
     private double motionX;
     private double motionY;
     private double motionZ;
     private final float yaw;
     private final float strafe;
     private final float forward;
-    private float jumpMovementFactor;
+    private final float jumpMovementFactor;
 
-    public FallingPlayer(double x, double y, double z, double motionX, double motionY, double motionZ, float yaw, float strafe, float forward) {
+    public FallingPlayer(double x, double y, double z, double motionX, double motionY, double motionZ, float yaw, float strafe, float forward, float jumpMovementFactor) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -27,96 +34,125 @@ public class FallingPlayer {
         this.yaw = yaw;
         this.strafe = strafe;
         this.forward = forward;
+        this.jumpMovementFactor = jumpMovementFactor;
     }
 
     public FallingPlayer(Player player) {
-        this(player.getX(), player.getY(), player.getZ(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z, player.getYRot(), player.xxa, player.zza);
-        float f = player.level().getBlockState(player.blockPosition()).getBlock().getJumpFactor();
-        float f1 = player.level().getBlockState(player.getOnPos()).getBlock().getJumpFactor();
-        float jumpingVelocity = 0.42F * ((double) f == 1.0 ? f1 : f) + player.getJumpBoostPower();
-        this.jumpMovementFactor = jumpingVelocity;
-    }
-
-    private void calculateForTick2() {
-        float sr = this.strafe;
-        float fw = this.forward;
-        float v = sr * sr + fw * fw;
-        if (v >= 1.0E-4F) {
-            v = Mth.sqrt(v);
-            if (v < 1.0F) {
-                v = 1.0F;
-            }
-
-            float fixedJumpFactor = this.jumpMovementFactor;
-            if (Minecraft.getInstance().player.isSprinting()) {
-                fixedJumpFactor *= 1.3F;
-            }
-
-            v = fixedJumpFactor / v;
-            sr *= v;
-            fw *= v;
-            float f1 = Mth.sin(this.yaw * (float) Math.PI / 180.0F);
-            float f2 = Mth.cos(this.yaw * (float) Math.PI / 180.0F);
-            this.motionX += (double) (sr * f2 - fw * f1);
-            this.motionZ += (double) (fw * f2 + sr * f1);
-        }
-
-        this.motionY -= 0.08;
-        this.motionY *= 0.98F;
-        this.x = this.x + this.motionX;
-        this.y = this.y + this.motionY;
-        this.z = this.z + this.motionZ;
+        this(
+                player.getX(),
+                player.getY(),
+                player.getZ(),
+                player.getDeltaMovement().x,
+                player.getDeltaMovement().y,
+                player.getDeltaMovement().z,
+                player.getYRot(),
+                0.0F,
+                0.0F,
+                player.getSpeed()
+        );
     }
 
     private void calculateForTick() {
-        float sr = this.strafe * 0.98F;
-        float fw = this.forward * 0.98F;
-        float v = sr * sr + fw * fw;
-        if (v >= 1.0E-4F) {
-            v = Mth.sqrt(v);
-            if (v < 1.0F) {
-                v = 1.0F;
+        float sr = strafe * 0.9800000190734863F;
+        float fw = forward * 0.9800000190734863F;
+        float movement = sr * sr + fw * fw;
+
+        if (movement >= 1.0E-4F) {
+            movement = Mth.sqrt(movement);
+            if (movement < 1.0F) {
+                movement = 1.0F;
             }
 
-            float fixedJumpFactor = this.jumpMovementFactor;
-            if (Minecraft.getInstance().player.isSprinting()) {
+            float fixedJumpFactor = jumpMovementFactor;
+            if (mc.player != null && mc.player.isSprinting()) {
                 fixedJumpFactor *= 1.3F;
             }
 
-            v = fixedJumpFactor / v;
-            sr *= v;
-            fw *= v;
-            float f1 = Mth.sin(this.yaw * (float) Math.PI / 180.0F);
-            float f2 = Mth.cos(this.yaw * (float) Math.PI / 180.0F);
-            this.motionX += (double) (sr * f2 - fw * f1);
-            this.motionZ += (double) (fw * f2 + sr * f1);
+            movement = fixedJumpFactor / movement;
+            sr *= movement;
+            fw *= movement;
+
+            float sin = Mth.sin(yaw * ((float) Math.PI / 180.0F));
+            float cos = Mth.cos(yaw * ((float) Math.PI / 180.0F));
+            motionX += sr * cos - fw * sin;
+            motionZ += fw * cos + sr * sin;
         }
 
-        this.motionY -= 0.08;
-        this.motionY *= 0.98F;
-        this.x = this.x + this.motionX;
-        this.y = this.y + this.motionY;
-        this.z = this.z + this.motionZ;
-        this.motionX *= 0.91;
-        this.motionZ *= 0.91;
+        motionY -= 0.08D;
+        motionY *= 0.9800000190734863D;
+        x += motionX;
+        y += motionY;
+        z += motionZ;
+        motionX *= 0.91D;
+        motionZ *= 0.91D;
     }
 
-    /**
-     * 这个是用来算 NoFall 落地水的
-     */
-    public void calculateMLG(int ticks) {
-        for (int i = 0; i < ticks; i++) {
-            this.calculateForTick2();
-        }
-    }
-
-    /**
-     * 一般的就用这个算
-     */
     public void calculate(int ticks) {
         for (int i = 0; i < ticks; i++) {
-            this.calculateForTick();
+            calculateForTick();
         }
+    }
+
+    public BlockPos findCollision(int ticks) {
+        if (mc.player == null) {
+            return null;
+        }
+
+        for (int i = 0; i < ticks; i++) {
+            Vec3 start = new Vec3(x, y, z);
+            calculateForTick();
+            Vec3 end = new Vec3(x, y, z);
+            BlockPos raytracedBlock;
+            float halfWidth = mc.player.getBbWidth() / 2.0F;
+
+            if ((raytracedBlock = rayTrace(start, end)) != null) return raytracedBlock;
+            if ((raytracedBlock = rayTrace(start.add(halfWidth, 0.0, halfWidth), end)) != null) return raytracedBlock;
+            if ((raytracedBlock = rayTrace(start.add(-halfWidth, 0.0, halfWidth), end)) != null) return raytracedBlock;
+            if ((raytracedBlock = rayTrace(start.add(halfWidth, 0.0, -halfWidth), end)) != null) return raytracedBlock;
+            if ((raytracedBlock = rayTrace(start.add(-halfWidth, 0.0, -halfWidth), end)) != null) return raytracedBlock;
+            if ((raytracedBlock = rayTrace(start.add(halfWidth, 0.0, halfWidth / 2.0F), end)) != null)
+                return raytracedBlock;
+            if ((raytracedBlock = rayTrace(start.add(-halfWidth, 0.0, halfWidth / 2.0F), end)) != null)
+                return raytracedBlock;
+            if ((raytracedBlock = rayTrace(start.add(halfWidth / 2.0F, 0.0, halfWidth), end)) != null)
+                return raytracedBlock;
+            if ((raytracedBlock = rayTrace(start.add(halfWidth / 2.0F, 0.0, -halfWidth), end)) != null)
+                return raytracedBlock;
+        }
+
+        return null;
+    }
+
+    private BlockPos rayTrace(Vec3 start, Vec3 end) {
+        if (mc.level == null) {
+            return null;
+        }
+
+        BlockHitResult result = mc.level.clip(new ClipContext(
+                start,
+                end,
+                ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE,
+                mc.player
+        ));
+
+        if (result.getType() == HitResult.Type.BLOCK && result.getDirection() == Direction.UP) {
+            return result.getBlockPos();
+        }
+
+        return null;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getZ() {
+        return z;
     }
 
 }

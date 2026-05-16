@@ -1,6 +1,6 @@
 package com.github.epsilon.managers;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
 import com.github.epsilon.addon.EpsilonAddon;
 
 import java.util.*;
@@ -23,13 +23,13 @@ public final class AddonManager {
 
         String addonId = addon.getAddonId();
         if (isBlank(addonId)) {
-            Epsilon.LOGGER.warn("忽略无有效ID的插件：{}", addon.getClass().getName());
+            Constants.LOGGER.warn("忽略无有效ID的插件：{}", addon.getClass().getName());
             return;
         }
 
         // 重复ID校验
         if (!addonIds.add(addonId)) {
-            Epsilon.LOGGER.warn("忽略重复插件ID：{}", addonId);
+            Constants.LOGGER.warn("忽略重复插件ID：{}", addonId);
             return;
         }
 
@@ -52,9 +52,9 @@ public final class AddonManager {
             try {
                 addon.initAddonI18n();
                 addon.onSetup();
-                Epsilon.LOGGER.info("插件加载完成：{}", addon.getAddonId());
+                Constants.LOGGER.info("插件加载完成：{}", addon.getAddonId());
             } catch (Throwable t) {
-                Epsilon.LOGGER.error("插件初始化失败：{}", addon.getAddonId(), t);
+                Constants.LOGGER.error("插件初始化失败：{}", addon.getAddonId(), t);
             }
         }
     }

@@ -1,6 +1,6 @@
 package com.github.epsilon.gui.dropdown;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
 import com.github.epsilon.gui.dropdown.component.DropdownPanel;
 import com.github.epsilon.managers.ConfigManager;
 import com.google.gson.*;
@@ -41,7 +41,7 @@ public final class DropdownLayoutState {
                 panel.setOpened(readBoolean(object, "opened", panel.isOpened()));
             }
         } catch (Exception e) {
-            Epsilon.LOGGER.error("读取 Dropdown GUI 布局失败", e);
+            Constants.LOGGER.error("读取 Dropdown GUI 布局失败", e);
         }
     }
 
@@ -67,7 +67,7 @@ public final class DropdownLayoutState {
                     StandardOpenOption.TRUNCATE_EXISTING,
                     StandardOpenOption.WRITE);
         } catch (IOException e) {
-            Epsilon.LOGGER.error("保存 Dropdown GUI 布局失败", e);
+            Constants.LOGGER.error("保存 Dropdown GUI 布局失败", e);
         }
     }
 

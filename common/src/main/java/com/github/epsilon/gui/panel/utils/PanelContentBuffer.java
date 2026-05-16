@@ -3,11 +3,12 @@ package com.github.epsilon.gui.panel.utils;
 import com.github.epsilon.graphics.renderers.*;
 import com.github.epsilon.graphics.text.ttf.TtfFontLoader;
 import com.github.epsilon.gui.panel.PanelLayout;
-import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.github.epsilon.Constants.mc;
 
 /**
  * 面板视口内容缓冲。
@@ -129,7 +130,7 @@ public class PanelContentBuffer {
             marqueeDraws.clear();
             return;
         }
-        int guiScale = Minecraft.getInstance().getWindow().getGuiScale();
+        int guiScale = mc.getWindow().getGuiScale();
         for (MarqueeTextDraw draw : marqueeDraws) {
             PanelLayout.Rect clip = intersect(draw.clip(), pendingViewport);
             if (clip == null) {

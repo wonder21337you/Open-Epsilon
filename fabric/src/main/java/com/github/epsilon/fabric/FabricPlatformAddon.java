@@ -1,6 +1,6 @@
 package com.github.epsilon.fabric;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
 import com.github.epsilon.addon.EpsilonAddon;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class FabricPlatformAddon extends EpsilonAddon {
 
     @Override
     public void onSetup() {
-        Epsilon.LOGGER.info("Fabric platform addon initialized.");
+        Constants.LOGGER.info("Fabric platform addon initialized.");
     }
 
     @Override
@@ -31,7 +31,7 @@ public class FabricPlatformAddon extends EpsilonAddon {
 
     @Override
     public String getVersion() {
-        return Epsilon.VERSION;
+        return Constants.VERSION;
     }
 
     @Override

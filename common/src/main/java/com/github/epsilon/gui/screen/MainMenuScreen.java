@@ -1,6 +1,6 @@
 package com.github.epsilon.gui.screen;
 
-import com.github.epsilon.Epsilon;
+import com.github.epsilon.Constants;
 import com.github.epsilon.graphics.LuminRenderSystem;
 import com.github.epsilon.graphics.renderers.RectRenderer;
 import com.github.epsilon.graphics.renderers.TextRenderer;
@@ -113,7 +113,7 @@ public class MainMenuScreen extends Screen {
         Color accentColor = applyAlpha(new Color(208, 188, 255), 0.95f);
 
         String title = "EPSILON";
-        String subtitle = Epsilon.VERSION;
+        String subtitle = Constants.VERSION;
 
         float titleHeight = textRenderer.getHeight(layout.titleScale, StaticFontLoader.JURA_LIGHT);
 

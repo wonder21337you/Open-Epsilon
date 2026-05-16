@@ -1,6 +1,5 @@
 package com.github.epsilon.assets.resources;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import org.lwjgl.system.MemoryUtil;
@@ -9,6 +8,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Optional;
 
+import static com.github.epsilon.Constants.mc;
+
 public class ResourceLocationUtils {
 
     public static Identifier getIdentifier(String path) {
@@ -16,7 +17,7 @@ public class ResourceLocationUtils {
     }
 
     public static ByteBuffer loadResource(Identifier identifier) {
-        final var manager = Minecraft.getInstance().getResourceManager();
+        final var manager = mc.getResourceManager();
         Optional<Resource> resource = manager.getResource(identifier);
 
         if (resource.isEmpty()) {
