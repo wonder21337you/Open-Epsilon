@@ -1,6 +1,11 @@
 package com.github.epsilon.modules.impl;
 
+import com.github.epsilon.assets.holders.TextureCacheHolder;
+import com.github.epsilon.assets.holders.TranslateHolder;
+import com.github.epsilon.gui.dropdown.DropdownScreen;
 import com.github.epsilon.gui.hudeditor.HudEditorScreen;
+import com.github.epsilon.gui.panel.PanelScreen;
+import com.github.epsilon.gui.panel.dsl.PanelUiTree;
 import com.github.epsilon.gui.screen.MainMenuScreen;
 import com.github.epsilon.modules.Module;
 import com.github.epsilon.settings.SettingGroup;
@@ -18,6 +23,11 @@ public class ClientSetting extends Module {
 
     private ClientSetting() {
         super("Client Setting", null);
+    }
+
+    public enum GuiMode {
+        Dropdown,
+        Panel
     }
 
     public enum ThemePreset {
@@ -45,13 +55,25 @@ public class ClientSetting extends Module {
     // General
     public final KeybindSetting guiKeybind = keybindSetting("Gui Keybind", GLFW.GLFW_KEY_RIGHT_SHIFT).group(sgGeneral);
 
+    public final EnumSetting<GuiMode> guiMode = enumSetting("Gui Mode", GuiMode.Dropdown, _ -> {
+        if (mc.screen instanceof PanelScreen) {
+            mc.setScreen(DropdownScreen.INSTANCE);
+        } else if (mc.screen instanceof DropdownScreen) {
+            mc.setScreen(PanelScreen.INSTANCE);
+        }
+    }).group(sgGeneral);
+
     private final ButtonSetting openHudEditor = buttonSetting("Open Hud Editor", () -> mc.setScreen(HudEditorScreen.INSTANCE)).group(sgGeneral);
 
-    public final BoolSetting i18nFallback = boolSetting("I18n Fallback", true).group(sgGeneral);
+    public final BoolSetting i18nFallback = boolSetting("I18n Fallback", true, _ -> {
+        TranslateHolder.INSTANCE.refresh();
+        PanelUiTree.clearMemoCache();
+        TextureCacheHolder.INSTANCE.clearCache();
+    }).group(sgGeneral);
 
     public final BoolSetting fontAntiAliasing = boolSetting("Font Anti Aliasing", true).group(sgGeneral);
 
-    public final BoolSetting closeOnOutside = boolSetting("Close Gui On Outside", false).group(sgGeneral);
+    public final BoolSetting closeOnOutside = boolSetting("Close Gui On Outside", false, () -> guiMode.is(GuiMode.Panel)).group(sgGeneral);
 
     // Anti Cheat
     public final DoubleSetting rotateBackSpeed = doubleSetting("Rotate Back Speed", 5.0f, 1.0f, 10.0f, 0.5f).group(sgAntiCheat);
@@ -59,7 +81,7 @@ public class ClientSetting extends Module {
     // Appearance
     public final EnumSetting<ThemeMode> themeMode = enumSetting("Theme Mode", ThemeMode.Dark).group(sgAppearance);
 
-    public final EnumSetting<ThemePreset> themePreset = enumSetting("Theme Preset", ThemePreset.Expressive).group(sgAppearance);
+    public final EnumSetting<ThemePreset> themePreset = enumSetting("Theme Preset", ThemePreset.TonalSpot).group(sgAppearance);
 
     public final BoolSetting customIcon = boolSetting("Custom Icon", true, _ -> {
         try {

@@ -95,6 +95,10 @@ public class RotationManager {
         smoothed = false;
     }
 
+    public boolean isDone() {
+        return Math.abs(Mth.wrapDegrees(rotations.x - targetRotations.x)) <= 1 && Math.abs(Mth.wrapDegrees(rotations.y - targetRotations.y)) <= 1;
+    }
+
     private void smooth() {
         if (!smoothed) {
             float targetYaw = targetRotations.x;
@@ -144,6 +148,10 @@ public class RotationManager {
 
     public boolean isActive() {
         return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public float getYaw() {
@@ -224,43 +232,6 @@ public class RotationManager {
     }
 
     @EventHandler
-    private void onRaytrace(RaytraceEvent event) {
-        if (active && rotations != null) {
-            event.setYaw(rotations.x);
-            event.setPitch(rotations.y);
-        }
-    }
-
-    @EventHandler
-    private void onKeyboardInput(KeyboardInputEvent event) {
-        MovementFix moveFix = MovementFix.INSTANCE;
-        if (active && moveFix.isEnabled() && rotations != null && !mc.player.isFallFlying()) {
-            moveFix.fixMovement(event, rotations.x);
-        }
-    }
-
-    @EventHandler
-    private void onStrafe(StrafeEvent event) {
-        if (active && MovementFix.INSTANCE.isEnabled() && rotations != null) {
-            event.setYaw(rotations.x);
-        }
-    }
-
-    @EventHandler
-    private void onJump(JumpEvent event) {
-        if (active && MovementFix.INSTANCE.isEnabled() && rotations != null) {
-            event.setYaw(rotations.x);
-        }
-    }
-
-    @EventHandler
-    public void onFallFlying(FallFlyingEvent event) {
-        if (active && MovementFix.INSTANCE.isEnabled() && rotations != null) {
-            event.setPitch(rotations.y);
-        }
-    }
-
-    @EventHandler
     private void onSendPosition(SendPositionEvent event) {
         if (active && rotations != null) {
             float yaw = rotations.x;
@@ -285,6 +256,58 @@ public class RotationManager {
         animationRotation = new Vector2f(event.getYaw(), event.getPitch());
         targetRotations = new Vector2f(mc.player.getYRot(), mc.player.getXRot());
         smoothed = false;
+    }
+
+    @EventHandler
+    private void onRaytrace(RaytraceEvent event) {
+        if (active && rotations != null) {
+            event.setYaw(rotations.x);
+            event.setPitch(rotations.y);
+        }
+    }
+
+    @EventHandler
+    private void onKeyboardInput(MoveInputEvent event) {
+        MovementFix moveFix = MovementFix.INSTANCE;
+        if (active && moveFix.isEnabled() && rotations != null && !mc.player.isFallFlying()) {
+            moveFix.fixMovement(event, rotations.x);
+        }
+    }
+
+    @EventHandler
+    private void onStrafe(StrafeEvent event) {
+        if (active && MovementFix.INSTANCE.isEnabled() && rotations != null) {
+            event.setYaw(rotations.x);
+        }
+    }
+
+    @EventHandler
+    private void onJump(JumpEvent event) {
+        if (active && MovementFix.INSTANCE.isEnabled() && rotations != null) {
+            event.setYaw(rotations.x);
+        }
+    }
+
+    @EventHandler
+    private void onItemRayTrace(UseItemRayTraceEvent event) {
+        if (rotations != null && active) {
+            event.setYaw(rotations.x);
+            event.setPitch(rotations.y);
+        }
+    }
+
+    @EventHandler
+    private void onFallFlying(FallFlyingEvent event) {
+        if (active && MovementFix.INSTANCE.isEnabled() && rotations != null) {
+            event.setPitch(rotations.y);
+        }
+    }
+
+    @EventHandler
+    private void onAttack(AttackYawEvent event) {
+        if (rotations != null) {
+            event.setYaw(rotations.x);
+        }
     }
 
     private void correctDisabledRotations() {

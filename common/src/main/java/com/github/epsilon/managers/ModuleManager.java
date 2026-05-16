@@ -7,6 +7,7 @@ import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.KeyPressEvent;
 import com.github.epsilon.events.impl.MousePressEvent;
 import com.github.epsilon.events.impl.Render2DEvent;
+import com.github.epsilon.gui.dropdown.DropdownScreen;
 import com.github.epsilon.gui.hudeditor.HudEditorScreen;
 import com.github.epsilon.gui.panel.PanelScreen;
 import com.github.epsilon.managers.sound.SoundKey;
@@ -16,7 +17,7 @@ import com.github.epsilon.modules.Module;
 import com.github.epsilon.modules.impl.ClientSetting;
 import com.github.epsilon.modules.impl.combat.*;
 import com.github.epsilon.modules.impl.hud.*;
-import com.github.epsilon.modules.impl.hud.notification.NotificationsHud;
+import com.github.epsilon.modules.impl.hud.notification.NotificationsHUD;
 import com.github.epsilon.modules.impl.movement.*;
 import com.github.epsilon.modules.impl.player.*;
 import com.github.epsilon.modules.impl.render.*;
@@ -101,26 +102,26 @@ public class ModuleManager {
                 Velocity.INSTANCE,
 
                 // Render
+                AntiAlias.INSTANCE,
                 AspectRatio.INSTANCE,
                 CameraClip.INSTANCE,
                 Chams.INSTANCE,
                 ESP.INSTANCE,
+                Filter.INSTANCE,
                 Fullbright.INSTANCE,
                 HandsView.INSTANCE,
                 Hat.INSTANCE,
                 NameTags.INSTANCE,
                 NoRender.INSTANCE,
-                PopChams.INSTANCE,
-                AntiAlias.INSTANCE,
-                Filter.INSTANCE,
+                //PopChams.INSTANCE,
 
                 // Hud
-                NotificationsHud.INSTANCE,
-                InventoryHud.INSTANCE,
-                ModuleListHud.INSTANCE,
-                PotionHud.INSTANCE,
-                TargetHud.INSTANCE,
-                WatermarkHud.INSTANCE
+                NotificationsHUD.INSTANCE,
+                InventoryHUD.INSTANCE,
+                ModuleListHUD.INSTANCE,
+                PotionHUD.INSTANCE,
+                TargetHUD.INSTANCE,
+                WatermarkHUD.INSTANCE
 
         ));
 
@@ -163,8 +164,13 @@ public class ModuleManager {
         int keyCode = event.getKey();
         int action = event.getAction();
 
-        if (keyCode == ClientSetting.INSTANCE.guiKeybind.getValue() && action == InputConstants.PRESS) {
-            mc.setScreen(PanelScreen.INSTANCE);
+        ClientSetting cs = ClientSetting.INSTANCE;
+        if (keyCode == cs.guiKeybind.getValue() && action == InputConstants.PRESS) {
+            if (cs.guiMode.is(ClientSetting.GuiMode.Dropdown)) {
+                mc.setScreen(DropdownScreen.INSTANCE);
+            } else {
+                mc.setScreen(PanelScreen.INSTANCE);
+            }
         }
 
         dispatchKeyBind(keyCode, action);
