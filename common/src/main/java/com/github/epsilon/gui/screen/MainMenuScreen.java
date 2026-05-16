@@ -37,6 +37,7 @@ public class MainMenuScreen extends Screen {
     private LuminRenderSystem.LuminRenderTarget uiRenderTarget;
 
     private long introStartMs;
+    private boolean initialized;
 
     private MainMenuScreen() {
         super(Component.literal("MainMenuScreen"));
@@ -52,11 +53,14 @@ public class MainMenuScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        introStartMs = Util.getMillis();
-        GlslSandBox.INSTANCE.resetTime();
-        for (MenuEntry entry : entries) {
-            entry.hoverProgress = 0.0f;
-            entry.setBounds(0.0f, 0.0f, 0.0f, 0.0f);
+        if (!initialized) {
+            initialized = true;
+            introStartMs = Util.getMillis();
+            GlslSandBox.INSTANCE.resetTime();
+            for (MenuEntry entry : entries) {
+                entry.hoverProgress = 0.0f;
+                entry.setBounds(0.0f, 0.0f, 0.0f, 0.0f);
+            }
         }
     }
 
@@ -207,6 +211,7 @@ public class MainMenuScreen extends Screen {
     @Override
     public void removed() {
         super.removed();
+        initialized = false;
         if (backgroundRenderTarget != null) {
             backgroundRenderTarget.close();
             backgroundRenderTarget = null;
