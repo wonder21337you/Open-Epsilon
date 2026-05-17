@@ -11,12 +11,13 @@ import com.github.epsilon.gui.panel.utils.IMEFocusHelper;
 import com.github.epsilon.utils.render.animation.Animation;
 import com.github.epsilon.utils.render.animation.Easing;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
+
+import static com.github.epsilon.Constants.mc;
 
 public class ClientSettingTextField {
 
@@ -179,17 +180,14 @@ public class ClientSettingTextField {
                 yield true;
             }
             case GLFW.GLFW_KEY_V -> {
-                Minecraft minecraft = Minecraft.getInstance();
-                if (minecraft != null) {
-                    String clipboard = minecraft.keyboardHandler.getClipboard();
-                    if (clipboard != null && !clipboard.isEmpty()) {
-                        String sanitized = clipboard.codePoints()
-                                .filter(cp -> cp >= 32 && cp != 127)
-                                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                                .toString();
-                        if (!sanitized.isEmpty()) {
-                            insertText(sanitized);
-                        }
+                String clipboard = mc.keyboardHandler.getClipboard();
+                if (!clipboard.isEmpty()) {
+                    String sanitized = clipboard.codePoints()
+                            .filter(cp -> cp >= 32 && cp != 127)
+                            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                            .toString();
+                    if (!sanitized.isEmpty()) {
+                        insertText(sanitized);
                     }
                 }
                 yield true;
@@ -216,10 +214,8 @@ public class ClientSettingTextField {
     }
 
     private boolean isControlDown() {
-        Minecraft minecraft = Minecraft.getInstance();
-        var window = minecraft.getWindow();
-        return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL)
-                || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
+        var window = mc.getWindow();
+        return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
     }
 }
 

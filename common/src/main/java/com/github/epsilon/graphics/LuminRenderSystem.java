@@ -9,7 +9,6 @@ import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.*;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Projection;
 import net.minecraft.client.renderer.ProjectionMatrixBuffer;
 import net.minecraft.client.renderer.rendertype.TextureTransform;
@@ -20,6 +19,8 @@ import org.joml.Vector4f;
 
 import javax.annotation.Nullable;
 import java.util.OptionalDouble;
+
+import static com.github.epsilon.Constants.mc;
 
 public class LuminRenderSystem {
 
@@ -46,7 +47,7 @@ public class LuminRenderSystem {
     }
 
     public static void applyOrthoProjection() {
-        WindowRenderState windowState = Minecraft.getInstance().gameRenderer.getGameRenderState().windowRenderState;
+        WindowRenderState windowState = mc.gameRenderer.getGameRenderState().windowRenderState;
 
         guiOrthoProjection
                 .setupOrtho(-1000.0F, 1000.0F,
@@ -64,13 +65,13 @@ public class LuminRenderSystem {
      */
     public static GpuTextureView resolveColorView() {
         if (activeTarget != null) return activeTarget.colorView();
-        return Minecraft.getInstance().getMainRenderTarget().getColorTextureView();
+        return mc.getMainRenderTarget().getColorTextureView();
     }
 
     @Nullable
     public static GpuTextureView resolveDepthView() {
         if (activeTarget != null) return activeTarget.depthView();
-        return Minecraft.getInstance().getMainRenderTarget().getDepthTextureView();
+        return mc.getMainRenderTarget().getDepthTextureView();
     }
 
     public static QuadRenderingInfo prepareQuadRendering(int vertexCount) {
@@ -153,7 +154,7 @@ public class LuminRenderSystem {
 
             this.colorTexture = new LuminTexture(colorTexture, colorView, sampler);
 
-            Minecraft.getInstance().getTextureManager().register(identifier, getColorTexture());
+            mc.getTextureManager().register(identifier, getColorTexture());
         }
 
         public void resize(int newWidth, int newHeight) {
@@ -202,7 +203,7 @@ public class LuminRenderSystem {
         }
 
         private void destroyTextures() {
-            Minecraft.getInstance().getTextureManager().release(identifier);
+            mc.getTextureManager().release(identifier);
             if (depthView != null) depthView.close();
             if (depthTexture != null) depthTexture.close();
         }

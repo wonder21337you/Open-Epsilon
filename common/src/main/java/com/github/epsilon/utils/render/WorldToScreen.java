@@ -1,6 +1,5 @@
 package com.github.epsilon.utils.render;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,12 +10,12 @@ import org.joml.Vector3f;
 import org.joml.Vector4d;
 import org.joml.Vector4f;
 
+import static com.github.epsilon.Constants.mc;
+
 public class WorldToScreen {
 
-    private static final Minecraft mc = Minecraft.getInstance();
-
     public static Vector3f getWorldPositionToScreen(Vec3 pos) {
-        final var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        final var camera = mc.gameRenderer.getMainCamera();
         final Vector3f position = new Vec3(
                 pos.x - camera.position().x,
                 pos.y - camera.position().y,

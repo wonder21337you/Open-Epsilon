@@ -1,6 +1,5 @@
 package com.github.epsilon.utils.player;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -15,9 +14,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class InvHelper {
+import static com.github.epsilon.Constants.mc;
 
-    private static final Minecraft mc = Minecraft.getInstance();
+public class InvHelper {
 
     public static final List<Block> blacklistedBlocks = Arrays.asList(
             Blocks.AIR,

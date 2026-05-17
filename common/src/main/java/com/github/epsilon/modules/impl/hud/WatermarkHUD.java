@@ -79,7 +79,7 @@ public class WatermarkHUD extends HudModule {
         float frameTime = deltaTracker == null ? 0.05f : deltaTracker.getGameTimeDeltaTicks() / 20.0f;
         animTimer += frameTime;
 
-        String fullBrand = "Epsilon";
+        String fullBrand = Constants.NAME;
         String separator = "|";
 
         String brandText = computeBrand(fullBrand, animSpeed.getValue().floatValue());

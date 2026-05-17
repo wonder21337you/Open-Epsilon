@@ -2,9 +2,10 @@ package com.github.epsilon.modules.impl.hud.notification;
 
 import com.github.epsilon.assets.i18n.EpsilonTranslateComponent;
 import com.github.epsilon.assets.i18n.TranslateComponent;
-import net.minecraft.client.Minecraft;
 
 import java.util.*;
+
+import static com.github.epsilon.Constants.mc;
 
 public class NotificationManager {
 
@@ -21,7 +22,7 @@ public class NotificationManager {
 
     public void post(String title, String subTitle, NotificationMode mode, int displayTime) {
         makeRoomIfNeeded();
-        Notification notification = new Notification(title, subTitle, mode, displayTime, getScreenHeight(), false);
+        Notification notification = new Notification(title, subTitle, mode, displayTime, mc.getWindow().getGuiScaledHeight(), false);
         notifications.add(notification);
     }
 
@@ -48,7 +49,7 @@ public class NotificationManager {
         makeRoomIfNeeded();
         String title = enabled ? enableComponent.getTranslatedName() : disableComponent.getTranslatedName();
         NotificationMode mode = enabled ? NotificationMode.Success : NotificationMode.Error;
-        Notification notification = new Notification(hashCode, title, moduleName, mode, displayTime, getScreenHeight(), true);
+        Notification notification = new Notification(hashCode, title, moduleName, mode, displayTime, mc.getWindow().getGuiScaledHeight(), true);
         notifications.add(notification);
         hashCodeMap.put(hashCode, notification);
     }
@@ -85,13 +86,6 @@ public class NotificationManager {
                 hashCodeMap.remove(oldest.getHashCode());
             }
         }
-    }
-
-    private float getScreenHeight() {
-        if (Minecraft.getInstance().getWindow() == null) {
-            return 0;
-        }
-        return Minecraft.getInstance().getWindow().getGuiScaledHeight();
     }
 
 }

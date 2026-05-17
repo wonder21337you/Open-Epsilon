@@ -5,7 +5,6 @@ import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.TickEvent;
 import com.github.epsilon.modules.impl.combat.AntiBot;
 import com.github.epsilon.utils.rotation.RotationUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
@@ -18,11 +17,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.github.epsilon.Constants.mc;
+
 public class TargetManager {
 
     public static final TargetManager INSTANCE = new TargetManager();
-
-    private final Minecraft mc = Minecraft.getInstance();
 
     private LivingEntity sharedTarget;
 

@@ -4,10 +4,11 @@ import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.WorldEvent;
 import com.github.epsilon.utils.player.ChatUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.Packet;
 
 import java.util.concurrent.LinkedBlockingQueue;
+
+import static com.github.epsilon.Constants.mc;
 
 // This is BlinkManager
 public class ServerboundPacketManager {
@@ -32,7 +33,7 @@ public class ServerboundPacketManager {
     public void flush() {
         while (!packets.isEmpty()) {
             try {
-                Minecraft.getInstance().getConnection().send(packets.poll());
+                mc.getConnection().send(packets.poll());
             } catch (Exception e) {
                 ChatUtils.addChatMessage("failed to flush serverbound packets: " + e.getMessage());
             }
@@ -56,7 +57,6 @@ public class ServerboundPacketManager {
 
         if (!blinking) return false;
 
-        Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null) return false;
 
         packets.add(packet);

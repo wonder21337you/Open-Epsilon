@@ -1,14 +1,13 @@
 package com.github.epsilon.utils.network;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.Packet;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class PacketUtils {
+import static com.github.epsilon.Constants.mc;
 
-    private static final Minecraft mc = Minecraft.getInstance();
+public class PacketUtils {
 
     public static final Set<Packet<?>> bypassedPackets = new HashSet<>();
 

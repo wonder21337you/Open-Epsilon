@@ -10,7 +10,6 @@ import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
@@ -19,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
+
+import static com.github.epsilon.Constants.mc;
 
 public class GlslSandBox implements AutoCloseable {
 
@@ -35,7 +36,6 @@ public class GlslSandBox implements AutoCloseable {
             .putVec4()
             .get();
 
-    private final Minecraft minecraft = Minecraft.getInstance();
     private final Map<Identifier, RenderPipeline> pipelines = new HashMap<>();
 
     private GpuBuffer sandboxInfoUniformBuf;
@@ -77,13 +77,13 @@ public class GlslSandBox implements AutoCloseable {
         ensureUniformBuffer();
 
         final var activeTarget = LuminRenderSystem.getActiveTarget();
-        final int targetWidth = activeTarget != null ? activeTarget.width() : minecraft.getMainRenderTarget().width;
-        final int targetHeight = activeTarget != null ? activeTarget.height() : minecraft.getMainRenderTarget().height;
+        final int targetWidth = activeTarget != null ? activeTarget.width() : mc.getMainRenderTarget().width;
+        final int targetHeight = activeTarget != null ? activeTarget.height() : mc.getMainRenderTarget().height;
 
         if (targetWidth <= 0 || targetHeight <= 0) return;
 
-        float scaleX = targetWidth / (float) minecraft.getWindow().getGuiScaledWidth();
-        float scaleY = targetHeight / (float) minecraft.getWindow().getGuiScaledHeight();
+        float scaleX = targetWidth / (float) mc.getWindow().getGuiScaledWidth();
+        float scaleY = targetHeight / (float) mc.getWindow().getGuiScaledHeight();
 
         float mousePxX = (float) mouseX * scaleX;
         float mousePxY = (float) mouseY * scaleY;

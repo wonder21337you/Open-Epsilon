@@ -5,12 +5,13 @@ import com.github.epsilon.gui.dropdown.DropdownTheme;
 import com.github.epsilon.gui.panel.MD3Theme;
 import com.github.epsilon.gui.panel.utils.IMEFocusHelper;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Predicate;
+
+import static com.github.epsilon.Constants.mc;
 
 public class DropdownTextField {
 
@@ -170,10 +171,7 @@ public class DropdownTextField {
                 yield true;
             }
             case GLFW.GLFW_KEY_V -> {
-                Minecraft minecraft = Minecraft.getInstance();
-                if (minecraft != null) {
-                    insertText(minecraft.keyboardHandler.getClipboard());
-                }
+                insertText(mc.keyboardHandler.getClipboard());
                 yield true;
             }
             default -> false;
@@ -181,11 +179,8 @@ public class DropdownTextField {
     }
 
     private boolean isControlDown() {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft == null) return false;
-        var window = minecraft.getWindow();
-        return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL)
-                || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
+        var window = mc.getWindow();
+        return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
     }
 
     private String clamp(String value) {

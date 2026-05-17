@@ -8,7 +8,6 @@ import com.github.epsilon.modules.impl.ClientSetting;
 import com.github.epsilon.modules.impl.movement.MovementFix;
 import com.github.epsilon.utils.rotation.Priority;
 import com.github.epsilon.utils.rotation.RotationUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import org.joml.Vector2f;
 
@@ -17,11 +16,11 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static com.github.epsilon.Constants.mc;
+
 public class RotationManager {
 
     public static final RotationManager INSTANCE = new RotationManager();
-
-    private final Minecraft mc = Minecraft.getInstance();
 
     private final Vector2f offset = new Vector2f(0, 0);
     public Vector2f rotations;

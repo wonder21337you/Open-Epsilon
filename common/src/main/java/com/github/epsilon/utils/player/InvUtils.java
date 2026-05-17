@@ -1,15 +1,14 @@
 package com.github.epsilon.utils.player;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Predicate;
 
-public class InvUtils {
+import static com.github.epsilon.Constants.mc;
 
-    private static final Minecraft mc = Minecraft.getInstance();
+public class InvUtils {
 
     public static int[] invSlots;
     public static int previousSlot = -1;

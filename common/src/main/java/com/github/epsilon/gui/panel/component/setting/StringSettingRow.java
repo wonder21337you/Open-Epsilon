@@ -8,13 +8,14 @@ import com.github.epsilon.gui.panel.dsl.PanelUiTree;
 import com.github.epsilon.gui.panel.utils.IMEFocusHelper;
 import com.github.epsilon.settings.impl.StringSetting;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 
 import java.awt.*;
+
+import static com.github.epsilon.Constants.mc;
 
 public class StringSettingRow extends SettingRow<StringSetting> {
 
@@ -289,14 +290,12 @@ public class StringSettingRow extends SettingRow<StringSetting> {
         if (!hasSelection()) {
             return;
         }
-        Minecraft minecraft = Minecraft.getInstance();
         String current = getDisplayBuffer();
-        minecraft.keyboardHandler.setClipboard(current.substring(getSelectionStart(), getSelectionEnd()));
+        mc.keyboardHandler.setClipboard(current.substring(getSelectionStart(), getSelectionEnd()));
     }
 
     private void pasteClipboard() {
-        Minecraft minecraft = Minecraft.getInstance();
-        String clipboard = minecraft.keyboardHandler.getClipboard();
+        String clipboard = mc.keyboardHandler.getClipboard();
         if (clipboard.isEmpty()) {
             return;
         }
@@ -373,8 +372,7 @@ public class StringSettingRow extends SettingRow<StringSetting> {
     }
 
     private boolean isControlDown() {
-        Minecraft minecraft = Minecraft.getInstance();
-        return InputConstants.isKeyDown(minecraft.getWindow(), 341) || InputConstants.isKeyDown(minecraft.getWindow(), 345);
+        return InputConstants.isKeyDown(mc.getWindow(), 341) || InputConstants.isKeyDown(mc.getWindow(), 345);
     }
 
     private record DisplaySlice(String text, float textX, int caretIndex, int start, int end) {

@@ -3,13 +3,14 @@ package com.github.epsilon.managers;
 import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.PacketEvent;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundSetScorePacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.github.epsilon.Constants.mc;
 
 public class HealthManager {
 
@@ -35,7 +36,6 @@ public class HealthManager {
 
     @EventHandler
     private void onPacket(PacketEvent.Receive event) {
-        Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null) return;
 
         if (event.getPacket() instanceof ClientboundSetScorePacket packet) {

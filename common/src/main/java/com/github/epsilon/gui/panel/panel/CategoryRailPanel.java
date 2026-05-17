@@ -18,11 +18,12 @@ import com.github.epsilon.managers.sound.SoundManager;
 import com.github.epsilon.modules.Category;
 import com.github.epsilon.utils.render.animation.Animation;
 import com.github.epsilon.utils.render.animation.Easing;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 
 import java.awt.*;
+
+import static com.github.epsilon.Constants.mc;
 
 public class CategoryRailPanel {
 
@@ -104,7 +105,7 @@ public class CategoryRailPanel {
                 float subtitleY = titleY + titleHeight + pad;
                 float titleOffset = (1.0f - titleProgress) * 8.0f;
                 float subtitleOffset = (1.0f - subtitleProgress) * 10.0f;
-                scope.text("Epsilon", bounds.x() + 38.0f + titleOffset, titleY, titleScale, MD3Theme.withAlpha(MD3Theme.TEXT_PRIMARY, (int) (255 * titleProgress)));
+                scope.text(Constants.NAME, bounds.x() + 38.0f + titleOffset, titleY, titleScale, MD3Theme.withAlpha(MD3Theme.TEXT_PRIMARY, (int) (255 * titleProgress)));
                 if (subtitleProgress > 0.02f) {
                     scope.text(Constants.VERSION, bounds.x() + 38.0f + subtitleOffset, subtitleY, subtitleScale, MD3Theme.withAlpha(MD3Theme.TEXT_SECONDARY, (int) (210 * subtitleProgress)));
                 }
@@ -328,7 +329,7 @@ public class CategoryRailPanel {
     }
 
     private void applyTextScissor(PanelLayout.Rect rect, int guiHeight) {
-        int scale = Minecraft.getInstance().getWindow().getGuiScale();
+        int scale = mc.getWindow().getGuiScale();
         int x = Math.round(rect.x() * scale);
         int y = Math.round((guiHeight - rect.bottom()) * scale);
         int width = Math.round(rect.width() * scale);

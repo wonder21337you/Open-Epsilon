@@ -13,7 +13,6 @@ import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.*;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.rendertype.TextureTransform;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -30,9 +29,9 @@ import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
-public class TextureRenderer implements IRenderer {
+import static com.github.epsilon.Constants.mc;
 
-    private final Minecraft mc = Minecraft.getInstance();
+public class TextureRenderer implements IRenderer {
 
     private static final int STRIDE = 56;
     private static final long BUFFER_SIZE = 32 * 1024;

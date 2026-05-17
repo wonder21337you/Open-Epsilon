@@ -12,12 +12,13 @@ import com.mojang.blaze3d.systems.CommandEncoder;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MappableRingBuffer;
 import net.minecraft.client.renderer.RenderPipelines;
 
 import java.awt.*;
 import java.util.OptionalInt;
+
+import static com.github.epsilon.Constants.mc;
 
 public class FilterShader {
 
@@ -26,8 +27,6 @@ public class FilterShader {
     private static final int UNIFORMS_SIZE = new Std140SizeCalculator()
             .putVec4()
             .get();
-
-    private final Minecraft mc = Minecraft.getInstance();
 
     private RenderPipeline pipeline;
     private MappableRingBuffer uniforms;
@@ -63,7 +62,7 @@ public class FilterShader {
     }
 
     public void renderMainTarget(Color color) {
-        render(this.mc.getMainRenderTarget(), color);
+        render(mc.getMainRenderTarget(), color);
     }
 
     public void render(RenderTarget framebuffer, Color color) {

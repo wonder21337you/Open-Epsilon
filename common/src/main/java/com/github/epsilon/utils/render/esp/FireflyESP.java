@@ -10,7 +10,6 @@ import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.LayeringTransform;
 import net.minecraft.client.renderer.rendertype.OutputTarget;
@@ -25,6 +24,8 @@ import org.joml.Matrix4f;
 import java.awt.*;
 import java.util.function.Function;
 
+import static com.github.epsilon.Constants.mc;
+
 public class FireflyESP {
 
     public enum ColorMode {
@@ -32,8 +33,6 @@ public class FireflyESP {
         Blend,
         Rainbow
     }
-
-    private static final Minecraft mc = Minecraft.getInstance();
 
     private static final Identifier FIREFLY_TEX = ResourceLocationUtils.getIdentifier("textures/particles/firefly.png");
 

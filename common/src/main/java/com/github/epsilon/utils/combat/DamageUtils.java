@@ -1,7 +1,6 @@
 package com.github.epsilon.utils.combat;
 
 import com.github.epsilon.utils.player.EnchantmentUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffects;
@@ -16,6 +15,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+import static com.github.epsilon.Constants.mc;
+
 /**
  * Utility class for calculating explosion damage dealt to entities.
  * Mirrors the vanilla {@code ServerExplosion} + {@code ExplosionDamageCalculator} +
@@ -23,8 +24,6 @@ import net.minecraft.world.phys.Vec3;
  * pipeline on the client side.
  */
 public class DamageUtils {
-
-    private static final Minecraft mc = Minecraft.getInstance();
 
     /**
      * End Crystal explosion radius as defined in {@code EndCrystal.hurtServer}.

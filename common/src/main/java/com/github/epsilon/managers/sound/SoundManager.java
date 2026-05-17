@@ -1,16 +1,15 @@
 package com.github.epsilon.managers.sound;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 
+import static com.github.epsilon.Constants.mc;
+
 public class SoundManager {
 
     public static final SoundManager INSTANCE = new SoundManager();
-
-    private final Minecraft mc = Minecraft.getInstance();
 
     private static final long UI_DEBOUNCE_MS = 40L;
 

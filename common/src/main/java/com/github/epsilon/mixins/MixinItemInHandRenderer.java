@@ -20,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.github.epsilon.Constants.mc;
+
 @Mixin(ItemInHandRenderer.class)
 public abstract class MixinItemInHandRenderer {
 
@@ -99,7 +101,7 @@ public abstract class MixinItemInHandRenderer {
         boolean skip = handsView.isEnabled() && handsView.swingMode.is(HandsView.SwingMode.Flux);
 
         if (skip && handsView.onlyWeapon.getValue()) {
-            ItemStack item = Minecraft.getInstance().player.getMainHandItem();
+            ItemStack item = mc.player.getMainHandItem();
             if (!item.is(ItemTags.SWORDS) && !item.is(ItemTags.AXES)) {
                 skip = false;
             }

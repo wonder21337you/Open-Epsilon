@@ -5,7 +5,6 @@ import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -18,9 +17,9 @@ import org.joml.Vector2f;
 import java.awt.*;
 import java.util.function.Function;
 
-public class CircleESP {
+import static com.github.epsilon.Constants.mc;
 
-    private static final Minecraft mc = Minecraft.getInstance();
+public class CircleESP {
 
     private static final RenderPipeline TRIANGLE_STRIP_NO_DEPTH_PIPELINE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
             .withLocation(ResourceLocationUtils.getIdentifier("pipeline/triangle_strip"))

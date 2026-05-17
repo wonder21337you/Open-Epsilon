@@ -42,9 +42,9 @@ public class Module {
     public TranslateComponent translateComponent;
 
     public Module(String name, Category category) {
-        mc = Minecraft.getInstance();
         this.name = name;
         this.category = category;
+        mc = Minecraft.getInstance();
     }
 
     public void initI18n(TranslateComponent moduleComponent) {

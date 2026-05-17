@@ -10,7 +10,6 @@ import com.mojang.blaze3d.systems.CommandEncoder;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MappableRingBuffer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -18,11 +17,11 @@ import net.minecraft.resources.Identifier;
 import java.awt.*;
 import java.util.OptionalInt;
 
+import static com.github.epsilon.Constants.mc;
+
 public class BlurShader {
 
     public static final BlurShader INSTANCE = new BlurShader();
-
-    private final Minecraft mc = Minecraft.getInstance();
 
     private static final Identifier identifier = ResourceLocationUtils.getIdentifier("blur");
 

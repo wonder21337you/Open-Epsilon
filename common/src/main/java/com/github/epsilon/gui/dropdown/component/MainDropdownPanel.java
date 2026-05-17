@@ -35,7 +35,7 @@ public class MainDropdownPanel extends AbstractDropdownPanel {
     private final SettingsContent settingsContent;
 
     public MainDropdownPanel(int panelIndex, Consumer<String> togglePanel, BooleanSupplier anySubPanelVisible, PanelVisibleResolver panelVisibleResolver) {
-        super("main", "Epsilon", "", panelIndex);
+        super("main", Constants.NAME, "", panelIndex);
         this.width = 160.0f;
         this.settingsContent = new SettingsContent(ClientSetting.INSTANCE.getSettings(), ClientSetting.INSTANCE.getSettingGroups());
         setVisible(true);

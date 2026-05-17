@@ -1,6 +1,5 @@
 package com.github.epsilon.utils.world;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -9,9 +8,9 @@ import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownExperienceBottle;
 import net.minecraft.world.phys.AABB;
 
-public class BlockUtils {
+import static com.github.epsilon.Constants.mc;
 
-    private static final Minecraft mc = Minecraft.getInstance();
+public class BlockUtils {
 
     public static boolean canPlaceAt(BlockPos pos) {
         if (!mc.level.getBlockState(pos).canBeReplaced()) return false;

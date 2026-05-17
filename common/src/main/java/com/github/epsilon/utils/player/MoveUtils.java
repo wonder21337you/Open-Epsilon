@@ -1,11 +1,10 @@
 package com.github.epsilon.utils.player;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec2;
 
-public class MoveUtils {
+import static com.github.epsilon.Constants.mc;
 
-    private static final Minecraft mc = Minecraft.getInstance();
+public class MoveUtils {
 
     public static boolean isMoving() {
         Vec2 moveVector = mc.player.input.getMoveVector();

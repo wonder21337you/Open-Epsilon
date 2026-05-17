@@ -4,7 +4,6 @@ import com.github.epsilon.managers.RotationManager;
 import com.github.epsilon.modules.impl.render.Chams;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -16,6 +15,8 @@ import org.joml.Vector2f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+
+import static com.github.epsilon.Constants.mc;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class MixinLivingEntityRenderer<S extends LivingEntityRenderState> {
@@ -36,7 +37,7 @@ public abstract class MixinLivingEntityRenderer<S extends LivingEntityRenderStat
 
     @ModifyExpressionValue(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;rotLerp(FFF)F"))
     private float hookHeadYaw(float original, LivingEntity entity, S state, float partialTick) {
-        if (entity == Minecraft.getInstance().player) {
+        if (entity == mc.player) {
             Vector2f rotation = RotationManager.INSTANCE.animationRotation;
             Vector2f lastRotation = RotationManager.INSTANCE.lastAnimationRotation;
             if (rotation != null && lastRotation != null && RotationManager.INSTANCE.isActive()) {
@@ -51,7 +52,7 @@ public abstract class MixinLivingEntityRenderer<S extends LivingEntityRenderStat
 
     @ModifyExpressionValue(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getXRot(F)F"))
     private float hookPitch(float original, LivingEntity entity, S state, float partialTick) {
-        if (entity == Minecraft.getInstance().player) {
+        if (entity == mc.player) {
             Vector2f rotation = RotationManager.INSTANCE.animationRotation;
             Vector2f lastRotation = RotationManager.INSTANCE.lastAnimationRotation;
             if (rotation != null && lastRotation != null && RotationManager.INSTANCE.isActive()) {

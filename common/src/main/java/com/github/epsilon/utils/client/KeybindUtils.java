@@ -4,8 +4,9 @@ import com.github.epsilon.assets.i18n.EpsilonTranslateComponent;
 import com.github.epsilon.assets.i18n.TranslateComponent;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
-import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
+
+import static com.github.epsilon.Constants.mc;
 
 /**
  * Encoding/formatting helpers for module keybinds stored as a single int.
@@ -49,7 +50,7 @@ public class KeybindUtils {
         if (keyBind == NONE) {
             return false;
         }
-        Window window = Minecraft.getInstance().getWindow();
+        Window window = mc.getWindow();
         if (isMouseButton(keyBind)) {
             return GLFW.glfwGetMouseButton(window.handle(), decodeMouseButton(keyBind)) == GLFW.GLFW_PRESS;
         }

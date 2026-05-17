@@ -4,11 +4,12 @@ import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.bus.EventHandler;
 import com.github.epsilon.events.impl.WorldEvent;
 import com.github.epsilon.utils.player.ChatUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 
 import java.util.concurrent.LinkedBlockingQueue;
+
+import static com.github.epsilon.Constants.mc;
 
 public class ClientboundPacketManager {
 
@@ -33,7 +34,7 @@ public class ClientboundPacketManager {
     public void flush() {
         while (!packets.isEmpty()) {
             try {
-                packets.poll().handle(Minecraft.getInstance().getConnection().getConnection().getPacketListener());
+                packets.poll().handle(mc.getConnection().getConnection().getPacketListener());
             } catch (Exception e) {
                 ChatUtils.addChatMessage("Failed to flush clientbound packets: " + e.getMessage());
             }
@@ -73,7 +74,6 @@ public class ClientboundPacketManager {
     }
 
     public boolean onPacketReceive(Packet<?> packet) {
-        Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null) return false;
 
         if (shouldFlush) {

@@ -2,7 +2,6 @@ package com.github.epsilon.modules;
 
 import com.github.epsilon.gui.hudeditor.HudLayoutHelper;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.Mth;
 
@@ -96,8 +95,8 @@ public abstract class HudModule extends Module {
     }
 
     private void applyRenderPosition(float renderX, float renderY, boolean updateAnchors) {
-        int screenWidth = getScreenWidth();
-        int screenHeight = getScreenHeight();
+        int screenWidth = mc.getWindow().getGuiScaledWidth();
+        int screenHeight = mc.getWindow().getGuiScaledHeight();
         float clampedX = Mth.clamp(renderX, 0.0f, Math.max(0.0f, screenWidth - width));
         float clampedY = Mth.clamp(renderY, 0.0f, Math.max(0.0f, screenHeight - height));
 
@@ -115,26 +114,11 @@ public abstract class HudModule extends Module {
     }
 
     private float getAnchoredRenderX() {
-        int screenWidth = getScreenWidth();
-        return HudLayoutHelper.getRenderX(horizontalAnchor, anchorX, width, screenWidth);
+        return HudLayoutHelper.getRenderX(horizontalAnchor, anchorX, width, mc.getWindow().getGuiScaledWidth());
     }
 
     private float getAnchoredRenderY() {
-        return HudLayoutHelper.getRenderY(verticalAnchor, anchorY, height, getScreenHeight());
-    }
-
-    private static int getScreenWidth() {
-        if (Minecraft.getInstance().getWindow() == null) {
-            return 0;
-        }
-        return Minecraft.getInstance().getWindow().getGuiScaledWidth();
-    }
-
-    private static int getScreenHeight() {
-        if (Minecraft.getInstance().getWindow() == null) {
-            return 0;
-        }
-        return Minecraft.getInstance().getWindow().getGuiScaledHeight();
+        return HudLayoutHelper.getRenderY(verticalAnchor, anchorY, height, mc.getWindow().getGuiScaledHeight());
     }
 
     public abstract void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker);

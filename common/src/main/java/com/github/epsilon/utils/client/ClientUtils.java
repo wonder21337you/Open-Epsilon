@@ -1,11 +1,10 @@
 package com.github.epsilon.utils.client;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.ResourceLoadStateTracker;
 
-public class ClientUtils {
+import static com.github.epsilon.Constants.mc;
 
-    private static final Minecraft mc = Minecraft.getInstance();
+public class ClientUtils {
 
     public static boolean isLoading() {
         ResourceLoadStateTracker.ReloadState state = mc.reloadStateTracker.reloadState;

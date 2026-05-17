@@ -18,7 +18,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.font.TextRenderable;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -49,6 +48,8 @@ import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
+
+import static com.github.epsilon.Constants.mc;
 
 public class EpsilonGuiRenderer implements AutoCloseable {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -176,12 +177,11 @@ public class EpsilonGuiRenderer implements AutoCloseable {
 
     private void draw(GpuBufferSlice fogBuffer) {
         if (!this.draws.isEmpty()) {
-            Minecraft minecraft = Minecraft.getInstance();
-            WindowRenderState windowState = minecraft.gameRenderer.getGameRenderState().windowRenderState;
+            WindowRenderState windowState = mc.gameRenderer.getGameRenderState().windowRenderState;
             this.guiProjection
                     .setupOrtho(1000.0F, 11000.0F, (float) windowState.width / windowState.guiScale, (float) windowState.height / windowState.guiScale, true);
             RenderSystem.setProjectionMatrix(this.guiProjectionMatrixBuffer.getBuffer(this.guiProjection), ProjectionType.ORTHOGRAPHIC);
-            RenderTarget mainRenderTarget = minecraft.getMainRenderTarget();
+            RenderTarget mainRenderTarget = mc.getMainRenderTarget();
             int maxIndexCount = 0;
 
             for (EpsilonGuiRenderer.Draw draw : this.draws) {
@@ -210,7 +210,7 @@ public class EpsilonGuiRenderer implements AutoCloseable {
 
             if (this.draws.size() > this.firstDrawIndexAfterBlur) {
                 RenderSystem.getDevice().createCommandEncoder().clearDepthTexture(mainRenderTarget.getDepthTexture(), 1.0);
-                minecraft.gameRenderer.processBlurEffect();
+                mc.gameRenderer.processBlurEffect();
                 this.executeDrawRange(
                         () -> "GUI after blur",
                         mainRenderTarget,
@@ -382,7 +382,7 @@ public class EpsilonGuiRenderer implements AutoCloseable {
     }
 
     private int getGuiScaleInvalidatingItemAtlasIfChanged() {
-        int guiScale = Minecraft.getInstance().gameRenderer.getGameRenderState().windowRenderState.guiScale;
+        int guiScale = mc.gameRenderer.getGameRenderState().windowRenderState.guiScale;
         if (guiScale != this.cachedGuiScale) {
             this.invalidateItemAtlas();
 
@@ -522,7 +522,7 @@ public class EpsilonGuiRenderer implements AutoCloseable {
     }
 
     private void enableScissor(ScreenRectangle rectangle, RenderPass renderPass) {
-        WindowRenderState windowState = Minecraft.getInstance().gameRenderer.getGameRenderState().windowRenderState;
+        WindowRenderState windowState = mc.gameRenderer.getGameRenderState().windowRenderState;
         int windowHeight = windowState.height;
         int guiScale = windowState.guiScale;
         double left = rectangle.left() * guiScale;

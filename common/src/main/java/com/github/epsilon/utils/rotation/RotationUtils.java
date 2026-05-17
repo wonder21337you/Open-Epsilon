@@ -2,7 +2,6 @@ package com.github.epsilon.utils.rotation;
 
 import com.github.epsilon.managers.RotationManager;
 import com.github.epsilon.utils.math.MathUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,9 +17,9 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Vector2f;
 
-public class RotationUtils {
+import static com.github.epsilon.Constants.mc;
 
-    private static final Minecraft mc = Minecraft.getInstance();
+public class RotationUtils {
 
     public static Direction getClickSide(BlockPos pos) {
         // 第一阶段：尝试找到玩家视线可见且距离最近的面

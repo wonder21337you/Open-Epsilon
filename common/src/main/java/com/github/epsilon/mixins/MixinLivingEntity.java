@@ -9,7 +9,6 @@ import com.github.epsilon.modules.impl.player.JumpCooldown;
 import com.github.epsilon.modules.impl.render.HandsView;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector2f;
@@ -20,12 +19,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static com.github.epsilon.Constants.mc;
+
 @Mixin(LivingEntity.class)
 public class MixinLivingEntity {
 
     @WrapOperation(method = "jumpFromGround", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getYRot()F"))
     private float redirectGetYRotInJumpFromGround(LivingEntity instance, Operation<Float> original) {
-        if (instance == Minecraft.getInstance().player) {
+        if (instance == mc.player) {
             JumpEvent event = EventBus.INSTANCE.post(new JumpEvent(instance.getYRot()));
             return event.getYaw();
         }
@@ -34,7 +35,7 @@ public class MixinLivingEntity {
 
     @WrapOperation(method = "tickHeadTurn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getYRot()F"))
     private float modifyHeadYaw(LivingEntity entity, Operation<Float> original) {
-        if (entity == Minecraft.getInstance().player) {
+        if (entity == mc.player) {
             Vector2f animationRotation = RotationManager.INSTANCE.animationRotation;
             if (animationRotation != null) {
                 return animationRotation.x;
@@ -53,7 +54,7 @@ public class MixinLivingEntity {
     private void redirectJumpingCooldown(LivingEntity instance, int value, Operation<Void> original) {
         JumpCooldown module = JumpCooldown.INSTANCE;
         int newValue = value;
-        if (instance == Minecraft.getInstance().player && module.isEnabled()) {
+        if (instance == mc.player && module.isEnabled()) {
             newValue = module.cooldown.getValue();
         }
         original.call(instance, newValue);
@@ -61,7 +62,7 @@ public class MixinLivingEntity {
 
     @Inject(method = "travel", at = @At("HEAD"), cancellable = true)
     private void onTravel(Vec3 vec3, CallbackInfo ci) {
-        if ((LivingEntity) (Object) this == Minecraft.getInstance().player) {
+        if ((LivingEntity) (Object) this == mc.player) {
             TravelEvent event = EventBus.INSTANCE.post(new TravelEvent());
             if (event.isCancelled()) {
                 ci.cancel();

@@ -4,7 +4,6 @@ import com.github.epsilon.events.bus.EventBus;
 import com.github.epsilon.events.impl.Render2DEvent;
 import com.github.epsilon.utils.render.EpsilonGuiRenderer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,6 +17,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static com.github.epsilon.Constants.mc;
 
 @Mixin(GuiRenderer.class)
 public class MixinGuiRenderer {
@@ -50,7 +51,6 @@ public class MixinGuiRenderer {
     private void onDrawHead(GpuBufferSlice fogBuffer, CallbackInfo ci) {
         epsilon$ensureRenderers();
 
-        Minecraft mc = Minecraft.getInstance();
         int mouseX = (int) mc.mouseHandler.getScaledXPos(mc.getWindow());
         int mouseY = (int) mc.mouseHandler.getScaledYPos(mc.getWindow());
 

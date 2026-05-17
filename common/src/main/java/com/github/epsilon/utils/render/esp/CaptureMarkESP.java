@@ -10,7 +10,6 @@ import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.LayeringTransform;
 import net.minecraft.client.renderer.rendertype.OutputTarget;
@@ -24,9 +23,9 @@ import org.joml.Matrix4f;
 
 import java.awt.*;
 
-public class CaptureMarkESP {
+import static com.github.epsilon.Constants.mc;
 
-    private static final Minecraft mc = Minecraft.getInstance();
+public class CaptureMarkESP {
 
     private static final Identifier CAPTUREMARK_TEX = ResourceLocationUtils.getIdentifier("textures/particles/target.png");
 

@@ -1,7 +1,8 @@
 package com.github.epsilon.gui.dropdown;
 
 import com.github.epsilon.graphics.renderers.*;
-import net.minecraft.client.Minecraft;
+
+import static com.github.epsilon.Constants.mc;
 
 public final class DropdownRenderer {
 
@@ -52,7 +53,7 @@ public final class DropdownRenderer {
     }
 
     public void setScissor(float guiX, float guiY, float guiW, float guiH, int guiHeight) {
-        int scale = Minecraft.getInstance().getWindow().getGuiScale();
+        int scale = mc.getWindow().getGuiScale();
         int x = Math.round(guiX * scale);
         int y = Math.round((guiHeight - guiY - guiH) * scale);
         int w = Math.round(guiW * scale);

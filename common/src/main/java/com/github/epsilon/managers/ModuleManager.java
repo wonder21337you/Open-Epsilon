@@ -26,11 +26,12 @@ import com.github.epsilon.utils.client.KeybindUtils;
 import com.github.epsilon.utils.player.ChatUtils;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.github.epsilon.Constants.mc;
 
 public class ModuleManager {
 
@@ -144,7 +145,6 @@ public class ModuleManager {
 
     @EventHandler
     private void onRender2D(Render2DEvent.HUD event) {
-        Minecraft mc = Minecraft.getInstance();
         if (ClientUtils.isLoading() || mc.level == null || mc.screen instanceof HudEditorScreen) return;
 
         for (Module m : modules) {
@@ -158,7 +158,6 @@ public class ModuleManager {
 
     @EventHandler
     private void onKeyPress(KeyPressEvent event) {
-        Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.screen != null || event.getKey() == GLFW.GLFW_KEY_UNKNOWN) return;
 
         int keyCode = event.getKey();
@@ -178,7 +177,6 @@ public class ModuleManager {
 
     @EventHandler
     private void onMousePress(MousePressEvent event) {
-        Minecraft mc = Minecraft.getInstance();
         if (mc.level != null && mc.screen == null) {
             dispatchKeyBind(KeybindUtils.encodeMouseButton(event.getButton()), event.getAction());
         }

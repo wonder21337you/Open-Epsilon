@@ -5,7 +5,6 @@ import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.LayeringTransform;
 import net.minecraft.client.renderer.rendertype.OutputTarget;
@@ -19,6 +18,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.awt.*;
+
+import static com.github.epsilon.Constants.mc;
 
 public class Render3DUtils {
 
@@ -44,8 +45,6 @@ public class Render3DUtils {
             .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
             .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
             .createRenderSetup());
-
-    private static Minecraft mc = Minecraft.getInstance();
 
     public static void drawFilledBox(BlockPos blockPos, Color color) {
         drawFilledBox(new AABB(blockPos), color.getRGB());

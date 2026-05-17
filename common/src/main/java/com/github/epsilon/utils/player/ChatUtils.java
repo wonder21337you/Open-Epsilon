@@ -2,15 +2,14 @@ package com.github.epsilon.utils.player;
 
 import com.github.epsilon.modules.impl.ClientSetting;
 import com.github.epsilon.utils.render.ColorUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 
-public class ChatUtils {
+import static com.github.epsilon.Constants.mc;
 
-    private static final Minecraft mc = Minecraft.getInstance();
+public class ChatUtils {
 
     public static final String PREFIX = "[Epsilon] ";
 
