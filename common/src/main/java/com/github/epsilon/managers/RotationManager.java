@@ -178,7 +178,7 @@ public class RotationManager {
         else return new Vector2f(mc.player.getYRot(), mc.player.getXRot());
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOW)
     private void onTick(TickEvent.Pre event) {
         if (mc.player == null || mc.level == null) {
             tickRequests.clear();
